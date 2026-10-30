@@ -30,7 +30,7 @@ class PlateController extends Controller
 
         // "no_stats": no numbers for that year, so the visitor lands on the model page instead
         if (in_array($result['status'], ['found', 'no_stats'], true)) {
-            return redirect($result['url']);
+            return redirect($result['url'])->with('from_plate', true);
         }
 
         return redirect()->route('home')->withInput()->with('plate_error', self::MESSAGES[$result['status']]);

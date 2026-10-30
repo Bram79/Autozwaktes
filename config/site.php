@@ -16,6 +16,18 @@ return [
         'model' => env('AI_ADVICE_MODEL', 'claude-sonnet-5-5'),
     ],
 
+    /*
+     * Advertisements: ready, but off. Switch on with ADS_ENABLED=true and ADS_SCRIPT_URL (the script of your ad network).
+     * The script is only loaded after the visitor accepts it in the cookie banner.
+     */
+    'ads' => [
+        'enabled' => (bool) env('ADS_ENABLED', false),
+        'script_url' => env('ADS_SCRIPT_URL'),
+    ],
+
+    // The cookie banner is shown when ads are on, or when you force it (for example for analytics you add later).
+    'consent_banner' => (bool) env('CONSENT_BANNER', false),
+
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 
@@ -44,6 +56,14 @@ return [
             'text' => 'Vergelijk verzekeringen voor je {merk} {model} en kijk wat je kunt besparen.',
             'button' => 'Vergelijk verzekeringen',
             'url' => env('AFFILIATE_INSURANCE_URL'),
+        ],
+        // The partner block in the APK reminder e-mail. Off until you have a partner that fits.
+        'apk_mail' => [
+            'enabled' => false,
+            'title' => 'Binnenkort APK? Laat je auto eerst nakijken',
+            'text' => 'Vergelijk garages bij jou in de buurt en ontdek wat een keuring kost.',
+            'button' => 'Bekijk garages',
+            'url' => env('AFFILIATE_APK_MAIL_URL'),
         ],
         'parts' => [
             'enabled' => true,

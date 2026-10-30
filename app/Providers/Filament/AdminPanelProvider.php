@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->brandName('Auto Zwaktes beheer')
             ->login()
-            ->navigationGroups(['Inhoud', 'Instellingen', 'Geavanceerd'])
+            ->navigationGroups(['Inhoud', 'Inkomsten', 'Instellingen', 'Geavanceerd'])
             ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Blue,

@@ -37,6 +37,9 @@ class GenerationStats extends Component
             'selectedYear' => $year,
             'selectedFuel' => $fuel,
             'result' => $stats->topDefects($generation, $year, $fuel),
+            'brandName' => $generation->carModel->brand->name,
+            'modelName' => $generation->carModel->name,
+            'yearLabel' => (string) ($year ?? ''),
         ]);
     }
 }

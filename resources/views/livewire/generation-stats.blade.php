@@ -23,6 +23,6 @@
     </form>
 
     <div wire:loading.class="opacity-50">
-        @include('partials.defect-table', ['result' => $result])
+        @include('partials.defect-table', ['result' => $result, 'brandName' => $brandName, 'modelName' => $modelName, 'yearLabel' => $yearLabel])
     </div>
 </div>

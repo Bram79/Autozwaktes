@@ -22,6 +22,8 @@ class SiteStatus extends StatsOverviewWidget
 
         $lastImport = ImportRun::where('status', 'finished')->latest('finished_at')->first();
 
+        $clicks = \App\Models\AffiliateClick::where('created_at', '>=', now()->subDays(30))->count();
+
         return [
             Stat::make('Modellen online', $online)
                 ->description($total - $online > 0 ? ($total - $online).' van de '.$total.' hebben nog geen cijfers' : 'Alle modellen hebben cijfers')
@@ -31,6 +33,9 @@ class SiteStatus extends StatsOverviewWidget
                 ->description($withoutAdvice > 0 ? 'Hier mist nog jouw tekst' : 'Alles is ingevuld')
                 ->descriptionIcon('heroicon-m-pencil-square')
                 ->color($withoutAdvice > 0 ? 'warning' : 'success'),
+            Stat::make('Affiliate-klikken (30 dagen)', $clicks)
+                ->description('Zie Inkomsten › Klikken')
+                ->descriptionIcon('heroicon-m-cursor-arrow-rays'),
             Stat::make('Laatste import', $lastImport?->finished_at ? \Illuminate\Support\Carbon::parse($lastImport->finished_at)->diffForHumans() : 'nog niet')
                 ->description('Elke maandag om 03:00 haalt de site nieuwe RDW-data op')
                 ->descriptionIcon('heroicon-m-arrow-path'),

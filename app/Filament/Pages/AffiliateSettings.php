@@ -22,7 +22,7 @@ class AffiliateSettings extends Page implements HasSchemas
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyEuro;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Instellingen';
+    protected static string|UnitEnum|null $navigationGroup = 'Inkomsten';
 
     protected static ?string $navigationLabel = 'Affiliate-instellingen';
 

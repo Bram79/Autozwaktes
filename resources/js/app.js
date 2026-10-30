@@ -25,3 +25,66 @@ document.addEventListener('livewire:navigated', observeReveals);
 document.addEventListener('livewire:initialized', () => {
     window.Livewire.hook('morphed', () => requestAnimationFrame(observeReveals));
 });
+
+// Cookie banner. Advertising is only loaded after the visitor says yes.
+const CONSENT_COOKIE = 'az_consent';
+
+function consentValue() {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${CONSENT_COOKIE}=([^;]*)`));
+
+    return match ? match[1] : null;
+}
+
+function saveConsent(value) {
+    // six months, as a plain preference cookie (it only remembers this choice)
+    document.cookie = `${CONSENT_COOKIE}=${value}; max-age=${60 * 60 * 24 * 180}; path=/; SameSite=Lax${location.protocol === 'https:' ? '; Secure' : ''}`;
+}
+
+function loadAds() {
+    const url = document.querySelector('meta[name="ads-script"]')?.content;
+
+    if (! url || window.adsLoaded) {
+        return;
+    }
+
+    window.adsLoaded = true;
+    const script = document.createElement('script');
+    script.src = url;
+    script.async = true;
+    document.head.appendChild(script);
+    document.querySelectorAll('[data-ad-slot]').forEach((slot) => { slot.hidden = false; });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.getElementById('consent-banner');
+
+    if (! banner) {
+        return;
+    }
+
+    // no choice made yet: ask; accepted before: load the ads right away
+    banner.hidden = consentValue() !== null;
+    if (consentValue() === 'accepted') {
+        loadAds();
+    }
+
+    banner.querySelectorAll('[data-consent]').forEach((button) => {
+        button.addEventListener('click', () => {
+            saveConsent(button.dataset.consent);
+            banner.hidden = true;
+
+            if (button.dataset.consent === 'accepted') {
+                loadAds();
+            } else {
+                // choosing "only necessary" after accepting: reload so that the ad script is gone
+                if (window.adsLoaded) {
+                    location.reload();
+                }
+            }
+        });
+    });
+
+    document.querySelectorAll('[data-consent-open]').forEach((link) => {
+        link.addEventListener('click', () => { banner.hidden = false; });
+    });
+});

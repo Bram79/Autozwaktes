@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // The RDW data is refreshed daily; once a week is enough for us.
 Schedule::command('rdw:update')->weeklyOn(1, '03:00')->withoutOverlapping();
+
+// Daily APK reminders (and clean up unconfirmed requests)
+Schedule::command('apk:remind')->dailyAt('08:00')->withoutOverlapping();

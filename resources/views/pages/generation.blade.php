@@ -51,6 +51,7 @@
         <div class="space-y-4">
             <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" />
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" />
+            <x-ad-slot name="zijbalk" />
             <x-affiliate-block type="parts" :brand="$model->brand->name" :model="$model->name" />
         </div>
     </div>

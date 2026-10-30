@@ -87,7 +87,8 @@ it('renders affiliate blocks only when a url is configured, with sponsored nofol
 
     $this->get('/audi/a4/b8')
         ->assertSee('rel="sponsored nofollow noopener"', false)
-        ->assertSee('https://partner.example/verzekering?auto=Audi', false)
+        ->assertSee('/go/insurance?', false)   // the visitor goes through our own redirect, so the click is counted
+        ->assertDontSee('https://partner.example', false)
         ->assertSee('Affiliate-link');
 });
 

@@ -22,6 +22,13 @@
         </ul>
     @endif
 
+    @unless ($generations->isEmpty())
+        <div class="mt-10 grid gap-4 md:grid-cols-2">
+            <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="modelpagina" :prominent="true" />
+            <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" position="modelpagina" />
+        </div>
+    @endunless
+
     @if ($similar->isNotEmpty())
         <section class="mt-10" aria-labelledby="meer">
             <h2 id="meer" class="text-xl font-bold">Andere {{ $model->brand->name }}-modellen</h2>

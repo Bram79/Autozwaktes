@@ -72,7 +72,7 @@ class PageController extends Controller
     public function sitemap()
     {
         $xml = Cache::rememberForever('sitemap', function () {
-            $urls = [url('/'), route('privacy')];
+            $urls = [url('/'), route('privacy'), route('apk')];
 
             foreach (Brand::orderBy('slug')->get() as $brand) {
                 $urls[] = route('brand', $brand);
@@ -102,7 +102,7 @@ class PageController extends Controller
 
     public function robots()
     {
-        $text = "User-agent: *\nAllow: /\n\nSitemap: ".url('/sitemap.xml')."\n";
+        $text = "User-agent: *\nAllow: /\nDisallow: /go/\nDisallow: /apk-herinnering/\n\nSitemap: ".url('/sitemap.xml')."\n";
 
         return response($text, 200, ['Content-Type' => 'text/plain']);
     }

@@ -11,6 +11,10 @@
     <meta property="og:type" content="website">
     <meta property="og:locale" content="nl_NL">
     <meta property="og:url" content="{{ $canonical ?? url()->current() }}">
+    @if (config('site.ads.enabled') && config('site.ads.script_url'))
+        {{-- only the address: the script itself is loaded by app.js after consent --}}
+        <meta name="ads-script" content="{{ config('site.ads.script_url') }}">
+    @endif
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <noscript><style>.reveal, .bar { opacity: 1; transform: none; }</style></noscript>
     {{ $head ?? '' }}
@@ -38,6 +42,7 @@
             </a>
             <nav aria-label="Hoofdmenu" class="text-sm font-medium">
                 <a href="{{ route('home') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">Zoeken</a>
+                <a href="{{ route('apk') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">APK-herinnering</a>
             </nav>
         </div>
     </header>
@@ -48,10 +53,12 @@
         {{ $slot }}
     </main>
 
+    <x-consent-banner />
+
     <footer class="mt-16 bg-brand-900 text-brand-100">
         <div class="h-1 bg-accent-400"></div>
         <div class="mx-auto max-w-5xl space-y-2 px-4 py-8 text-sm">
-            <p class="flex items-center justify-between font-bold text-white">Auto Zwaktes <a href="{{ route('privacy') }}" class="font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Privacy</a></p>
+            <p class="flex items-center justify-between font-bold text-white">Auto Zwaktes <span class="flex gap-4"><a href="{{ route('privacy') }}" class="font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Privacy</a>@if (config('site.ads.enabled') || config('site.consent_banner'))<button type="button" data-consent-open class="font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Cookie-instellingen</button>@endif</span></p>
             <p>Bron: RDW open data (CC-0). Auto Zwaktes is een onafhankelijke website en is niet gelieerd aan de overheid of de RDW.</p>
             <p>De cijfers zijn een indicatie: ze zijn gebaseerd op geregistreerde voertuigen en geconstateerde APK-gebreken sinds 2022 en zeggen niets over een individuele auto. Laat een auto altijd zelf keuren voordat je koopt.</p>
         </div>
