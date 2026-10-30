@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class DefectStat extends Model
 {
     public $timestamps = false;
+
     protected $guarded = [];
 
     public function carModel(): BelongsTo

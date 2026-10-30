@@ -1,10 +1,12 @@
 <?php
 
+use App\Models\CarModel;
 use App\Rdw\ModelNormalizer;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-uses(Tests\TestCase::class, RefreshDatabase::class);
+uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
     $this->seed(StarterModelsSeeder::class);
@@ -12,13 +14,13 @@ beforeEach(function () {
 });
 
 it('maps messy Audi A4 names to one model', function (string $raw) {
-    $a4 = App\Models\CarModel::where('slug', 'a4')->value('id');
+    $a4 = CarModel::where('slug', 'a4')->value('id');
 
     expect($this->normalizer->match('AUDI', $raw))->toBe($a4);
 })->with(['A4', 'A4 AVANT', 'A4 Avant', 'A4 LIMOUSINE', 'A4 74 KW', 'A4 ALLROAD QUATTRO', '  a4   cabrio ']);
 
 it('maps Polo variants including codes and brand prefixes', function (string $raw) {
-    $polo = App\Models\CarModel::where('slug', 'polo')->value('id');
+    $polo = CarModel::where('slug', 'polo')->value('id');
 
     expect($this->normalizer->match('VOLKSWAGEN', $raw))->toBe($polo);
 })->with(['POLO', 'POLO 44 KW', 'POLO COUPE FOX 40 KW E2', '861011 POLO', 'VOLKSWAGEN POLO']);
@@ -34,6 +36,6 @@ it('does not match other models', function (string $brand, string $raw) {
 ]);
 
 it('handles a slash in an alias pattern, escaped or not', function () {
-    expect(preg_match(\App\Rdw\ModelNormalizer::regex('^(?:TRANSIT\/TOURNEO)( |$)'), 'TRANSIT/TOURNEO'))->toBe(1);
-    expect(preg_match(\App\Rdw\ModelNormalizer::regex('^A/B( |$)'), 'A/B CUSTOM'))->toBe(1);
+    expect(preg_match(ModelNormalizer::regex('^(?:TRANSIT\/TOURNEO)( |$)'), 'TRANSIT/TOURNEO'))->toBe(1);
+    expect(preg_match(ModelNormalizer::regex('^A/B( |$)'), 'A/B CUSTOM'))->toBe(1);
 });

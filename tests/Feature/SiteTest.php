@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Brand;
+use App\Livewire\SearchBox;
 use App\Models\DefectCode;
 use App\Models\Generation;
 use Database\Seeders\StarterModelsSeeder;
@@ -93,7 +93,7 @@ it('renders affiliate blocks only when a url is configured, with sponsored nofol
 });
 
 it('finds models through the search box', function () {
-    Livewire\Livewire::test(App\Livewire\SearchBox::class)
+    Livewire\Livewire::test(SearchBox::class)
         ->set('query', 'audi a4')
         ->assertSee('Audi A4')
         ->set('query', 'zzzz')

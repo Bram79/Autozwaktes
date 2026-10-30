@@ -3,6 +3,7 @@
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Rdw\ModelDiscoverer;
+use App\Rdw\ModelNormalizer;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Support\Facades\DB;
 
@@ -44,7 +45,7 @@ it('creates a model with an alias and one generation from the vehicle data', fun
         ->toBe(['code' => 'Alle bouwjaren', 'year_from' => 2012, 'year_to' => 2020]);
 
     // the alias now matches both spellings
-    expect(app(\App\Rdw\ModelNormalizer::class)->match('KIA', 'CEED SPORTSWAGON'))->toBe($model->id);
+    expect(app(ModelNormalizer::class)->match('KIA', 'CEED SPORTSWAGON'))->toBe($model->id);
 });
 
 it('skips models we already have and models with too few vehicles', function () {

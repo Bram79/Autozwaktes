@@ -2,11 +2,13 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\AffiliateClick;
 use App\Models\CarModel;
 use App\Models\Generation;
 use App\Models\ImportRun;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Carbon;
 
 /** The numbers an admin wants to see first: what is online and what still needs work. */
 class SiteStatus extends StatsOverviewWidget
@@ -22,7 +24,7 @@ class SiteStatus extends StatsOverviewWidget
 
         $lastImport = ImportRun::where('status', 'finished')->latest('finished_at')->first();
 
-        $clicks = \App\Models\AffiliateClick::where('created_at', '>=', now()->subDays(30))->count();
+        $clicks = AffiliateClick::where('created_at', '>=', now()->subDays(30))->count();
 
         return [
             Stat::make('Modellen online', $online)
@@ -36,7 +38,7 @@ class SiteStatus extends StatsOverviewWidget
             Stat::make('Affiliate-klikken (30 dagen)', $clicks)
                 ->description('Zie Inkomsten › Klikken')
                 ->descriptionIcon('heroicon-m-cursor-arrow-rays'),
-            Stat::make('Laatste import', $lastImport?->finished_at ? \Illuminate\Support\Carbon::parse($lastImport->finished_at)->diffForHumans() : 'nog niet')
+            Stat::make('Laatste import', $lastImport?->finished_at ? Carbon::parse($lastImport->finished_at)->diffForHumans() : 'nog niet')
                 ->description('Elke maandag om 03:00 haalt de site nieuwe RDW-data op')
                 ->descriptionIcon('heroicon-m-arrow-path'),
         ];

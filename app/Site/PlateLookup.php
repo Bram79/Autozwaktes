@@ -26,7 +26,7 @@ class PlateLookup
 
     /**
      * @return array{status: string, url?: string, car?: string}
-     *   status: invalid | not_found | not_supported | unavailable | unknown_model | no_stats | found
+     *                                                           status: invalid | not_found | not_supported | unavailable | unknown_model | no_stats | found
      */
     public function find(string $input): array
     {

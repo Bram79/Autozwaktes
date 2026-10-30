@@ -5,7 +5,6 @@ namespace App\Filament\Resources\Generations;
 use App\Filament\Resources\Generations\Pages\ManageGenerations;
 use App\Models\Generation;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -20,6 +19,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class GenerationResource extends Resource
 {

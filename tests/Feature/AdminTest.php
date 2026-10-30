@@ -1,14 +1,17 @@
 <?php
 
 use App\Filament\Pages\AffiliateSettings;
+use App\Filament\Resources\CarModels\Pages\ManageCarModels;
 use App\Filament\Resources\Generations\Pages\ManageGenerations;
+use App\Filament\Widgets\GettingStarted;
+use App\Filament\Widgets\SiteStatus;
+use App\Models\CarModel;
 use App\Models\Generation;
 use App\Models\Setting;
 use App\Models\User;
 use Database\Seeders\StarterModelsSeeder;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Support\Facades\Cache;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -66,10 +69,10 @@ it('saves affiliate settings, which then show up on the site', function () {
 
 it('lets the admin edit the aliases of a model on the model screen', function () {
     $this->actingAs($this->admin);
-    $model = \App\Models\CarModel::where('slug', 'a4')->first();
+    $model = CarModel::where('slug', 'a4')->first();
     $alias = $model->aliases()->first();
 
-    Livewire::test(\App\Filament\Resources\CarModels\Pages\ManageCarModels::class)
+    Livewire::test(ManageCarModels::class)
         ->callAction(TestAction::make('edit')->table($model), [
             'aliases' => [
                 ['pattern' => '^A4( |$)', 'priority' => 100],
@@ -84,8 +87,8 @@ it('lets the admin edit the aliases of a model on the model screen', function ()
 it('shows a clear dashboard with a short guide and the status of the site', function () {
     $this->actingAs($this->admin)->get('/admin')->assertOk()->assertSee('Generaties en koopadvies');
 
-    Livewire::test(\App\Filament\Widgets\GettingStarted::class)->assertSee('Welkom bij het beheer van Auto Zwaktes');
-    Livewire::test(\App\Filament\Widgets\SiteStatus::class)->assertSee('Generaties zonder koopadvies')->assertSee('Modellen online');
+    Livewire::test(GettingStarted::class)->assertSee('Welkom bij het beheer van Auto Zwaktes');
+    Livewire::test(SiteStatus::class)->assertSee('Generaties zonder koopadvies')->assertSee('Modellen online');
 });
 
 it('can filter generations that have no buying advice yet', function () {

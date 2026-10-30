@@ -4,7 +4,9 @@ namespace App\Console\Commands;
 
 use App\Models\CarModel;
 use App\Models\ImportRun;
+use App\Site\AffiliateLink;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -62,15 +64,15 @@ class SiteCheck extends Command
             if ($last === null) {
                 $add('warn', 'Er is nog geen import afgerond');
             } else {
-                \Illuminate\Support\Carbon::parse($last->finished_at)->lt(now()->subDays(14))
+                Carbon::parse($last->finished_at)->lt(now()->subDays(14))
                     ? $add('warn', 'De laatste import is ouder dan 14 dagen (draait de scheduler?)')
-                    : $add('ok', 'Laatste import: '.\Illuminate\Support\Carbon::parse($last->finished_at)->diffForHumans());
+                    : $add('ok', 'Laatste import: '.Carbon::parse($last->finished_at)->diffForHumans());
             }
         } catch (Throwable) {
             $add('fail', 'De tabellen ontbreken (php artisan migrate --force)');
         }
 
-        $affiliates = collect(config('site.affiliates'))->keys()->filter(fn ($type) => \App\Site\AffiliateLink::target($type) !== null)->count();
+        $affiliates = collect(config('site.affiliates'))->keys()->filter(fn ($type) => AffiliateLink::target($type) !== null)->count();
         $affiliates > 0 ? $add('ok', "{$affiliates} affiliate-partner(s) ingesteld") : $add('warn', 'Er is nog geen affiliate-partner ingesteld: de site verdient dan niets');
 
         filled(config('site.google_verification')) ? $add('ok', 'Search Console-verificatie staat aan') : $add('warn', 'GOOGLE_SITE_VERIFICATION ontbreekt (nodig voor Search Console)');

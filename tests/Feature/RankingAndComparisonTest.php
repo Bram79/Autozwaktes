@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Generation;
 use App\Site\ComparisonService;
@@ -57,7 +58,7 @@ it('leaves out generations with too few cars', function () {
 
 it('filters a ranking on brand, fuel and build year', function () {
     $service = app(RankingService::class);
-    $audi = \App\Models\Brand::where('slug', 'audi')->first();
+    $audi = Brand::where('slug', 'audi')->first();
 
     expect(collect($service->scores($audi->id))->pluck('brand')->unique()->all())->toBe(['Audi']);
     expect($service->fuels())->toHaveKey('benzine');

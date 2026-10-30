@@ -72,7 +72,7 @@ class StatsService
      * How a generation (or one build year of it) scores against the other models, on the defects that are common.
      * "Weak" is clearly more often than the average, "strong" clearly less often.
      *
-     * @return array{enough_data: bool, total: int, weak: array, strong: array}  each point: code, description, vehicles, percentage, average, ratio
+     * @return array{enough_data: bool, total: int, weak: array, strong: array} each point: code, description, vehicles, percentage, average, ratio
      */
     public function comparison(Generation $generation, ?int $year = null): array
     {

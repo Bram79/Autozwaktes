@@ -9,7 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class AdviceDraft extends Model
 {
     public const CONCEPT = 'concept';
+
     public const APPROVED = 'approved';
+
     public const REJECTED = 'rejected';
 
     protected $guarded = [];

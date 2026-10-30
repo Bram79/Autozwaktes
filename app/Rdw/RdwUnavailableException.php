@@ -4,6 +4,4 @@ namespace App\Rdw;
 
 use RuntimeException;
 
-class RdwUnavailableException extends RuntimeException
-{
-}
+class RdwUnavailableException extends RuntimeException {}

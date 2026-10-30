@@ -1,11 +1,12 @@
 <?php
 
-use App\Models\Generation;
+use App\Models\CarModel;
 use App\Rdw\RdwClient;
 use App\Site\PlateLookup;
 use Database\Seeders\DemoStatsSeeder;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 
 beforeEach(function () {
@@ -83,8 +84,8 @@ it('only lists models that have statistics', function () {
     // the demo data covers some starter models, so a model without data must not show up
     $this->get('/volkswagen')->assertOk();
 
-    $model = \App\Models\CarModel::where('slug', 'yaris')->first();
-    \Illuminate\Support\Facades\DB::table('defect_stats')->where('car_model_id', $model->id)->delete();
+    $model = CarModel::where('slug', 'yaris')->first();
+    DB::table('defect_stats')->where('car_model_id', $model->id)->delete();
     Cache::flush();
 
     $this->get('/toyota')->assertDontSee('Yaris');

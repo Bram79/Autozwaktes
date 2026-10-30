@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\DB;
 class ComparisonService
 {
     private const MIN_CARS_PER_YEAR = 300;
+
     private const MIN_SHARED_YEARS = 3;
+
     private const MAX_PRICE_RATIO = 1.33;
+
     private const PER_MODEL = 3;
 
     /**

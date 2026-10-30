@@ -26,9 +26,7 @@ class PlanDatasetImportJob implements ShouldQueue
     public int $timeout = 900;
 
     /** @param string[] $next datasets still to import after this one; 'calculate' means: recalculate statistics */
-    public function __construct(public string $dataset, public array $next = [])
-    {
-    }
+    public function __construct(public string $dataset, public array $next = []) {}
 
     public function handle(RdwClient $client): void
     {

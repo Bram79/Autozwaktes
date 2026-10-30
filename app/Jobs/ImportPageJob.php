@@ -25,8 +25,7 @@ class ImportPageJob implements ShouldQueue
         public int $limit,
         public int $importRunId,
         public array $extraWhere = [],
-    ) {
-    }
+    ) {}
 
     public function backoff(): array
     {

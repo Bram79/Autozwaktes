@@ -11,7 +11,9 @@ use Illuminate\Support\Str;
 class GenerationProposal extends Model
 {
     public const PENDING = 'pending';
+
     public const APPROVED = 'approved';
+
     public const REJECTED = 'rejected';
 
     protected $guarded = [];

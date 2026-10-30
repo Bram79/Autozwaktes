@@ -24,9 +24,7 @@ class StatisticsCalculator
         return "CASE WHEN {$fuel2} IS NOT NULL AND ({$fuel} = 'Elektriciteit' OR {$fuel2} = 'Elektriciteit') THEN 'Hybride' ELSE COALESCE({$fuel}, 'Onbekend') END";
     }
 
-    public function __construct(private ModelNormalizer $normalizer)
-    {
-    }
+    public function __construct(private ModelNormalizer $normalizer) {}
 
     public function run(): void
     {

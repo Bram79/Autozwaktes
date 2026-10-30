@@ -5,7 +5,6 @@ namespace App\Filament\Resources\CarModels;
 use App\Filament\Resources\CarModels\Pages\ManageCarModels;
 use App\Models\CarModel;
 use BackedEnum;
-use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
@@ -19,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use UnitEnum;
 
 class CarModelResource extends Resource
 {

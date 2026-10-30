@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\AppServiceProvider;
+use App\Site\StatsService;
 use Database\Seeders\DemoStatsSeeder;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Support\Facades\Process;
@@ -23,7 +24,7 @@ it('shows a helpful 404 page with search and popular models, and keeps it out of
 it('shows a plain 500 page without technical details', function () {
     config(['app.debug' => false]);
     // the home page needs the statistics: when they break, the visitor must not see why
-    app()->bind(\App\Site\StatsService::class, fn () => throw new RuntimeException('geheime databasefout'));
+    app()->bind(StatsService::class, fn () => throw new RuntimeException('geheime databasefout'));
 
     $this->withExceptionHandling()->get('/')->assertStatus(500)->assertSee('Er ging iets mis')->assertDontSee('geheime databasefout');
 });

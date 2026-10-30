@@ -5,14 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Generation;
+use App\Site\ComparisonService;
+use App\Site\RankingService;
 use App\Site\StatsService;
 use Illuminate\Support\Facades\Cache;
 
 class PageController extends Controller
 {
-    public function __construct(private StatsService $stats)
-    {
-    }
+    public function __construct(private StatsService $stats) {}
 
     public function home()
     {
@@ -95,7 +95,7 @@ class PageController extends Controller
             }
 
             // rankings with enough rows to be worth indexing, and the comparison pages that exist
-            $rankings = app(\App\Site\RankingService::class);
+            $rankings = app(RankingService::class);
             $urls[] = route('rankings');
             $urls[] = route('ranking', ['alles']);
             foreach (Brand::orderBy('slug')->get() as $brand) {
@@ -113,8 +113,8 @@ class PageController extends Controller
                     $urls[] = route('ranking', ['bouwjaar', $year]);
                 }
             }
-            foreach (app(\App\Site\ComparisonService::class)->pairs() as $pair) {
-                $urls[] = route('comparison', \App\Site\ComparisonService::slug(...$pair));
+            foreach (app(ComparisonService::class)->pairs() as $pair) {
+                $urls[] = route('comparison', ComparisonService::slug(...$pair));
             }
 
             return view('sitemap', ['urls' => $urls])->render();
