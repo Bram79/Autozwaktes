@@ -13,10 +13,13 @@ return new class extends Migration
             $table->string('license_plate', 10)->primary();
             $table->string('brand_raw');
             $table->string('model_raw');
-            $table->date('first_registration_date')->nullable();
-            $table->string('fuel')->nullable();
+            $table->unsignedSmallInteger('build_year')->nullable(); // year of first registration
+            $table->string('fuel', 30)->nullable();                 // brandstof_volgnummer 1
+            $table->string('fuel_2', 30)->nullable();               // brandstof_volgnummer 2 (hybrids)
+            $table->foreignId('car_model_id')->nullable();          // filled in by the model mapping step
 
             $table->index(['brand_raw', 'model_raw']);
+            $table->index(['car_model_id', 'build_year']);
         });
 
         Schema::create('staging_defects', function (Blueprint $table) {
