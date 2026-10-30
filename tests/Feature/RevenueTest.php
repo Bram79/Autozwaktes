@@ -75,7 +75,7 @@ it('puts every affiliate block behind /go, with sponsored nofollow and a visible
 });
 
 it('shows the vehicle report prominently after a license plate search, and on model pages', function () {
-    $this->withSession(['from_plate' => true])->get('/audi/a4/b8/2010')->assertSee('kenteken-resultaat', false);
+    $this->withSession(['from_plate_until' => now()->addMinutes(10)->timestamp])->get('/audi/a4/b8/2010')->assertSee('kenteken-resultaat', false);
     $this->flushSession();
     $this->get('/audi/a4/b8/2010')->assertDontSee('kenteken-resultaat', false);
 

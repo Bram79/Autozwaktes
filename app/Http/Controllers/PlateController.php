@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Site\PlateLookup;
+use App\Site\PlateVisit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -30,7 +31,9 @@ class PlateController extends Controller
 
         // "no_stats": no numbers for that year, so the visitor lands on the model page instead
         if (in_array($result['status'], ['found', 'no_stats'], true)) {
-            return redirect($result['url'])->with('from_plate', true);
+            PlateVisit::mark();
+
+            return redirect($result['url']);
         }
 
         return redirect()->route('home')->with('plate_error', self::MESSAGES[$result['status']]);

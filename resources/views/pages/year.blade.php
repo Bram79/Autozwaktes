@@ -19,6 +19,10 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }} uit {{ $year }}: APK-gebreken</h1>
 
+    @if (\App\Site\PlateVisit::active())
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="$year" />
+    @endif
+
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
             @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
@@ -28,12 +32,10 @@
             <p class="mt-6"><a href="{{ $genUrl }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">Alle bouwjaren van de {{ $name }}</a></p>
         </div>
         <div class="space-y-4">
-            @if (session('from_plate'))
-                {{-- the visitor came from the license plate search: the one with the highest intention to buy --}}
-                <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" :year="$year" position="kenteken-resultaat" :prominent="true" />
-            @else
+            {{-- after a plate search the report is already shown above, so not a second time --}}
+            @unless (\App\Site\PlateVisit::active())
                 <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" :year="$year" position="zijbalk" />
-            @endif
+            @endunless
             <x-ad-slot name="zijbalk" />
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" :year="$year" />
         </div>

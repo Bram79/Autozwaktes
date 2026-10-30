@@ -33,6 +33,10 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
 
+    @if (\App\Site\PlateVisit::active())
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-generatie" />
+    @endif
+
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
             <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken</h2>
@@ -49,7 +53,9 @@
         </div>
 
         <div class="space-y-4">
-            <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" />
+            @unless (\App\Site\PlateVisit::active())
+                <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="generatiepagina-rapport" />
+            @endunless
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" />
             <x-ad-slot name="zijbalk" />
             <x-affiliate-block type="parts" :brand="$model->brand->name" :model="$model->name" />
