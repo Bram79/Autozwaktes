@@ -3,7 +3,9 @@
 return [
     'name' => 'Auto Zwaktes',
 
-    // Contact address shown on the privacy page (set CONTACT_EMAIL in .env).
+    // Who is responsible for the site, shown on the privacy page (OPERATOR_NAME, optionally OPERATOR_KVK), and the contact address (CONTACT_EMAIL).
+    'operator_name' => env('OPERATOR_NAME'),
+    'operator_kvk' => env('OPERATOR_KVK'),
     'contact_email' => env('CONTACT_EMAIL'),
 
     /*
@@ -33,6 +35,14 @@ return [
 
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
+
+    // A passenger car gets its first APK after this many years. Cars of a newer build year have no defects yet,
+    // so they must not be compared with older cars (they would look perfect).
+    'first_apk_after_years' => 4,
+
+    // Rankings only look at cars built in the last this many years: of very old cars only the best kept ones are left,
+    // which makes them look better than they are for someone who buys a used car.
+    'ranking_max_age' => 20,
 
     // A generation needs at least this many cars to appear in a ranking.
     'min_ranking_sample' => (int) env('SITE_MIN_RANKING_SAMPLE', 500),

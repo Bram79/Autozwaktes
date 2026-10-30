@@ -51,7 +51,8 @@ class SiteCheck extends Command
         config('cache.default') === 'array' ? $add('warn', 'CACHE_STORE is array: de cache blijft dan niet bewaard') : $add('ok', 'Cache: '.config('cache.default'));
 
         config('site.admin_emails') !== [] ? $add('ok', 'ADMIN_EMAILS is ingesteld') : $add($production ? 'fail' : 'warn', 'ADMIN_EMAILS is leeg: buiten de lokale omgeving kan niemand in /admin');
-        filled(config('site.contact_email')) ? $add('ok', 'CONTACT_EMAIL staat op de privacypagina') : $add('warn', 'CONTACT_EMAIL ontbreekt: de privacyverklaring noemt geen contactadres');
+        filled(config('site.contact_email')) ? $add('ok', 'CONTACT_EMAIL staat op de privacypagina') : $add($production ? 'fail' : 'warn', 'CONTACT_EMAIL ontbreekt: de privacyverklaring noemt geen contactadres');
+        filled(config('site.operator_name')) ? $add('ok', 'OPERATOR_NAME staat op de privacypagina') : $add($production ? 'fail' : 'warn', 'OPERATOR_NAME ontbreekt: de privacyverklaring zegt niet wie verantwoordelijk is');
 
         file_exists(public_path('build/manifest.json')) ? $add('ok', 'Vite-assets zijn gebouwd') : $add('fail', 'public/build ontbreekt (npm run build)');
         is_writable(storage_path()) && is_writable(base_path('bootstrap/cache')) ? $add('ok', 'storage en bootstrap/cache zijn schrijfbaar') : $add('fail', 'storage of bootstrap/cache is niet schrijfbaar');

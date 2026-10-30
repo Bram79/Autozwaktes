@@ -4,7 +4,7 @@ Een checklist, in de volgorde waarin je het doet. Controleer onderweg met `php a
 
 ## 1. Eerst regelen
 - [ ] **Domein** (bijvoorbeeld autozwaktes.nl) en eventueel ook een variant zonder streepje of met streepje, en laat die doorsturen.
-- [ ] **E-mailadres** voor de site, bijvoorbeeld `info@jouwdomein.nl` (komt op de privacypagina als `CONTACT_EMAIL`) en een verzendadres voor de APK-herinnering.
+- [ ] **E-mailadres** voor de site, bijvoorbeeld `info@jouwdomein.nl` (komt op de privacypagina als `CONTACT_EMAIL`; zet ook je naam of bedrijfsnaam in `OPERATOR_NAME`: `site:check` faalt zonder die twee) en een verzendadres voor de APK-herinnering.
 - [ ] **Mailprovider** met SMTP (de meeste hosters en diensten als Mailgun, Postmark of Brevo hebben dit). Zet SPF en DKIM goed bij je domein, anders komen de herinneringen in de spam.
 - [ ] **Affiliate-accounts** (kentekenrapport, verzekering, onderdelen). Zonder links verdient de site niets.
 - [ ] **KvK-inschrijving** is meestal nodig zodra je geld verdient met affiliate-links of advertenties. Vraag dit na bij de Belastingdienst of KvK.
@@ -92,7 +92,7 @@ Open dan **/admin**, bekijk de *Generatievoorstellen* en keur ze goed, pas ze to
 
 ## 9. Laatste check voor je het deelt
 - [ ] `php artisan site:check` geeft geen fouten.
-- [ ] De privacyverklaring is door jou gelezen (en eventueel door iemand met verstand van privacywetgeving), `CONTACT_EMAIL` is ingevuld.
+- [ ] De privacyverklaring is door jou gelezen (en eventueel door iemand met verstand van privacywetgeving), `CONTACT_EMAIL` en `OPERATOR_NAME` zijn ingevuld, en je hebt verwerkersovereenkomsten met je hostingpartij en mailprovider.
 - [ ] Je hebt minstens van de populairste modellen een eigen koopadvies of een goedgekeurd concept.
 - [ ] Een APK-herinnering aangevraagd met je eigen e-mailadres: bevestiging komt aan, en de uitschrijflink werkt.
 - [ ] Je ziet in `/admin/affiliate-clicks` dat een klik op een affiliate-link geteld wordt.
