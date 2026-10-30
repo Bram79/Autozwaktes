@@ -14,7 +14,7 @@ class ApkRemind extends Command
 {
     protected $signature = 'apk:remind {--days=30 : Remind this many days before the APK expires}';
 
-    protected $description = 'Send the APK reminders that are due, and delete requests that were never confirmed';
+    protected $description = 'Send the APK reminders that are due, delete requests that were never confirmed and delete reminders of cars whose APK has been expired for more than a year';
 
     public function handle(RdwClient $rdw): int
     {
@@ -44,8 +44,15 @@ class ApkRemind extends Command
 
             // the APK may have been renewed since: always work with the date the RDW has now
             $reminder->apk_expires_at = ApkReminderController::expiry($vehicle);
-            $reminder->save();
 
+            // a year after the APK ran out without a new one the car is probably sold or scrapped: we do not keep the data any longer
+            if ($reminder->apk_expires_at?->lt(now()->subYear())) {
+                $reminder->delete();
+
+                continue;
+            }
+
+            $reminder->save();
             $expires = $reminder->apk_expires_at;
             $isDue = $expires && $expires->isFuture() && $expires->lte(now()->addDays($days)->endOfDay());
 

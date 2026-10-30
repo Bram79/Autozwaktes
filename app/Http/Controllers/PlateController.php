@@ -22,7 +22,7 @@ class PlateController extends Controller
         $key = 'plate:'.$request->ip();
 
         if (RateLimiter::tooManyAttempts($key, 10)) {
-            return redirect()->route('home')->withInput()->with('plate_error', 'Je zoekt te snel. Probeer het over een minuut opnieuw.');
+            return redirect()->route('home')->with('plate_error', 'Je zoekt te snel. Probeer het over een minuut opnieuw.');
         }
         RateLimiter::hit($key, 60);
 
@@ -33,6 +33,6 @@ class PlateController extends Controller
             return redirect($result['url'])->with('from_plate', true);
         }
 
-        return redirect()->route('home')->withInput()->with('plate_error', self::MESSAGES[$result['status']]);
+        return redirect()->route('home')->with('plate_error', self::MESSAGES[$result['status']]);
     }
 }
