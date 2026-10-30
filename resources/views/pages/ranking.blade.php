@@ -6,6 +6,7 @@
         default => "Auto's met de minste APK-gebreken: ranglijst per generatie",
     };
     $count = count($rows);
+    $maxScore = max(1, $count ? max(array_column($rows, 'score')) : 1);
     $intro = match ($scope) {
         'merk' => "Hoe scoren de {$label}-generaties bij de APK? Deze lijst rangschikt ze op het aantal gebreken per 100 auto's.",
         'brandstof' => "Welke {$label}-auto's hebben bij de APK het minst vaak gebreken? Dit zijn de beste en de slechtste generaties.",
@@ -25,9 +26,13 @@
     <p class="mt-3 max-w-2xl text-slate-700">{{ $intro }}</p>
 
     @if ($count === 0)
-        <p class="mt-8 rounded-2xl bg-brand-50 p-4 text-sm text-slate-700">Voor deze lijst zijn nog te weinig auto's om een eerlijke vergelijking te maken.</p>
+        <div class="mt-8 rounded-2xl border border-brand-100 bg-brand-50 p-5 text-slate-700">
+            <p class="font-semibold text-brand-900">Nog geen lijst</p>
+            <p class="mt-1 text-sm">Voor deze lijst zijn nog te weinig auto's om een eerlijke vergelijking te maken.</p>
+            <p class="mt-3"><a href="{{ route('ranking', ['alles']) }}" class="btn">Bekijk de lijst met alle auto's</a></p>
+        </div>
     @else
-        <p class="mt-3 max-w-2xl text-sm text-slate-600">Score = geconstateerde APK-gebreken per 100 auto's (elk soort gebrek telt één keer per auto). Alleen generaties met minstens {{ number_format(config('site.min_ranking_sample'), 0, ',', '.') }} auto's doen mee.</p>
+        <p class="mt-3 max-w-2xl text-sm text-slate-600">De balk toont de score ten opzichte van de hoogste in deze lijst: korter is beter. Score = geconstateerde APK-gebreken per 100 auto's (elk soort gebrek telt één keer per auto). Alleen generaties met minstens {{ number_format(config('site.min_ranking_sample'), 0, ',', '.') }} auto's doen mee.</p>
 
         @foreach ([['De minste gebreken', 'minste', $best], ['De meeste gebreken', 'meeste', $worst]] as [$heading, $id, $list])
             @if ($list !== [] && ($id === 'minste' || $count > count($best)))
@@ -48,15 +53,19 @@
                             <tbody>
                                 @foreach ($list as $i => $row)
                                     <tr class="border-b border-brand-100 transition hover:bg-brand-50">
-                                        <td class="py-3 pr-2 text-slate-600">{{ $id === 'minste' ? $i + 1 : $count - $i }}</td>
+                                        <td class="py-3 pr-2 text-slate-700">{{ $id === 'minste' ? $i + 1 : $count - $i }}</td>
                                         <td class="py-3 pr-4">
                                             <a class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" href="{{ $year ? route('year', [$row['brand_slug'], $row['model_slug'], $row['generation_slug'], $year]) : route('generation', [$row['brand_slug'], $row['model_slug'], $row['generation_slug']]) }}">
                                                 {{ $row['brand'] }} {{ $row['model'] }} {{ $row['code'] }}
                                             </a>
+                                            @if ($id === 'minste' && $i === 0)<span class="badge-best ml-2 align-middle">Beste score</span>@endif
                                             <span class="block text-xs text-slate-700 sm:hidden">{{ $year ?? $row['years'] }}</span>
                                         </td>
                                         <td class="hidden py-3 pr-4 text-slate-700 sm:table-cell">{{ $year ?? $row['years'] }}</td>
-                                        <td class="py-3 pr-4 text-right font-semibold tabular-nums">{{ number_format($row['score'], 1, ',', '.') }}</td>
+                                        <td class="min-w-28 py-3 pr-4 text-right">
+                                            <span class="font-semibold tabular-nums">{{ number_format($row['score'], 1, ',', '.') }}</span>
+                                            <span class="score-track mt-1 block" aria-hidden="true"><span class="bar score-fill {{ $id === 'minste' ? 'score-fill-best' : '' }}" style="--w: {{ round($row['score'] / $maxScore * 100) }}%"></span></span>
+                                        </td>
                                         <td class="py-3 text-right tabular-nums text-slate-700">{{ number_format($row['total'], 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach

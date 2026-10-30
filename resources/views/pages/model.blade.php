@@ -7,16 +7,25 @@
     <x-breadcrumbs :items="[['Home', route('home')], [$model->brand->name, route('brand', $model->brand)], [$model->name, route('model', [$model->brand, $model->slug])]]" />
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }}: generaties</h1>
+    @unless ($generations->isEmpty())
+        <p class="mt-3 max-w-2xl text-slate-700">Er zijn {{ $generations->count() }} {{ $generations->count() === 1 ? 'generatie' : 'generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
+    @endunless
 
     @if ($generations->isEmpty())
-        <p class="mt-6 text-slate-700">Voor dit model zijn nog geen cijfers beschikbaar.</p>
+        <div class="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-5 text-slate-700">
+            <p class="font-semibold text-brand-900">Nog geen cijfers</p>
+            <p class="mt-1 text-sm">Voor dit model zijn nog geen cijfers beschikbaar. Kijk bij <a href="{{ route('brand', $model->brand) }}" class="font-medium text-brand-700 underline underline-offset-2">alle {{ $model->brand->name }}-modellen</a>.</p>
+        </div>
     @else
         <ul class="mt-6 grid gap-3 sm:grid-cols-2">
             @foreach ($generations as $generation)
                 <li class="reveal" style="--i: {{ min($loop->index, 8) }}">
-                    <a href="{{ route('generation', [$model->brand, $model->slug, $generation->slug]) }}" class="card-link">
-                        <span class="block font-semibold text-brand-700">{{ $name }} {{ $generation->code }}</span>
-                        <span class="text-sm text-slate-700">{{ \App\Site\Seo::yearsLabel($generation) }}</span>
+                    <a href="{{ route('generation', [$model->brand, $model->slug, $generation->slug]) }}" class="card-link group flex items-center gap-3">
+                        <span>
+                            <span class="block font-semibold text-brand-700">{{ $name }} {{ $generation->code }}</span>
+                            <span class="mt-0.5 inline-block rounded-full bg-brand-50 px-2.5 py-0.5 text-sm text-brand-900">{{ \App\Site\Seo::yearsLabel($generation) }}</span>
+                        </span>
+                        <span class="card-arrow" aria-hidden="true">&rarr;</span>
                     </a>
                 </li>
             @endforeach
@@ -32,8 +41,9 @@
 
     @php $suggestions = app(\App\Site\ComparisonService::class)->suggestions($model); @endphp
     @if ($suggestions)
-        <section class="mt-10" aria-labelledby="vergelijken">
+        <section class="mt-10 rounded-2xl border border-brand-100 bg-brand-50 p-5" aria-labelledby="vergelijken">
             <h2 id="vergelijken" class="text-xl font-bold">Vergelijk de {{ $name }} met</h2>
+            <p class="mt-1 text-sm text-slate-700">Zie welke van de twee bij de APK de minste gebreken heeft.</p>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($suggestions as $suggestion)
                     <li><a href="{{ route('comparison', $suggestion['slug']) }}" class="chip">{{ $suggestion['name'] }}</a></li>

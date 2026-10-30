@@ -66,6 +66,10 @@
         <div class="h-1 bg-accent-400"></div>
         <div class="mx-auto max-w-5xl space-y-2 px-4 py-8 text-sm">
             <p class="flex flex-wrap items-center justify-between gap-x-4 font-bold text-white">Auto Zwaktes <span class="flex flex-wrap gap-x-4"><a href="{{ route('privacy') }}" class="inline-flex min-h-11 items-center font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Privacy</a>@if (config('site.ads.enabled') || config('site.consent_banner'))<button type="button" data-consent-open class="inline-flex min-h-11 items-center font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Cookie-instellingen</button>@endif</span></p>
+            <nav aria-label="Voetmenu" class="flex flex-wrap gap-x-4">
+                <a href="{{ route('rankings') }}" class="inline-flex min-h-11 items-center text-brand-100 underline underline-offset-2 hover:text-white">Ranglijsten</a>
+                <a href="{{ route('apk') }}" class="inline-flex min-h-11 items-center text-brand-100 underline underline-offset-2 hover:text-white">APK-herinnering</a>
+            </nav>
             <p>Bron: RDW open data (CC-0). Auto Zwaktes is een onafhankelijke website en is niet gelieerd aan de overheid of de RDW.</p>
             <p>De cijfers zijn een indicatie: ze zijn gebaseerd op geregistreerde voertuigen en geconstateerde APK-gebreken sinds 2022 en zeggen niets over een individuele auto. Laat een auto altijd zelf keuren voordat je koopt.</p>
         </div>

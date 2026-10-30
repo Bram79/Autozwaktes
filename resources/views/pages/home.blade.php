@@ -48,8 +48,12 @@
             <ul class="mt-4 grid gap-3 sm:grid-cols-2 md:grid-cols-3">
                 @foreach ($popular as $model)
                     <li class="reveal" style="--i: {{ min($loop->index, 8) }}">
-                        <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="card-link">
-                            {{ $model->brand->name }} {{ $model->name }}
+                        <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="card-link group flex items-center gap-2">
+                            <span>
+                                <span class="block text-xs font-medium uppercase tracking-wide text-slate-700">{{ $model->brand->name }}</span>
+                                <span class="block font-semibold">{{ $model->name }}</span>
+                            </span>
+                            <span class="card-arrow" aria-hidden="true">&rarr;</span>
                         </a>
                     </li>
                 @endforeach
@@ -57,9 +61,13 @@
         </section>
     @endif
 
-    <section class="mt-12 rounded-2xl bg-brand-50 p-6" aria-labelledby="ranglijsten">
-        <h2 id="ranglijsten" class="reveal text-2xl font-extrabold text-brand-900">Welke auto heeft de minste gebreken?</h2>
-        <p class="reveal mt-2 max-w-2xl text-slate-700" style="--i: 1">Bekijk de ranglijsten met de beste en de slechtste generaties, per merk, brandstof en bouwjaar.</p>
-        <p class="reveal mt-4" style="--i: 2"><a href="{{ route('rankings') }}" class="btn">Naar de ranglijsten</a></p>
+    <section class="relative mt-12 overflow-hidden rounded-2xl bg-brand-900 p-6 text-white sm:p-8" aria-labelledby="ranglijsten">
+        <div class="pointer-events-none absolute -right-10 -top-10 size-32 rounded-full bg-accent-400" aria-hidden="true"></div>
+        <h2 id="ranglijsten" class="reveal relative max-w-xl text-2xl font-extrabold text-accent-300">Welke auto heeft de minste gebreken?</h2>
+        <p class="reveal relative mt-2 max-w-2xl text-brand-100" style="--i: 1">Bekijk de ranglijsten met de beste en de slechtste generaties, per merk, brandstof en bouwjaar. Hoe lager de score, hoe minder gebreken bij de APK.</p>
+        <p class="reveal relative mt-5 flex flex-wrap gap-3" style="--i: 2">
+            <a href="{{ route('rankings') }}" class="btn">Naar de ranglijsten</a>
+            <a href="{{ route('ranking', ['alles']) }}" class="inline-flex min-h-11 items-center rounded-full border-2 border-white/60 px-5 py-2 font-semibold text-white transition hover:bg-white/10">Direct naar de top</a>
+        </p>
     </section>
 </x-layouts.app>
