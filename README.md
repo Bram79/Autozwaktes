@@ -14,3 +14,15 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 | `php artisan rdw:unmatched` | Toont RDW-modelnamen die bij geen enkel model passen (om aliassen aan te vullen). |
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.
+
+## Beheer (`/admin`)
+
+Gebouwd met Filament. Maak een beheerder aan met:
+
+```bash
+php artisan make:filament-user
+```
+
+Buiten de lokale omgeving komen alleen e-mailadressen uit `ADMIN_EMAILS` (in `.env`, kommagescheiden) binnen.
+
+Hier beheer je generaties (incl. koopadvies), modellen, merken, modelnaam-patronen en affiliate-instellingen. Elke wijziging leegt de site-cache. Wijzig je bouwjaren van een generatie of een patroon, klik dan op "Statistieken herberekenen" (queue worker nodig).

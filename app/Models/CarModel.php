@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class CarModel extends Model
 {
+    use \App\Models\Concerns\FlushesSiteCache;
+
     protected $guarded = [];
 
     public function brand(): BelongsTo

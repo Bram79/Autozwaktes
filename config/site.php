@@ -9,6 +9,9 @@ return [
     // How many defects the top list shows.
     'top_defects' => 10,
 
+    // Comma separated e-mail addresses that may open /admin outside the local environment.
+    'admin_emails' => array_filter(array_map(fn ($e) => strtolower(trim($e)), explode(',', env('ADMIN_EMAILS', '')))),
+
     /*
      * Affiliate blocks. Set 'url' to your own affiliate link and 'enabled' to true
      * to show a block. Blocks without a url are never shown.

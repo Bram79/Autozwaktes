@@ -1,7 +1,7 @@
 @props(['type', 'brand' => '', 'model' => '', 'year' => ''])
 
 @php
-    $config = config("site.affiliates.{$type}");
+    $config = \App\Models\Setting::affiliate($type);
     $replace = fn ($text) => str_replace(['{merk}', '{model}', '{jaar}'], [$brand, $model, $year], $text);
 @endphp
 

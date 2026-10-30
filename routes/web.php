@@ -7,7 +7,7 @@ Route::get('/sitemap.xml', [PageController::class, 'sitemap']);
 Route::get('/robots.txt', [PageController::class, 'robots']);
 
 // A brand slug can't be one of these (they belong to the framework or the build).
-$reserved = 'livewire(-[a-z0-9]+)?|up|storage|build|sitemap\.xml|robots\.txt|favicon\.ico';
+$reserved = 'admin|filament|livewire(-[a-z0-9]+)?|up|storage|build|sitemap\.xml|robots\.txt|favicon\.ico';
 
 Route::get('/', [PageController::class, 'home'])->name('home');
 
