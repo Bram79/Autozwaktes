@@ -3,9 +3,9 @@
     description="Zoek je auto en zie welke APK-gebreken het vaakst voorkomen per merk, model, generatie en bouwjaar. Handig bij het kopen van een occasion.">
 
     <x-slot:hero>
-        <section class="relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 text-white">
+        <section class="relative overflow-hidden bg-brand-700 bg-gradient-to-br from-brand-900 via-brand-700 to-brand-600 text-white">
             {{-- Zwevende vormen: puur decoratief --}}
-            <div class="pointer-events-none absolute -right-16 -top-16 size-72 animate-float rounded-full bg-accent-400/90 blur-sm" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute -right-24 -top-24 size-48 animate-float sm:-right-16 sm:-top-16 sm:size-72 rounded-full bg-accent-400/90 blur-sm" aria-hidden="true"></div>
             <div class="pointer-events-none absolute -bottom-24 left-1/4 size-64 animate-float-slow rounded-full bg-white/10" aria-hidden="true"></div>
             <div class="pointer-events-none absolute bottom-10 right-1/4 size-16 animate-float rounded-2xl border-4 border-accent-300 rotate-12" aria-hidden="true"></div>
 
@@ -23,20 +23,20 @@
                 <form method="post" action="{{ route('plate') }}" class="reveal mt-6 max-w-xl" style="--i: 4">
                     @csrf
                     <label for="kenteken" class="block text-sm font-semibold text-brand-100">Of zoek op kenteken</label>
-                    <div class="mt-2 flex gap-2">
+                    <div class="mt-2 flex flex-wrap gap-2">
                         {{-- ziet eruit als een Nederlands kenteken --}}
                         <div class="flex w-full max-w-60 overflow-hidden rounded-md border-2 border-brand-900 bg-accent-400 shadow-lg">
                             <span class="flex w-9 items-center justify-center bg-brand-600 text-xs font-bold text-white" aria-hidden="true">NL</span>
                             <input id="kenteken" name="kenteken" type="text" required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
                                    placeholder="AB-123-C"
-                                   class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/40 focus:outline-none focus:ring-4 focus:ring-white/70">
+                                   class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/70 focus:outline-none focus:ring-4 focus:ring-inset focus:ring-brand-900">
                         </div>
                         <button type="submit" class="btn">Bekijk mijn auto</button>
                     </div>
                     @if (session('plate_error'))
                         <p role="alert" class="mt-3 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">{{ session('plate_error') }}</p>
                     @endif
-                    <p class="mt-2 text-xs text-brand-100">We zoeken de auto op bij de RDW en slaan je kenteken niet op.</p>
+                    <p class="mt-2 text-sm text-brand-100">We zoeken de auto op bij de RDW en slaan je kenteken niet op.</p>
                 </form>
             </div>
         </section>

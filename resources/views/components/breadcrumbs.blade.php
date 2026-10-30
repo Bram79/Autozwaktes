@@ -9,10 +9,10 @@
     ]);
 @endphp
 
-<nav aria-label="Kruimelpad" class="mb-4 text-sm text-slate-700">
-    <ol class="flex flex-wrap items-center gap-x-2 gap-y-1">
+<nav aria-label="Kruimelpad" class="mb-2 text-sm text-slate-700">
+    <ol class="flex flex-wrap items-center gap-x-2">
         @foreach ($items as $i => $item)
-            <li class="flex items-center gap-2">
+            <li class="flex min-h-11 items-center gap-2">
                 @if ($i > 0)<span aria-hidden="true">/</span>@endif
                 @if ($loop->last)
                     <span aria-current="page" class="font-medium text-slate-900">{{ $item[0] }}</span>

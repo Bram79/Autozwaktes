@@ -4,7 +4,7 @@
 
     <x-breadcrumbs :items="[['Home', route('home')], ['Privacy', route('privacy')]]" />
 
-    <article class="max-w-3xl space-y-8">
+    <article class="max-w-3xl space-y-8 leading-relaxed">
         <header>
             <h1 class="text-3xl sm:text-4xl">Privacyverklaring</h1>
             <p class="mt-2 text-slate-600">Laatst bijgewerkt: 31 oktober 2026</p>

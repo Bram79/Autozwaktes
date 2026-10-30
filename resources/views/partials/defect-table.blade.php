@@ -6,7 +6,7 @@
 @else
     @php $max = max(1, $result['defects']->max('percentage')); @endphp
 
-    <p class="mb-3 text-sm text-slate-700">
+    <p class="mb-3 text-slate-700">
         Gebaseerd op {{ number_format($result['total'], 0, ',', '.') }} voertuigen. Het percentage is het aandeel voertuigen waarbij dit gebrek minstens één keer is geconstateerd.
     </p>
 
@@ -29,7 +29,7 @@
                             {{ $defect->description }}
                             @if (($category = \App\Models\PartsCategory::forDefect($defect->description)) && ($brandName ?? null))
                                 <a href="{{ \App\Site\AffiliateLink::url('parts', 'gebrek: '.$category['name'], $brandName, $modelName ?? '', $yearLabel ?? '', $category['id']) }}"
-                                   rel="sponsored nofollow noopener" target="_blank" class="mt-1 block text-xs font-medium text-brand-700 underline underline-offset-2">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (affiliate)</a>
+                                   rel="sponsored nofollow noopener" target="_blank" class="mt-1 block py-1 text-sm font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (affiliate)</a>
                             @endif
                         </td>
                         <td class="py-3 pr-2 sm:pr-4">
@@ -37,10 +37,10 @@
                                 <div class="bar-wrap h-3 w-10 shrink-0 overflow-hidden rounded-full bg-brand-100 sm:w-40" aria-hidden="true">
                                     <div class="bar h-3 rounded-full bg-brand-600" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
                                 </div>
-                                <span class="font-semibold">{{ number_format($defect->percentage, 1, ',', '.') }}%</span>
+                                <span class="font-semibold tabular-nums">{{ number_format($defect->percentage, 1, ',', '.') }}%</span>
                             </div>
                         </td>
-                        <td class="py-3 text-right text-slate-700">
+                        <td class="py-3 text-right tabular-nums text-slate-700">
                             @if ($defect->average !== null)
                                 {{ number_format($defect->average, 1, ',', '.') }}%
                                 @if ($defect->percentage > $defect->average * 1.25)
@@ -57,7 +57,7 @@
             </tbody>
         </table>
     </div>
-    <p class="mt-2 text-xs text-slate-600">* Gemiddeld voor de andere modellen op deze site met dezelfde bouwjaren.</p>
+    <p class="mt-2 text-sm text-slate-600">* Gemiddeld voor de andere modellen op deze site met dezelfde bouwjaren.</p>
 
     <section class="mt-8" aria-labelledby="checklist">
         <h2 id="checklist" class="text-xl font-bold">Koopchecklist</h2>

@@ -40,7 +40,7 @@
                                 <tr class="border-b-2 border-accent-400">
                                     <th scope="col" class="py-2 pr-2">#</th>
                                     <th scope="col" class="py-2 pr-4">Auto</th>
-                                    <th scope="col" class="py-2 pr-4">Bouwjaren</th>
+                                    <th scope="col" class="hidden py-2 pr-4 sm:table-cell">Bouwjaren</th>
                                     <th scope="col" class="py-2 pr-4 text-right">Gebreken per 100</th>
                                     <th scope="col" class="py-2 text-right">Auto's</th>
                                 </tr>
@@ -50,13 +50,14 @@
                                     <tr class="border-b border-brand-100 transition hover:bg-brand-50">
                                         <td class="py-3 pr-2 text-slate-600">{{ $id === 'minste' ? $i + 1 : $count - $i }}</td>
                                         <td class="py-3 pr-4">
-                                            <a class="font-medium text-brand-700 underline underline-offset-2" href="{{ $year ? route('year', [$row['brand_slug'], $row['model_slug'], $row['generation_slug'], $year]) : route('generation', [$row['brand_slug'], $row['model_slug'], $row['generation_slug']]) }}">
+                                            <a class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" href="{{ $year ? route('year', [$row['brand_slug'], $row['model_slug'], $row['generation_slug'], $year]) : route('generation', [$row['brand_slug'], $row['model_slug'], $row['generation_slug']]) }}">
                                                 {{ $row['brand'] }} {{ $row['model'] }} {{ $row['code'] }}
                                             </a>
+                                            <span class="block text-xs text-slate-700 sm:hidden">{{ $year ?? $row['years'] }}</span>
                                         </td>
-                                        <td class="py-3 pr-4 text-slate-700">{{ $year ?? $row['years'] }}</td>
-                                        <td class="py-3 pr-4 text-right font-semibold">{{ number_format($row['score'], 1, ',', '.') }}</td>
-                                        <td class="py-3 text-right text-slate-700">{{ number_format($row['total'], 0, ',', '.') }}</td>
+                                        <td class="hidden py-3 pr-4 text-slate-700 sm:table-cell">{{ $year ?? $row['years'] }}</td>
+                                        <td class="py-3 pr-4 text-right font-semibold tabular-nums">{{ number_format($row['score'], 1, ',', '.') }}</td>
+                                        <td class="py-3 text-right tabular-nums text-slate-700">{{ number_format($row['total'], 0, ',', '.') }}</td>
                                     </tr>
                                 @endforeach
                             </tbody>

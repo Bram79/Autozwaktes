@@ -15,14 +15,14 @@
             <div>
                 <label for="kenteken" class="block text-sm font-semibold">Kenteken</label>
                 <input id="kenteken" name="kenteken" type="text" required maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AB-123-C"
-                       class="mt-1 w-full max-w-60 rounded-lg border border-brand-100 bg-accent-400 px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/40 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
+                       class="mt-1 w-full max-w-60 rounded-lg border-2 border-brand-900 bg-accent-400 px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/70 focus:outline-none focus:ring-4 focus:ring-brand-600/60">
                 @error('kenteken')<p role="alert" class="mt-1 text-sm font-medium text-red-800">{{ $message }}</p>@enderror
             </div>
 
             <div>
                 <label for="email" class="block text-sm font-semibold">E-mailadres</label>
                 <input id="email" name="email" type="email" required maxlength="190" autocomplete="email" value="{{ old('email') }}"
-                       class="mt-1 w-full rounded-lg border border-brand-100 bg-white px-3 py-2 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
+                       class="mt-1 w-full rounded-lg border border-slate-500 bg-white px-3 py-2 focus:border-brand-600 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
                 @error('email')<p role="alert" class="mt-1 text-sm font-medium text-red-800">{{ $message }}</p>@enderror
             </div>
 

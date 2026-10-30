@@ -10,6 +10,6 @@
             <h2 class="mt-2 text-xl font-extrabold text-white">Koop je een {{ $brand }} {{ $model }}{{ $year ? ' uit '.$year : '' }}? Check eerst de historie</h2>
             <p class="mt-1 text-sm text-brand-100">{{ str_replace(['{merk}', '{model}', '{jaar}'], [$brand, $model, $year], $config['text']) }}</p>
         </div>
-        <a href="{{ \App\Site\AffiliateLink::url('vehicle_report', $position, $brand, $model, $year) }}" rel="sponsored nofollow noopener" target="_blank" class="btn">{{ $config['button'] }}</a>
+        <a href="{{ \App\Site\AffiliateLink::url('vehicle_report', $position, $brand, $model, $year) }}" rel="sponsored nofollow noopener" target="_blank" class="btn w-full sm:w-auto">{{ $config['button'] }}<span class="sr-only"> (opent in een nieuw tabblad)</span></a>
     </aside>
 @endif

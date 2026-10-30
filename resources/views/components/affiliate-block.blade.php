@@ -9,10 +9,10 @@
 @if ($config && \App\Site\AffiliateLink::target($type, $brand, $model, (string) $year))
     <aside class="{{ $prominent ? 'rounded-2xl border-2 border-accent-400 bg-brand-900 p-6 text-white shadow-lg' : 'rounded-2xl border border-accent-400 bg-brand-50 p-5 shadow-sm' }}" aria-label="Advertentie">
         <p class="text-xs font-bold uppercase tracking-wide {{ $prominent ? 'text-accent-300' : 'text-brand-700' }}">Affiliate-link</p>
-        <h3 class="mt-1 {{ $prominent ? 'text-xl font-extrabold text-white' : 'font-semibold' }}">{{ $replace($config['title']) }}</h3>
+        <p class="mt-1 {{ $prominent ? 'text-xl font-extrabold text-white' : 'font-semibold text-brand-900' }}">{{ $replace($config['title']) }}</p>
         <p class="mt-1 text-sm {{ $prominent ? 'text-brand-100' : 'text-slate-700' }}">{{ $replace($config['text']) }}</p>
         <a href="{{ \App\Site\AffiliateLink::url($type, $position, $brand, $model, $year) }}" rel="sponsored nofollow noopener" target="_blank" class="btn mt-3 text-sm">
-            {{ $config['button'] }}
+            {{ $config['button'] }}<span class="sr-only"> (opent in een nieuw tabblad)</span>
         </a>
         <p class="mt-2 text-xs {{ $prominent ? 'text-brand-100' : 'text-slate-600' }}">Dit is een affiliate-link: als je hierop klikt en iets afneemt, ontvangen wij een vergoeding. Voor jou verandert de prijs niet.</p>
     </aside>

@@ -12,13 +12,13 @@
             @forelse ($results as $model)
                 @if ($loop->first)<ul class="divide-y divide-brand-100 overflow-hidden rounded-2xl bg-white shadow-lg">@endif
                 <li>
-                    <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="block px-3 py-2 text-brand-700 hover:bg-accent-300 focus:bg-accent-300">
+                    <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="block px-4 py-3 text-brand-700 hover:bg-accent-300 focus-visible:bg-accent-300">
                         {{ $model->brand->name }} {{ $model->name }}
                     </a>
                 </li>
                 @if ($loop->last)</ul>@endif
             @empty
-                <p class="text-sm text-brand-100">Geen resultaten voor "{{ $query }}".</p>
+                <p class="text-sm font-medium text-brand-100">Geen resultaten voor "{{ $query }}".</p>
             @endforelse
         </div>
     @endif

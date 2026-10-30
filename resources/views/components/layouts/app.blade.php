@@ -26,7 +26,7 @@
     {{ $head ?? '' }}
 </head>
 <body class="bg-white text-slate-900 antialiased">
-    <a href="#inhoud" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-10 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:text-brand-700">Ga naar de inhoud</a>
+    <a href="#inhoud" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:font-semibold focus:text-brand-700 focus:shadow-lg">Ga naar de inhoud</a>
 
     <div class="overflow-hidden bg-brand-900 py-2 text-sm font-medium text-accent-300" aria-hidden="true">
         <div class="flex w-max animate-marquee gap-12 whitespace-nowrap">
@@ -40,16 +40,16 @@
         </div>
     </div>
 
-    <header class="sticky top-0 z-20 border-b border-brand-100 bg-white/85 backdrop-blur">
-        <div class="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-            <a href="{{ route('home') }}" class="flex items-center gap-2 text-lg font-extrabold tracking-tight text-brand-900">
+    <header class="border-b border-brand-100 bg-white/85 backdrop-blur sm:sticky sm:top-0 sm:z-20">
+        <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 px-4 py-1">
+            <a href="{{ route('home') }}" class="flex min-h-11 items-center gap-2 text-lg font-extrabold tracking-tight text-brand-900">
                 <span class="inline-block size-3 rounded-full bg-accent-400" aria-hidden="true"></span>
                 Auto Zwaktes
             </a>
-            <nav aria-label="Hoofdmenu" class="text-sm font-medium">
-                <a href="{{ route('home') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">Zoeken</a>
-                <a href="{{ route('rankings') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">Ranglijsten</a>
-                <a href="{{ route('apk') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">APK-herinnering</a>
+            <nav aria-label="Hoofdmenu" class="-mx-3 flex flex-wrap text-sm font-medium sm:mx-0">
+                <a href="{{ route('home') }}" class="nav-link">Zoeken</a>
+                <a href="{{ route('rankings') }}" class="nav-link">Ranglijsten</a>
+                <a href="{{ route('apk') }}" class="nav-link">APK-herinnering</a>
             </nav>
         </div>
     </header>
@@ -65,7 +65,7 @@
     <footer class="mt-16 bg-brand-900 text-brand-100">
         <div class="h-1 bg-accent-400"></div>
         <div class="mx-auto max-w-5xl space-y-2 px-4 py-8 text-sm">
-            <p class="flex items-center justify-between font-bold text-white">Auto Zwaktes <span class="flex gap-4"><a href="{{ route('privacy') }}" class="font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Privacy</a>@if (config('site.ads.enabled') || config('site.consent_banner'))<button type="button" data-consent-open class="font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Cookie-instellingen</button>@endif</span></p>
+            <p class="flex flex-wrap items-center justify-between gap-x-4 font-bold text-white">Auto Zwaktes <span class="flex flex-wrap gap-x-4"><a href="{{ route('privacy') }}" class="inline-flex min-h-11 items-center font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Privacy</a>@if (config('site.ads.enabled') || config('site.consent_banner'))<button type="button" data-consent-open class="inline-flex min-h-11 items-center font-medium text-accent-300 underline underline-offset-2 hover:text-accent-400">Cookie-instellingen</button>@endif</span></p>
             <p>Bron: RDW open data (CC-0). Auto Zwaktes is een onafhankelijke website en is niet gelieerd aan de overheid of de RDW.</p>
             <p>De cijfers zijn een indicatie: ze zijn gebaseerd op geregistreerde voertuigen en geconstateerde APK-gebreken sinds 2022 en zeggen niets over een individuele auto. Laat een auto altijd zelf keuren voordat je koopt.</p>
         </div>
