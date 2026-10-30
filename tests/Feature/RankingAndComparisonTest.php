@@ -32,11 +32,11 @@ function givePrices(): void
 
 // --- rankings ---------------------------------------------------------------------------------------------------
 
-it('ranks generations by defects per 100 cars, lowest first, and the score matches the database', function () {
+it('ranks generations on the index compared with the average, lowest first, and the score per 100 cars matches the database', function () {
     $rows = app(RankingService::class)->scores();
 
     expect(count($rows))->toBeGreaterThan(5);
-    expect(array_column($rows, 'score'))->toBe(collect(array_column($rows, 'score'))->sort()->values()->all());
+    expect(array_column($rows, 'index'))->toBe(collect(array_column($rows, 'index'))->sort()->values()->all());
 
     $first = $rows[0];
     $generation = Generation::whereHas('carModel', fn ($q) => $q->where('slug', $first['model_slug']))->where('slug', $first['generation_slug'])->first();

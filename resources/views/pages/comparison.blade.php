@@ -17,6 +17,21 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $nameA }} vs {{ $nameB }}: APK-gebreken vergeleken</h1>
 
+    @php $maxPair = max($scoreA, $scoreB, 1); @endphp
+    <section class="mt-6 grid gap-3 sm:grid-cols-2" aria-label="Score per model">
+        @foreach ([[$nameA, $scoreA], [$nameB, $scoreB]] as [$cardName, $cardScore])
+            @php $wins = $better === $cardName; @endphp
+            <div class="rounded-2xl border-2 {{ $wins ? 'border-accent-400 bg-accent-300/20' : 'border-brand-100 bg-brand-50' }} p-4">
+                <div class="flex items-center justify-between gap-2">
+                    <p class="font-bold text-brand-900">{{ $cardName }}</p>
+                    @if ($wins)<span class="badge-best">Minste gebreken</span>@endif
+                </div>
+                <p class="mt-2 text-3xl font-extrabold tabular-nums text-brand-900">{{ $fmt($cardScore) }} <span class="text-sm font-medium text-slate-700">gebreken per 100 auto's</span></p>
+                <div class="score-track mt-3" aria-hidden="true"><span class="bar score-fill {{ $wins ? 'score-fill-best' : '' }}" style="--w: {{ round($cardScore / $maxPair * 100) }}%"></span></div>
+            </div>
+        @endforeach
+    </section>
+
     <div class="mt-6 max-w-3xl space-y-3 text-slate-800">
         <p>
             We vergelijken de bouwjaren {{ $first }} tot en met {{ $last }}, de jaren waarin beide auto's veel werden gebouwd.

@@ -186,7 +186,9 @@ class RdwClient
         try {
             return $this->request($quick)->get($path, $query)->throw()->json() ?? [];
         } catch (ConnectionException|RequestException $e) {
-            $message = "RDW API not reachable or returned an error for {$path}: ".$e->getMessage();
+            // not $e->getMessage(): that contains the whole address, and with it the license plate that was asked for
+            $message = "RDW API not reachable or returned an error for {$path}: ".class_basename($e)
+                .($e instanceof RequestException ? ' (HTTP '.$e->response->status().')' : '');
             Log::error($message);
 
             throw new RdwUnavailableException($message, previous: $e);

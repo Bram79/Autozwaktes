@@ -77,7 +77,7 @@ it('is happy with a correct live configuration', function () {
     app()->detectEnvironment(fn () => 'production');
     config([
         'app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
-        'site.contact_email' => 'info@example.com', 'site.google_verification' => 'abc',
+        'site.contact_email' => 'info@example.com', 'site.operator_name' => 'Bram Meijer', 'site.google_verification' => 'abc',
     ]);
 
     $this->artisan('site:check')->assertSuccessful()->expectsOutputToContain('APP_URL is https://autozwaktes.example');

@@ -29,7 +29,7 @@ class ComparisonService
      */
     public function pairs(): array
     {
-        return Cache::rememberForever('comparison:pairs', fn () => $this->findPairs());
+        return Cache::rememberForever('comparison:pairs:'.RankingService::lastInspectedYear(), fn () => $this->findPairs());
     }
 
     /** "volkswagen-polo-vs-opel-corsa" for two keys, in the canonical (alphabetical) order. */
@@ -79,7 +79,7 @@ class ComparisonService
      */
     public function compare(CarModel $a, CarModel $b): ?array
     {
-        return Cache::rememberForever("comparison:{$a->id}:{$b->id}", fn () => $this->calculate($a, $b));
+        return Cache::rememberForever('comparison:'.RankingService::lastInspectedYear().":{$a->id}:{$b->id}", fn () => $this->calculate($a, $b));
     }
 
     private function calculate(CarModel $a, CarModel $b): ?array
@@ -155,10 +155,11 @@ class ComparisonService
         return array_values($pairs);
     }
 
-    /** Build years where both models have enough cars. */
+    /** Build years where both models have enough cars, and that have had an APK (younger cars have no defects yet). */
     private function sharedYears(array $a, array $b): array
     {
-        $enough = fn (array $data) => array_keys(array_filter($data, fn ($y) => $y['cars'] >= self::MIN_CARS_PER_YEAR && $y['defects'] > 0));
+        $last = RankingService::lastInspectedYear();
+        $enough = fn (array $data) => array_keys(array_filter($data, fn ($y, $year) => $year <= $last && $y['cars'] >= self::MIN_CARS_PER_YEAR && $y['defects'] > 0, ARRAY_FILTER_USE_BOTH));
 
         return array_values(array_intersect($enough($a), $enough($b)));
     }

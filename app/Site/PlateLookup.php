@@ -7,12 +7,13 @@ use App\Models\Generation;
 use App\Rdw\ModelNormalizer;
 use App\Rdw\RdwClient;
 use App\Rdw\RdwUnavailableException;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 /**
  * Finds the page of a car by its license plate, using the RDW open data.
- * The plate itself is never stored; only the (public) car details are cached for a day.
+ * The plate itself is never stored or logged; only the (public) car details are cached for a day, without the plate.
  */
 class PlateLookup
 {
@@ -37,8 +38,14 @@ class PlateLookup
         }
 
         try {
-            // only plain arrays go into the cache; a plate that does not exist is cached as []
-            $vehicle = Cache::remember('plate:'.sha1($plate), now()->addDay(), fn () => $this->rdw->findVehicle($plate) ?? []);
+            // Only the public details of the car go into the cache, never the plate or the APK date of that one car.
+            // The key is a keyed hash: without the app key nobody can work out a plate from it.
+            // A plate that does not exist is cached as [].
+            $vehicle = Cache::remember(
+                'plate:'.hash_hmac('sha256', $plate, (string) config('app.key')),
+                now()->addDay(),
+                fn () => Arr::only($this->rdw->findVehicle($plate) ?? [], ['voertuigsoort', 'merk', 'handelsbenaming', 'datum_eerste_toelating_dt']),
+            );
         } catch (RdwUnavailableException) {
             return ['status' => 'unavailable'];
         }

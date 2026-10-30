@@ -27,7 +27,7 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.
 
-De site heeft ook ranglijsten (`/ranglijsten`: minste en meeste gebreken per 100 auto's, per merk, brandstof en bouwjaar) en vergelijkingspagina's (`/vergelijk/merk-model-vs-merk-model`). Een vergelijking bestaat alleen voor modellen die tegelijk verkocht werden (minstens 3 bouwjaren in gemeen, elk met 300+ auto's) en ongeveer evenveel kostten als nieuw (catalogusprijs binnen een derde), maximaal 3 per model. Pagina's met te weinig data krijgen `noindex` of een 404. Draai `rdw:types` (voor de prijzen) voor de vergelijkingen.
+De site heeft ook ranglijsten (`/ranglijsten`: score t.o.v. het gemiddelde van auto's van dezelfde bouwjaren en brandstof, waarbij 100 gemiddeld is, per merk, brandstof en bouwjaar; alleen bouwjaren die een APK hebben gehad en niet ouder dan 20 jaar, zie `config/site.php`) en vergelijkingspagina's (`/vergelijk/merk-model-vs-merk-model`). Een vergelijking bestaat alleen voor modellen die tegelijk verkocht werden (minstens 3 bouwjaren in gemeen, elk met 300+ auto's) en ongeveer evenveel kostten als nieuw (catalogusprijs binnen een derde), maximaal 3 per model. Pagina's met te weinig data krijgen `noindex` of een 404. Draai `rdw:types` (voor de prijzen) voor de vergelijkingen.
 
 ## Git-hook activeren (na het clonen)
 In `.githooks/pre-push` staat een hook die een `git push` blokkeert als Pint (`./vendor/bin/pint --test`) of de testsuite (`php artisan test`) faalt. Git gebruikt hem pas nadat je dit eenmalig doet, na het clonen:
@@ -52,7 +52,7 @@ php artisan make:filament-user
 ```
 
 
-Zet ook `CONTACT_EMAIL` in `.env`: dat adres staat op de privacypagina (`/privacy`).
+Zet ook `OPERATOR_NAME` (wie is verantwoordelijk) en `CONTACT_EMAIL` in `.env`: die staan op de privacypagina (`/privacy`). `site:check` faalt in productie zonder die twee.
 Buiten de lokale omgeving komen alleen e-mailadressen uit `ADMIN_EMAILS` (in `.env`, kommagescheiden) binnen.
 
 Hier beheer je generaties (incl. koopadvies), modellen, merken, modelnaam-patronen en affiliate-instellingen. Elke wijziging leegt de site-cache. Wijzig je bouwjaren van een generatie of een patroon, klik dan op "Statistieken herberekenen" (queue worker nodig).
