@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Blokkeert een push als de code niet netjes is (Pint) of als een test faalt.
+# Activeren na het clonen: git config core.hooksPath .githooks
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+if [ ! -x ./vendor/bin/pint ]; then
+    echo "pre-push: vendor/bin/pint ontbreekt. Draai eerst: composer install"
+    exit 1
+fi
+
+echo "pre-push: Pint controleert de stijl..."
+if ! ./vendor/bin/pint --test; then
+    echo ""
+    echo "pre-push: PUSH GEBLOKKEERD - de code volgt de stijlregels niet."
+    echo "          Los het op met: ./vendor/bin/pint   (commit het resultaat als 'style: ...')"
+    exit 1
+fi
+
+echo "pre-push: de testsuite draait..."
+if ! php artisan test; then
+    echo ""
+    echo "pre-push: PUSH GEBLOKKEERD - er faalt een test."
+    echo "          Los het echte probleem op (pas een test niet aan om hem te laten slagen) en push opnieuw."
+    exit 1
+fi
+
+echo "pre-push: alles groen, de push gaat door."

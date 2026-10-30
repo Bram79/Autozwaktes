@@ -29,6 +29,20 @@ Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/lar
 
 De site heeft ook ranglijsten (`/ranglijsten`: minste en meeste gebreken per 100 auto's, per merk, brandstof en bouwjaar) en vergelijkingspagina's (`/vergelijk/merk-model-vs-merk-model`). Een vergelijking bestaat alleen voor modellen die tegelijk verkocht werden (minstens 3 bouwjaren in gemeen, elk met 300+ auto's) en ongeveer evenveel kostten als nieuw (catalogusprijs binnen een derde), maximaal 3 per model. Pagina's met te weinig data krijgen `noindex` of een 404. Draai `rdw:types` (voor de prijzen) voor de vergelijkingen.
 
+## Git-hook activeren (na het clonen)
+In `.githooks/pre-push` staat een hook die een `git push` blokkeert als Pint (`./vendor/bin/pint --test`) of de testsuite (`php artisan test`) faalt. Git gebruikt hem pas nadat je dit eenmalig doet, na het clonen:
+
+```bash
+composer install
+git config core.hooksPath .githooks
+```
+
+- Controleren dat het aanstaat: `git config core.hooksPath` hoort `.githooks` te tonen.
+- Pint zegt dat de stijl niet klopt? Draai `./vendor/bin/pint` en commit het resultaat.
+- Een test faalt? Los het echte probleem op; pas een test niet aan om hem te laten slagen.
+- Handmatig proberen zonder te pushen: `.githooks/pre-push`.
+- Alleen in een noodgeval kun je de hook overslaan met `git push --no-verify`. Doe dat niet voor gewoon werk.
+
 ## Beheer (`/admin`)
 
 Gebouwd met Filament. Maak een beheerder aan met:
