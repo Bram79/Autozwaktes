@@ -9,6 +9,11 @@ class Brand extends Model
 {
     protected $guarded = [];
 
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
     public function carModels(): HasMany
     {
         return $this->hasMany(CarModel::class);
