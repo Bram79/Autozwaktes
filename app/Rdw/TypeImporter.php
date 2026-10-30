@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 /**
  * Fills `vehicle_types`: per car model, how many cars of each RDW type code were registered per year.
  * The type code (like "6R" for a Polo) changes when a new generation is built, which is what we use to find generations.
+ * Also fills `model_prices` with the average catalogue price (new price) per model and year.
  */
 class TypeImporter
 {
@@ -17,6 +18,7 @@ class TypeImporter
     public function import(): int
     {
         $counts = [];   // [car_model_id][type][year] => vehicles
+        $prices = [];   // [car_model_id][year] => [cars with a price, sum of their prices]
 
         foreach (Brand::pluck('rdw_name') as $rdwBrand) {
             foreach ($this->rdw->typeCounts($rdwBrand) as $row) {
@@ -32,6 +34,28 @@ class TypeImporter
             }
         }
 
+        // (second loop over the brands: the price numbers are a different question to the RDW)
+        foreach (Brand::pluck('rdw_name') as $rdwBrand) {
+            foreach ($this->rdw->priceAverages($rdwBrand) as $row) {
+                $modelId = $this->normalizer->match($rdwBrand, $row['handelsbenaming'] ?? '');
+                $year = (int) ($row['jaar'] ?? 0);
+
+                if ($modelId === null || $year < 1900) {
+                    continue;
+                }
+
+                $cars = (int) $row['n'];
+                $prices[$modelId][$year] = [($prices[$modelId][$year][0] ?? 0) + $cars, ($prices[$modelId][$year][1] ?? 0) + $cars * (float) $row['prijs']];
+            }
+        }
+
+        $priceRows = [];
+        foreach ($prices as $modelId => $years) {
+            foreach ($years as $year => [$cars, $sum]) {
+                $priceRows[] = ['car_model_id' => $modelId, 'build_year' => $year, 'vehicles' => $cars, 'average_price' => (int) round($sum / $cars)];
+            }
+        }
+
         $rows = [];
         foreach ($counts as $modelId => $types) {
             foreach ($types as $type => $years) {
@@ -41,11 +65,15 @@ class TypeImporter
             }
         }
 
-        DB::transaction(function () use ($rows) {
+        DB::transaction(function () use ($rows, $priceRows) {
             DB::table('vehicle_types')->delete();
+            DB::table('model_prices')->delete();
 
             foreach (array_chunk($rows, 2000) as $chunk) {
                 DB::table('vehicle_types')->insert($chunk);
+            }
+            foreach (array_chunk($priceRows, 2000) as $chunk) {
+                DB::table('model_prices')->insert($chunk);
             }
         });
 

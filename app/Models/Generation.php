@@ -17,6 +17,11 @@ class Generation extends Model
         return $this->belongsTo(CarModel::class);
     }
 
+    public function adviceDrafts(): HasMany
+    {
+        return $this->hasMany(AdviceDraft::class);
+    }
+
     public function defectStats(): HasMany
     {
         return $this->hasMany(DefectStat::class);

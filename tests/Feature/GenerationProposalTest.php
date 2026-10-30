@@ -194,18 +194,29 @@ it('lets the admin approve, change and apply proposals', function () {
         ->toBe([['9N', 2001, 2008], ['Mk6', 2010, null]]);
 });
 
-it('saves the RDW type codes per model and year', function () {
-    Http::fake(['opendata.rdw.nl/*' => Http::response([
-        ['handelsbenaming' => 'POLO', 'type' => '6 R', 'jaar' => '2012', 'n' => '300'],
-        ['handelsbenaming' => 'POLO 44 KW', 'type' => '6R', 'jaar' => '2012', 'n' => '20'],
-        ['handelsbenaming' => 'POLO', 'type' => '-', 'jaar' => '1999', 'n' => '50'],
-        ['handelsbenaming' => 'ID. POLO', 'type' => 'X', 'jaar' => '2026', 'n' => '5'],   // not a model of ours
-    ])]);
+it('saves the RDW type codes and the catalogue prices per model and year', function () {
+    Http::fake(['opendata.rdw.nl/*' => function ($request) {
+        $isPriceQuery = str_contains($request['$select'] ?? '', 'avg(catalogusprijs)');
+
+        return Http::response($isPriceQuery ? [
+            ['handelsbenaming' => 'POLO', 'jaar' => '2012', 'n' => '100', 'prijs' => '15000.5'],
+            ['handelsbenaming' => 'POLO 44 KW', 'jaar' => '2012', 'n' => '100', 'prijs' => '17000.5'],
+        ] : [
+            ['handelsbenaming' => 'POLO', 'type' => '6 R', 'jaar' => '2012', 'n' => '300'],
+            ['handelsbenaming' => 'POLO 44 KW', 'type' => '6R', 'jaar' => '2012', 'n' => '20'],
+            ['handelsbenaming' => 'POLO', 'type' => '-', 'jaar' => '1999', 'n' => '50'],
+            ['handelsbenaming' => 'ID. POLO', 'type' => 'X', 'jaar' => '2026', 'n' => '5'],   // not a model of ours
+        ]);
+    }]);
 
     app(TypeImporter::class)->import();
 
     $rows = DB::table('vehicle_types')->where('car_model_id', $this->polo->id)->orderBy('build_year')->get();
     expect($rows->map(fn ($r) => [$r->type, $r->build_year, $r->vehicles])->all())->toBe([['', 1999, 50], ['6R', 2012, 320]]);
+
+    // only the Volkswagen brand has a Polo: the average of 100 x 15000.5 and 100 x 17000.5
+    $price = DB::table('model_prices')->where('car_model_id', $this->polo->id)->first();
+    expect($price->average_price)->toBe(16001)->and($price->vehicles)->toBe(200);
 });
 
 it('does not flip between two types that start in the same year', function () {

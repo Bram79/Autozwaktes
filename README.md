@@ -16,6 +16,7 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 | `php artisan rdw:types` | Haalt per model de RDW-typecodes per bouwjaar op (een typecode verandert meestal bij een nieuwe generatie). Duurt een halve minuut. |
 | `php artisan generations:propose [--model=polo] [--no-wikidata] [--auto-approve=90] [--dry-run]` | Maakt voorstellen voor generaties uit de typecodes en Wikidata, met een zekerheidspercentage. Niets komt live: keur ze goed in de admin onder "Generatievoorstellen". Modellen met handgemaakte generaties blijven met rust (tenzij `--include-existing`). |
 | `php artisan generations:apply` | Zet goedgekeurde voorstellen op de site (kan ook met de knop in de admin). Draai daarna `rdw:calculate`. |
+| `php artisan advice:draft [--model=polo] [--limit=10]` | Optioneel: Claude schrijft concept-koopadviezen uit onze eigen cijfers (zet `AI_ADVICE_ENABLED=true` en `ANTHROPIC_API_KEY` in `.env`). Een tekst met een getal dat niet in de cijfers staat wordt automatisch afgewezen. Concepten komen pas live na goedkeuren in de admin onder "Koopadvies-concepten". |
 | `php artisan db:seed --class=ModelFixesSeeder` | Ruimt de modellen van `rdw:discover` op: voegt dubbelen samen, past namen aan en zet echte generaties bij de populairste modellen (jaartallen zijn een eerste gok, controleer ze). Draai dit na `rdw:discover` en vóór `rdw:calculate`. |
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.

@@ -78,6 +78,24 @@ class RdwClient
     }
 
     /**
+     * Average catalogue price per trade name and first-registration year for one brand (cars with a price only).
+     *
+     * @return array<int, array{handelsbenaming: string, jaar?: string, n: string, prijs: string}>
+     */
+    public function priceAverages(string $rdwBrand): array
+    {
+        $config = $this->datasetConfig('vehicles');
+
+        return $this->get("/resource/{$config['id']}.json", [
+            '$select' => 'handelsbenaming,date_extract_y(datum_eerste_toelating_dt) as jaar,count(catalogusprijs) as n,avg(catalogusprijs) as prijs',
+            '$where' => "voertuigsoort = 'Personenauto' AND catalogusprijs > 0 AND merk = '".str_replace("'", "''", $rdwBrand)."'",
+            '$group' => 'handelsbenaming,jaar',
+            '$order' => 'handelsbenaming,jaar',
+            '$limit' => 50000,
+        ]);
+    }
+
+    /**
      * Look up one vehicle by license plate (letters and digits only, uppercase).
      * Uses a short timeout: a visitor is waiting for the answer.
      *

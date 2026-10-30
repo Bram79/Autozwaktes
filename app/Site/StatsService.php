@@ -68,6 +68,86 @@ class StatsService
         });
     }
 
+    /**
+     * How a generation (or one build year of it) scores against the other models, on the defects that are common.
+     * "Weak" is clearly more often than the average, "strong" clearly less often.
+     *
+     * @return array{enough_data: bool, total: int, weak: array, strong: array}  each point: code, description, vehicles, percentage, average, ratio
+     */
+    public function comparison(Generation $generation, ?int $year = null): array
+    {
+        return Cache::rememberForever("stats:compare:{$generation->id}:".($year ?? 'all'), fn () => $this->calculateComparison($generation, $year));
+    }
+
+    /** Average catalogue price (the new price according to the RDW) of a generation or one build year, if the RDW has enough prices. */
+    public function newPrice(Generation $generation, ?int $year = null): ?array
+    {
+        return Cache::rememberForever("stats:price:{$generation->id}:".($year ?? 'all'), function () use ($generation, $year) {
+            $rows = DB::table('model_prices')->where('car_model_id', $generation->car_model_id)->whereBetween('build_year', $this->yearRange($generation));
+            $year && $rows->where('build_year', $year);
+            $row = $rows->selectRaw('sum(vehicles) as cars, sum(vehicles * average_price) as total')->first();
+
+            // fewer than 20 prices is not an average worth showing
+            return ($row->cars ?? 0) >= 20 ? ['average' => (int) round($row->total / $row->cars), 'vehicles' => (int) $row->cars] : null;
+        });
+    }
+
+    private function calculateComparison(Generation $generation, ?int $year): array
+    {
+        $none = ['enough_data' => false, 'total' => 0, 'weak' => [], 'strong' => []];
+        $range = $this->yearRange($generation);
+
+        $scope = function ($query, string $table) use ($range, $year) {
+            $query->whereBetween("{$table}.build_year", $range);
+            $year && $query->where("{$table}.build_year", $year);
+
+            return $query;
+        };
+
+        $total = (int) $scope(DB::table('vehicle_counts')->where('car_model_id', $generation->car_model_id), 'vehicle_counts')->sum('total_vehicles');
+        $othersTotal = (int) $scope(DB::table('vehicle_counts')->where('car_model_id', '!=', $generation->car_model_id), 'vehicle_counts')->sum('total_vehicles');
+
+        if ($total < config('site.min_sample') || $othersTotal < config('site.min_sample')) {
+            return $none;
+        }
+
+        $own = $scope(DB::table('defect_stats')->where('generation_id', $generation->id), 'defect_stats')
+            ->groupBy('defect_code')->selectRaw('defect_code, sum(vehicles_with_defect) as n')->pluck('n', 'defect_code');
+        $others = $scope(DB::table('defect_stats')->where('car_model_id', '!=', $generation->car_model_id), 'defect_stats')
+            ->groupBy('defect_code')->selectRaw('defect_code, sum(vehicles_with_defect) as n')->pluck('n', 'defect_code');
+        $descriptions = DB::table('defect_codes')->whereIn('code', $own->keys()->merge($others->keys())->unique())->pluck('description', 'code');
+
+        $weak = [];
+        $strong = [];
+
+        foreach ($others as $code => $n) {
+            $average = $n / $othersTotal * 100;
+            $vehicles = (int) ($own[$code] ?? 0);
+            $percentage = $vehicles / $total * 100;
+
+            // only defects that are common elsewhere, otherwise a ratio says nothing
+            if ($average < 2 || ! isset($descriptions[$code])) {
+                continue;
+            }
+
+            $point = [
+                'code' => (string) $code, 'description' => $descriptions[$code], 'vehicles' => $vehicles,
+                'percentage' => round($percentage, 1), 'average' => round($average, 1), 'ratio' => round($percentage / $average, 1),
+            ];
+
+            if ($vehicles >= 20 && $point['ratio'] >= 1.5) {
+                $weak[] = $point;
+            } elseif ($point['ratio'] <= 0.6) {
+                $strong[] = $point;
+            }
+        }
+
+        usort($weak, fn ($a, $b) => $b['ratio'] <=> $a['ratio']);
+        usort($strong, fn ($a, $b) => $a['ratio'] <=> $b['ratio']);
+
+        return ['enough_data' => true, 'total' => $total, 'weak' => array_slice($weak, 0, 3), 'strong' => array_slice($strong, 0, 3)];
+    }
+
     /** Models with the most vehicles in the register. */
     public function popularModels(int $limit = 10): Collection
     {

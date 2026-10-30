@@ -6,6 +6,16 @@ return [
     // Contact address shown on the privacy page (set CONTACT_EMAIL in .env).
     'contact_email' => env('CONTACT_EMAIL'),
 
+    /*
+     * Optional: let Claude write a draft of the buying advice from our own statistics (php artisan advice:draft).
+     * Off by default. A draft never goes live before a person approves it in the admin.
+     */
+    'ai' => [
+        'enabled' => (bool) env('AI_ADVICE_ENABLED', false),
+        'api_key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('AI_ADVICE_MODEL', 'claude-sonnet-5-5'),
+    ],
+
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 

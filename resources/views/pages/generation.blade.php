@@ -38,6 +38,8 @@
             <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken</h2>
             <livewire:generation-stats :generation-id="$generation->id" />
 
+            @include('partials.data-advice', ['paragraphs' => app(\App\Site\AdviceWriter::class)->paragraphs($generation)])
+
             @if (filled($generation->buying_advice))
                 <section class="mt-8" aria-labelledby="advies">
                     <h2 id="advies" class="text-xl font-bold">Koopadvies</h2>
