@@ -19,10 +19,15 @@ class PageController extends Controller
         return view('pages.home', ['popular' => $this->stats->popularModels(12)]);
     }
 
+    public function privacy()
+    {
+        return view('pages.privacy');
+    }
+
     public function brand(string $brand)
     {
         $brand = Brand::where('slug', $brand)->firstOrFail();
-        $models = $brand->carModels()->orderBy('name')->get();
+        $models = $brand->carModels()->withStats()->orderBy('name')->get();
 
         return view('pages.brand', compact('brand', 'models'));
     }
@@ -67,7 +72,7 @@ class PageController extends Controller
     public function sitemap()
     {
         $xml = Cache::rememberForever('sitemap', function () {
-            $urls = [url('/')];
+            $urls = [url('/'), route('privacy')];
 
             foreach (Brand::orderBy('slug')->get() as $brand) {
                 $urls[] = route('brand', $brand);

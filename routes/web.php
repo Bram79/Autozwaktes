@@ -1,15 +1,18 @@
 <?php
 
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PlateController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [PageController::class, 'sitemap']);
 Route::get('/robots.txt', [PageController::class, 'robots']);
 
 // A brand slug can't be one of these (they belong to the framework or the build).
-$reserved = 'admin|filament|livewire(-[a-z0-9]+)?|up|storage|build|sitemap\.xml|robots\.txt|favicon\.ico';
+$reserved = 'admin|filament|livewire(-[a-z0-9]+)?|up|storage|build|sitemap\.xml|robots\.txt|favicon\.ico|kenteken|privacy';
 
 Route::get('/', [PageController::class, 'home'])->name('home');
+Route::post('/kenteken', [PlateController::class, 'lookup'])->name('plate');
+Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 
 Route::get('/{brand}', [PageController::class, 'brand'])
     ->where('brand', "^(?!({$reserved})$)[a-z0-9-]+$")->name('brand');

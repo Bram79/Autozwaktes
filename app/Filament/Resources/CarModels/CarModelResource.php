@@ -5,6 +5,7 @@ namespace App\Filament\Resources\CarModels;
 use App\Filament\Resources\CarModels\Pages\ManageCarModels;
 use App\Models\CarModel;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
@@ -24,6 +25,10 @@ class CarModelResource extends Resource
     protected static ?string $model = CarModel::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTruck;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Inhoud';
+
+    protected static ?string $navigationLabel = 'Modellen';
 
     protected static ?string $modelLabel = 'model';
 
@@ -64,6 +69,7 @@ class CarModelResource extends Resource
                 TextColumn::make('slug')->label('Slug'),
                 TextColumn::make('generations_count')->label('Generaties')->counts('generations'),
             ])
+            ->description('Elk model hoort bij een merk. Bij een model beheer je ook de aliassen: hoe de RDW het model noemt.')
             ->defaultSort('brand_id')
             ->filters([SelectFilter::make('brand_id')->label('Merk')->relationship('brand', 'name')])
             ->recordActions([EditAction::make(), DeleteAction::make()]);

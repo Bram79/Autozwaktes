@@ -19,6 +19,25 @@
                 <div class="reveal mt-8 max-w-xl" style="--i: 3">
                     <livewire:search-box />
                 </div>
+
+                <form method="post" action="{{ route('plate') }}" class="reveal mt-6 max-w-xl" style="--i: 4">
+                    @csrf
+                    <label for="kenteken" class="block text-sm font-semibold text-brand-100">Of zoek op kenteken</label>
+                    <div class="mt-2 flex gap-2">
+                        {{-- ziet eruit als een Nederlands kenteken --}}
+                        <div class="flex w-full max-w-60 overflow-hidden rounded-md border-2 border-brand-900 bg-accent-400 shadow-lg">
+                            <span class="flex w-9 items-center justify-center bg-brand-600 text-xs font-bold text-white" aria-hidden="true">NL</span>
+                            <input id="kenteken" name="kenteken" type="text" required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                                   value="{{ old('kenteken') }}" placeholder="AB-123-C"
+                                   class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/40 focus:outline-none focus:ring-4 focus:ring-white/70">
+                        </div>
+                        <button type="submit" class="btn">Bekijk mijn auto</button>
+                    </div>
+                    @if (session('plate_error'))
+                        <p role="alert" class="mt-3 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">{{ session('plate_error') }}</p>
+                    @endif
+                    <p class="mt-2 text-xs text-brand-100">We zoeken de auto op bij de RDW en slaan je kenteken niet op.</p>
+                </form>
             </div>
         </section>
     </x-slot:hero>

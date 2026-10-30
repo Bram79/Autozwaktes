@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ModelAliases;
 use App\Filament\Resources\ModelAliases\Pages\ManageModelAliases;
 use App\Models\ModelAlias;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -20,6 +21,10 @@ class ModelAliasResource extends Resource
     protected static ?string $model = ModelAlias::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedArrowsRightLeft;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Geavanceerd';
+
+    protected static ?string $navigationLabel = 'Modelnamen koppelen';
 
     protected static ?string $modelLabel = 'modelnaam-patroon';
 

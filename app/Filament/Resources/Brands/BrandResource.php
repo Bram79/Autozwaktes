@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Brands;
 use App\Filament\Resources\Brands\Pages\ManageBrands;
 use App\Models\Brand;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
@@ -21,6 +22,10 @@ class BrandResource extends Resource
     protected static ?string $model = Brand::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Inhoud';
+
+    protected static ?string $navigationLabel = 'Merken';
 
     protected static ?string $modelLabel = 'merk';
 

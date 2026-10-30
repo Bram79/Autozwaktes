@@ -80,3 +80,21 @@ it('lets the admin edit the aliases of a model on the model screen', function ()
 
     expect($model->aliases()->pluck('pattern')->all())->toContain('^A4( |$)', '^S4( |$)');
 });
+
+it('shows a clear dashboard with a short guide and the status of the site', function () {
+    $this->actingAs($this->admin)->get('/admin')->assertOk()->assertSee('Generaties en koopadvies');
+
+    Livewire::test(\App\Filament\Widgets\GettingStarted::class)->assertSee('Welkom bij het beheer van Auto Zwaktes');
+    Livewire::test(\App\Filament\Widgets\SiteStatus::class)->assertSee('Generaties zonder koopadvies')->assertSee('Modellen online');
+});
+
+it('can filter generations that have no buying advice yet', function () {
+    $this->actingAs($this->admin);
+    Generation::where('slug', 'b8')->update(['buying_advice' => 'Tekst']);
+
+    Livewire::test(ManageGenerations::class)
+        ->filterTable('buying_advice', false)
+        ->assertCanNotSeeTableRecords(Generation::where('slug', 'b8')->get())
+        ->filterTable('buying_advice', true)
+        ->assertCanSeeTableRecords(Generation::where('slug', 'b8')->get());
+});

@@ -25,6 +25,8 @@ Gebouwd met Filament. Maak een beheerder aan met:
 php artisan make:filament-user
 ```
 
+
+Zet ook `CONTACT_EMAIL` in `.env`: dat adres staat op de privacypagina (`/privacy`).
 Buiten de lokale omgeving komen alleen e-mailadressen uit `ADMIN_EMAILS` (in `.env`, kommagescheiden) binnen.
 
 Hier beheer je generaties (incl. koopadvies), modellen, merken, modelnaam-patronen en affiliate-instellingen. Elke wijziging leegt de site-cache. Wijzig je bouwjaren van een generatie of een patroon, klik dan op "Statistieken herberekenen" (queue worker nodig).

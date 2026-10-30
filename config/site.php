@@ -3,6 +3,9 @@
 return [
     'name' => 'Auto Zwaktes',
 
+    // Contact address shown on the privacy page (set CONTACT_EMAIL in .env).
+    'contact_email' => env('CONTACT_EMAIL'),
+
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 

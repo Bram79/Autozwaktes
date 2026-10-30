@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Generations;
 use App\Filament\Resources\Generations\Pages\ManageGenerations;
 use App\Models\Generation;
 use BackedEnum;
+use UnitEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -16,6 +17,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
 
@@ -24,6 +26,10 @@ class GenerationResource extends Resource
     protected static ?string $model = Generation::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Inhoud';
+
+    protected static ?string $navigationLabel = 'Generaties en koopadvies';
 
     protected static ?string $modelLabel = 'generatie';
 
@@ -86,9 +92,17 @@ class GenerationResource extends Resource
                     ->badge()
                     ->color(fn ($state) => $state === 'Ingevuld' ? 'success' : 'gray'),
             ])
+            ->description('Hier staan de generaties van elk model. Vul bij elke generatie je koopadvies in: dat verschijnt op de site.')
+            ->emptyStateHeading('Nog geen generaties')
             ->defaultSort('car_model_id')
             ->filters([
-                SelectFilter::make('car_model_id')->label('Model')->relationship('carModel', 'name'),
+                SelectFilter::make('car_model_id')->label('Model')->relationship('carModel', 'name')->searchable(),
+                TernaryFilter::make('buying_advice')->label('Koopadvies')
+                    ->placeholder('Alle')->trueLabel('Ingevuld')->falseLabel('Nog leeg')
+                    ->queries(
+                        true: fn ($query) => $query->whereNotNull('buying_advice')->where('buying_advice', '!=', ''),
+                        false: fn ($query) => $query->where(fn ($q) => $q->whereNull('buying_advice')->orWhere('buying_advice', '')),
+                    ),
             ])
             ->recordActions([EditAction::make(), DeleteAction::make()]);
     }

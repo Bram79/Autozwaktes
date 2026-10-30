@@ -4,6 +4,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use BackedEnum;
+use UnitEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
@@ -20,6 +21,8 @@ class AffiliateSettings extends Page implements HasSchemas
     use InteractsWithSchemas;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCurrencyEuro;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Instellingen';
 
     protected static ?string $navigationLabel = 'Affiliate-instellingen';
 

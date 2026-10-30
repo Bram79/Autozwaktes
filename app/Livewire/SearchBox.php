@@ -22,7 +22,7 @@ class SearchBox extends Component
             return collect();
         }
 
-        $models = CarModel::with('brand')->limit(10);
+        $models = CarModel::withStats()->with('brand')->limit(10);
 
         foreach (array_slice($words, 0, 4) as $word) {
             $like = '%'.addcslashes($word, '%_\\').'%';

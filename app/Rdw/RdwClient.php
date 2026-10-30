@@ -49,6 +49,25 @@ class RdwClient
     }
 
     /**
+     * Look up one vehicle by license plate (letters and digits only, uppercase).
+     * Uses a short timeout: a visitor is waiting for the answer.
+     *
+     * @return array<string, string>|null null when the plate does not exist
+     */
+    public function findVehicle(string $plate): ?array
+    {
+        $config = $this->datasetConfig('vehicles');
+
+        $rows = $this->get("/resource/{$config['id']}.json", [
+            '$select' => implode(',', ['kenteken', 'voertuigsoort', ...array_slice($config['columns'], 2)]),
+            '$where' => "kenteken = '".str_replace("'", '', $plate)."'",
+            '$limit' => 1,
+        ], quick: true);
+
+        return $rows[0] ?? null;
+    }
+
+    /**
      * Check that every column we need still exists in the dataset.
      *
      * @throws RdwSchemaChangedException
@@ -83,11 +102,11 @@ class RdwClient
             ?? throw new \InvalidArgumentException("Unknown RDW dataset '{$dataset}'");
     }
 
-    private function request(): PendingRequest
+    private function request(bool $quick = false): PendingRequest
     {
         $request = Http::baseUrl(config('rdw.base_url'))
-            ->timeout(config('rdw.timeout'))
-            ->retry(3, 2000, throw: false)
+            ->timeout($quick ? 8 : config('rdw.timeout'))
+            ->retry($quick ? 1 : 3, $quick ? 500 : 2000, throw: false)
             ->acceptJson();
 
         if ($token = config('rdw.app_token')) {
@@ -97,10 +116,10 @@ class RdwClient
         return $request;
     }
 
-    private function get(string $path, array $query): array
+    private function get(string $path, array $query, bool $quick = false): array
     {
         try {
-            return $this->request()->get($path, $query)->throw()->json() ?? [];
+            return $this->request($quick)->get($path, $query)->throw()->json() ?? [];
         } catch (ConnectionException|RequestException $e) {
             $message = "RDW API not reachable or returned an error for {$path}: ".$e->getMessage();
             Log::error($message);
