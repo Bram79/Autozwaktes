@@ -28,7 +28,7 @@
                         <div class="flex w-full max-w-60 overflow-hidden rounded-md border-2 border-brand-900 bg-accent-400 shadow-lg">
                             <span class="flex w-9 items-center justify-center bg-brand-600 text-xs font-bold text-white" aria-hidden="true">NL</span>
                             <input id="kenteken" name="kenteken" type="text" required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
-                                   value="{{ old('kenteken') }}" placeholder="AB-123-C"
+                                   placeholder="AB-123-C"
                                    class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/40 focus:outline-none focus:ring-4 focus:ring-white/70">
                         </div>
                         <button type="submit" class="btn">Bekijk mijn auto</button>

@@ -23,8 +23,8 @@
 
         <section class="space-y-2" aria-labelledby="apk">
             <h2 id="apk" class="text-xl font-bold">APK-herinnering</h2>
-            <p>Als je een APK-herinnering aanvraagt, bewaren we je e-mailadres, je kenteken en de vervaldatum van de APK (die halen we uit de open data van de RDW). We gebruiken dit alleen om je één mail te sturen ongeveer 30 dagen voor de APK verloopt.</p>
-            <p>Dit werkt met dubbele bevestiging: we sturen eerst een mail met een bevestigingslink. Bevestig je niet binnen een week, dan verwijderen we je gegevens. Onderaan elke mail staat een link waarmee je je meteen uitschrijft; dan verwijderen we je e-mailadres en kenteken direct. We delen deze gegevens met niemand. De rechtsgrond is jouw toestemming.</p>
+            <p>Als je een APK-herinnering aanvraagt, bewaren we je e-mailadres, je kenteken en de vervaldatum van de APK (die halen we uit de open data van de RDW). We gebruiken dit alleen om je elk jaar één mail te sturen ongeveer 30 dagen voordat de APK verloopt, zolang je herinnering loopt.</p>
+            <p>Dit werkt met dubbele bevestiging: we sturen eerst een mail met een bevestigingslink. Bevestig je niet binnen een week, dan verwijderen we je gegevens. Onderaan elke mail staat een link waarmee je je meteen uitschrijft; dan verwijderen we je e-mailadres en kenteken direct. Is de APK meer dan een jaar verlopen zonder dat er een nieuwe datum bij de RDW staat (de auto is dan waarschijnlijk verkocht of gesloopt), dan verwijderen we je gegevens ook automatisch. Je gegevens delen we alleen met onze mailprovider, die de mail namens ons verstuurt. De rechtsgrond is jouw toestemming.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="cookies">

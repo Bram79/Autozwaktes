@@ -1,20 +1,20 @@
 <x-layouts.app
     title="APK-herinnering: een mail voordat je APK verloopt | Auto Zwaktes"
-    description="Vul je kenteken en e-mailadres in en ontvang één mail ongeveer 30 dagen voordat de APK van je auto verloopt. Gratis en altijd uit te schrijven."
+    description="Vul je kenteken en e-mailadres in en ontvang elk jaar één mail ongeveer 30 dagen voordat de APK van je auto verloopt. Gratis en altijd uit te schrijven."
     :canonical="route('apk')">
 
     <x-breadcrumbs :items="[['Home', route('home')], ['APK-herinnering', route('apk')]]" />
 
     <div class="max-w-xl">
         <h1 class="text-3xl sm:text-4xl">Nooit meer je APK vergeten</h1>
-        <p class="mt-3 text-slate-700">Vul je kenteken en e-mailadres in. We sturen je één mail ongeveer 30 dagen voordat de APK van je auto verloopt. Gratis, en je kunt je altijd uitschrijven.</p>
+        <p class="mt-3 text-slate-700">Vul je kenteken en e-mailadres in. Elk jaar sturen we je één mail ongeveer 30 dagen voordat de APK van je auto verloopt, tot je je uitschrijft. Gratis, en je kunt je altijd direct uitschrijven.</p>
 
         <form method="post" action="{{ route('apk.store') }}" class="mt-6 space-y-4 rounded-2xl border border-brand-100 bg-brand-50 p-5">
             @csrf
 
             <div>
                 <label for="kenteken" class="block text-sm font-semibold">Kenteken</label>
-                <input id="kenteken" name="kenteken" type="text" required maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" value="{{ old('kenteken') }}" placeholder="AB-123-C"
+                <input id="kenteken" name="kenteken" type="text" required maxlength="12" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="AB-123-C"
                        class="mt-1 w-full max-w-60 rounded-lg border border-brand-100 bg-accent-400 px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/40 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
                 @error('kenteken')<p role="alert" class="mt-1 text-sm font-medium text-red-800">{{ $message }}</p>@enderror
             </div>
@@ -29,14 +29,14 @@
             <div>
                 <label class="flex items-start gap-2 text-sm">
                     <input type="checkbox" name="akkoord" value="1" @checked(old('akkoord')) class="mt-1 size-4 rounded border-slate-400 text-brand-700 focus:ring-brand-600">
-                    <span>Ja, stuur mij een herinnering voor de APK van dit kenteken. Ik weet dat ik daarna een mail krijg om dit te bevestigen, en dat ik me altijd kan uitschrijven.</span>
+                    <span>Ja, stuur mij elk jaar een herinnering voor de APK van dit kenteken. Ik weet dat ik daarna een mail krijg om dit te bevestigen, en dat ik me altijd kan uitschrijven.</span>
                 </label>
                 @error('akkoord')<p role="alert" class="mt-1 text-sm font-medium text-red-800">{{ $message }}</p>@enderror
             </div>
 
             <button type="submit" class="btn">Herinner mij</button>
 
-            <p class="text-xs text-slate-600">We bewaren alleen je e-mailadres, je kenteken en de APK-datum, en alleen om deze herinnering te sturen. Meer in onze <a href="{{ route('privacy') }}" class="text-brand-700 underline underline-offset-2">privacyverklaring</a>.</p>
+            <p class="text-xs text-slate-600">We bewaren alleen je e-mailadres, je kenteken en de APK-datum, en alleen om deze herinnering te sturen. Is de APK meer dan een jaar verlopen zonder nieuwe, dan verwijderen we je gegevens vanzelf. Meer in onze <a href="{{ route('privacy') }}" class="text-brand-700 underline underline-offset-2">privacyverklaring</a>.</p>
         </form>
     </div>
 </x-layouts.app>

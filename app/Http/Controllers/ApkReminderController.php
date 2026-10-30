@@ -25,7 +25,7 @@ class ApkReminderController extends Controller
     {
         $key = 'apk-reminder:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
-            return back()->withInput()->withErrors(['email' => 'Je probeert het te vaak. Wacht een minuut en probeer het opnieuw.']);
+            return back()->withInput($request->except('kenteken'))->withErrors(['email' => 'Je probeert het te vaak. Wacht een minuut en probeer het opnieuw.']);
         }
         RateLimiter::hit($key, 60);
 
@@ -42,17 +42,17 @@ class ApkReminderController extends Controller
 
         $plate = PlateLookup::normalize($data['kenteken']);
         if (! preg_match('/^[A-Z0-9]{6}$/', $plate)) {
-            return back()->withInput()->withErrors(['kenteken' => 'Dit is geen geldig kenteken. Een kenteken heeft 6 tekens, bijvoorbeeld AB-123-C.']);
+            return back()->withInput($request->except('kenteken'))->withErrors(['kenteken' => 'Dit is geen geldig kenteken. Een kenteken heeft 6 tekens, bijvoorbeeld AB-123-C.']);
         }
 
         try {
             $vehicle = $rdw->findVehicle($plate);
         } catch (RdwUnavailableException) {
-            return back()->withInput()->withErrors(['kenteken' => 'De RDW is nu niet bereikbaar. Probeer het straks nog eens.']);
+            return back()->withInput($request->except('kenteken'))->withErrors(['kenteken' => 'De RDW is nu niet bereikbaar. Probeer het straks nog eens.']);
         }
 
         if ($vehicle === null) {
-            return back()->withInput()->withErrors(['kenteken' => 'We vonden geen auto met dit kenteken.']);
+            return back()->withInput($request->except('kenteken'))->withErrors(['kenteken' => 'We vonden geen auto met dit kenteken.']);
         }
 
         $email = Str::lower(trim($data['email']));
@@ -86,7 +86,7 @@ class ApkReminderController extends Controller
 
         return view('pages.apk-message', [
             'title' => 'Je herinnering staat aan',
-            'text' => 'We sturen je een e-mail ongeveer 30 dagen voordat de APK van '.$reminder->license_plate.' verloopt'
+            'text' => 'Elk jaar sturen we je een e-mail ongeveer 30 dagen voordat de APK van '.$reminder->license_plate.' verloopt'
                 .($reminder->apk_expires_at ? ' (nu: '.$reminder->apk_expires_at->translatedFormat('j F Y').')' : '').'. Onderaan elke mail staat een link om je uit te schrijven.',
         ]);
     }
