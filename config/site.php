@@ -28,6 +28,9 @@ return [
     // The cookie banner is shown when ads are on, or when you force it (for example for analytics you add later).
     'consent_banner' => (bool) env('CONSENT_BANNER', false),
 
+    // Verification code from Google Search Console ("HTML tag" method). Leave empty until you have it.
+    'google_verification' => env('GOOGLE_SITE_VERIFICATION'),
+
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 

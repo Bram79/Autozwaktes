@@ -13,3 +13,6 @@ Schedule::command('rdw:update')->weeklyOn(1, '03:00')->withoutOverlapping();
 
 // Daily APK reminders (and clean up unconfirmed requests)
 Schedule::command('apk:remind')->dailyAt('08:00')->withoutOverlapping();
+
+// A copy of the database every night, on the live server only
+Schedule::command('backup:database')->dailyAt('02:30')->environments(['production']);

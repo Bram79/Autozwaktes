@@ -125,7 +125,7 @@ class PageController extends Controller
 
     public function robots()
     {
-        $text = "User-agent: *\nAllow: /\nDisallow: /go/\nDisallow: /apk-herinnering/\n\nSitemap: ".url('/sitemap.xml')."\n";
+        $text = "User-agent: *\nAllow: /\nDisallow: /go/\nDisallow: /apk-herinnering/\nDisallow: /admin/\nDisallow: /livewire\n\nSitemap: ".url('/sitemap.xml')."\n";
 
         return response($text, 200, ['Content-Type' => 'text/plain']);
     }

@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
+    @if (config('site.google_verification'))
+        <meta name="google-site-verification" content="{{ config('site.google_verification') }}">
+    @endif
     @if (! empty($robots))
         <meta name="robots" content="{{ $robots }}">
     @endif
