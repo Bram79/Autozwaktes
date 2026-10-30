@@ -19,6 +19,12 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }} uit {{ $year }}: APK-gebreken</h1>
 
+    @if ($year > \App\Site\RankingService::lastInspectedYear())
+        <p class="mt-4 rounded-2xl border border-accent-400 bg-accent-300/20 p-4 text-sm text-brand-900">
+            Auto's van bouwjaar {{ $year }} hebben nog geen APK gehad (de eerste keuring is na {{ config('site.first_apk_after_years') }} jaar). Wat je hieronder ziet, zijn dus nog geen gebreken van een eerste APK en de cijfers zijn nog niet te vergelijken met oudere auto's.
+        </p>
+    @endif
+
     @if (\App\Site\PlateVisit::active())
         <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="$year" />
     @endif

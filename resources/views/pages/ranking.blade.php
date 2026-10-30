@@ -6,9 +6,11 @@
         default => "Auto's met de minste APK-gebreken: ranglijst per generatie",
     };
     $count = count($rows);
-    $maxScore = max(1, $count ? max(array_column($rows, 'score')) : 1);
+    $maxIndex = max(1, $count ? max(array_column($rows, 'index')) : 1);
+    $lastYear = \App\Site\RankingService::lastInspectedYear();
+    $firstYear = \App\Site\RankingService::firstRankedYear();
     $intro = match ($scope) {
-        'merk' => "Hoe scoren de {$label}-generaties bij de APK? Deze lijst rangschikt ze op het aantal gebreken per 100 auto's.",
+        'merk' => "Hoe scoren de {$label}-generaties bij de APK? Deze lijst rangschikt ze op hun APK-gebreken, vergeleken met andere auto's van dezelfde bouwjaren.",
         'brandstof' => "Welke {$label}-auto's hebben bij de APK het minst vaak gebreken? Dit zijn de beste en de slechtste generaties.",
         'bouwjaar' => "Kijk je naar een occasion {$label}? Dit zijn de generaties met de minste en de meeste APK-gebreken in dat bouwjaar.",
         default => "De generaties met de minste en de meeste APK-gebreken, van alle auto's op deze site.",
@@ -32,7 +34,10 @@
             <p class="mt-3"><a href="{{ route('ranking', ['alles']) }}" class="btn">Bekijk de lijst met alle auto's</a></p>
         </div>
     @else
-        <p class="mt-3 max-w-2xl text-sm text-slate-600">De balk toont de score ten opzichte van de hoogste in deze lijst: korter is beter. Score = geconstateerde APK-gebreken per 100 auto's (elk soort gebrek telt één keer per auto). Alleen generaties met minstens {{ number_format(config('site.min_ranking_sample'), 0, ',', '.') }} auto's doen mee.</p>
+        <div class="mt-3 max-w-2xl space-y-1 text-sm text-slate-600">
+            <p><strong>Score: 100 = gemiddeld.</strong> We vergelijken elke generatie met het gemiddelde van alle auto's van dezelfde bouwjaren en brandstof. Een score van 80 is dus 20% beter dan gemiddeld, 120 is 20% slechter. Zo hoeft een oudere auto niet te boeten voor zijn leeftijd. Lager is beter; de balk toont de score ten opzichte van de hoogste in deze lijst.</p>
+            <p>Alleen auto's van bouwjaar {{ $firstYear }} tot en met bouwjaar {{ $lastYear }} tellen mee: nieuwere auto's hebben nog geen APK gehad en lijken daardoor onterecht foutloos, en van veel oudere auto's blijven vooral de best onderhouden exemplaren over. Alleen generaties met minstens {{ number_format(config('site.min_ranking_sample'), 0, ',', '.') }} auto's doen mee.</p>
+        </div>
 
         @foreach ([['De minste gebreken', 'minste', $best], ['De meeste gebreken', 'meeste', $worst]] as [$heading, $id, $list])
             @if ($list !== [] && ($id === 'minste' || $count > count($best)))
@@ -46,7 +51,7 @@
                                     <th scope="col" class="py-2 pr-2">#</th>
                                     <th scope="col" class="py-2 pr-4">Auto</th>
                                     <th scope="col" class="hidden py-2 pr-4 sm:table-cell">Bouwjaren</th>
-                                    <th scope="col" class="py-2 pr-4 text-right">Gebreken per 100</th>
+                                    <th scope="col" class="py-2 pr-4 text-right">Score (100 = gemiddeld)</th>
                                     <th scope="col" class="py-2 text-right">Auto's</th>
                                 </tr>
                             </thead>
@@ -63,8 +68,9 @@
                                         </td>
                                         <td class="hidden py-3 pr-4 text-slate-700 sm:table-cell">{{ $year ?? $row['years'] }}</td>
                                         <td class="min-w-28 py-3 pr-4 text-right">
-                                            <span class="font-semibold tabular-nums">{{ number_format($row['score'], 1, ',', '.') }}</span>
-                                            <span class="score-track mt-1 block" aria-hidden="true"><span class="bar score-fill {{ $id === 'minste' ? 'score-fill-best' : '' }}" style="--w: {{ round($row['score'] / $maxScore * 100) }}%"></span></span>
+                                            <span class="font-semibold tabular-nums">{{ number_format($row['index'], 0, ',', '.') }}</span>
+                                            <span class="block text-xs text-slate-700">{{ round(abs($row['index'] - 100)) === 0.0 ? 'gemiddeld' : round(abs($row['index'] - 100)).'% '.($row['index'] < 100 ? 'beter' : 'slechter') }}</span>
+                                            <span class="score-track mt-1 block" aria-hidden="true"><span class="bar score-fill {{ $id === 'minste' ? 'score-fill-best' : '' }}" style="--w: {{ round($row['index'] / $maxIndex * 100) }}%"></span></span>
                                         </td>
                                         <td class="py-3 text-right tabular-nums text-slate-700">{{ number_format($row['total'], 0, ',', '.') }}</td>
                                     </tr>
