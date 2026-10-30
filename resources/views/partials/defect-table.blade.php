@@ -29,7 +29,7 @@
                         <td class="py-3 pr-2 sm:pr-4">
                             <div class="flex items-center gap-2">
                                 <div class="bar-wrap h-3 w-10 shrink-0 overflow-hidden rounded-full bg-brand-100 sm:w-40" aria-hidden="true">
-                                    <div class="bar h-3 rounded-full bg-gradient-to-r from-brand-600 to-accent-400" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
+                                    <div class="bar h-3 rounded-full bg-brand-600" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
                                 </div>
                                 <span class="font-semibold">{{ number_format($defect->percentage, 1, ',', '.') }}%</span>
                             </div>

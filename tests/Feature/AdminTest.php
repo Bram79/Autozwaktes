@@ -63,3 +63,20 @@ it('saves affiliate settings, which then show up on the site', function () {
     expect(Setting::affiliate('insurance'))->toMatchArray(['url' => 'https://partner.example/x', 'title' => 'Mijn titel']);
     expect(Setting::affiliate('parts')['url'])->toBeNull();   // untouched blocks keep the config defaults
 });
+
+it('lets the admin edit the aliases of a model on the model screen', function () {
+    $this->actingAs($this->admin);
+    $model = \App\Models\CarModel::where('slug', 'a4')->first();
+    $alias = $model->aliases()->first();
+
+    Livewire::test(\App\Filament\Resources\CarModels\Pages\ManageCarModels::class)
+        ->callAction(TestAction::make('edit')->table($model), [
+            'aliases' => [
+                ['pattern' => '^A4( |$)', 'priority' => 100],
+                ['pattern' => '^S4( |$)', 'priority' => 50],
+            ],
+        ])
+        ->assertHasNoActionErrors();
+
+    expect($model->aliases()->pluck('pattern')->all())->toContain('^A4( |$)', '^S4( |$)');
+});

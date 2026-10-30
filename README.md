@@ -12,6 +12,7 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 | `php artisan rdw:import {dataset}` | Eén dataset: `defect_codes`, `vehicles`, `fuel` of `defects`. |
 | `php artisan rdw:calculate [--now]` | Statistieken opnieuw berekenen en cache legen. |
 | `php artisan rdw:unmatched` | Toont RDW-modelnamen die bij geen enkel model passen (om aliassen aan te vullen). |
+| `php artisan rdw:discover [--min=1000] [--dry-run]` | Maakt automatisch modellen aan uit de geïmporteerde voertuigen, met aliassen en één generatie "Alle bouwjaren" (daarna zelf opsplitsen in de admin). Bestaande modellen blijven ongemoeid. |
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.
 

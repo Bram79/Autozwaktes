@@ -7,6 +7,7 @@ use App\Models\CarModel;
 use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
@@ -40,6 +41,17 @@ class CarModelResource extends Resource
                 ->live(onBlur: true)
                 ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state ?? ''))),
             TextInput::make('slug')->label('Slug (in de URL)')->required()->alphaDash(),
+            Repeater::make('aliases')
+                ->label('Aliassen (hoe de RDW dit model noemt)')
+                ->helperText('Een regex op de RDW-naam in hoofdletters, zonder merknaam. Bijvoorbeeld ^A4( |$) past op "A4" en "A4 AVANT".')
+                ->relationship('aliases')
+                ->schema([
+                    TextInput::make('pattern')->label('Patroon')->required(),
+                    TextInput::make('priority')->label('Prioriteit (laag eerst)')->numeric()->default(100)->required(),
+                ])
+                ->columns(2)
+                ->addActionLabel('Alias toevoegen')
+                ->columnSpanFull(),
         ]);
     }
 
