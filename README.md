@@ -18,6 +18,7 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 | `php artisan generations:apply` | Zet goedgekeurde voorstellen op de site (kan ook met de knop in de admin). Draai daarna `rdw:calculate`. |
 | `php artisan advice:draft [--model=polo] [--limit=10]` | Optioneel: Claude schrijft concept-koopadviezen uit onze eigen cijfers (zet `AI_ADVICE_ENABLED=true` en `ANTHROPIC_API_KEY` in `.env`). Een tekst met een getal dat niet in de cijfers staat wordt automatisch afgewezen. Concepten komen pas live na goedkeuren in de admin onder "Koopadvies-concepten". |
 | `php artisan apk:remind [--days=30]` | Stuurt de APK-herinneringen die aan de beurt zijn en verwijdert onbevestigde aanvragen (ouder dan 7 dagen). Staat dagelijks om 08:00 in de scheduler. Zet in `.env` een echte mailserver (`MAIL_MAILER=smtp` en de rest), anders komt alles alleen in het log. |
+| `php artisan rdw:brands [--top=20] [--add]` | Toont de grootste personenautomerken in de RDW-data en welke nog ontbreken; met `--add` worden ze toegevoegd. Daarna: `rdw:update` (uren), `rdw:discover`, `rdw:types`, `generations:propose`. |
 | `php artisan db:seed --class=ModelFixesSeeder` | Ruimt de modellen van `rdw:discover` op: voegt dubbelen samen, past namen aan en zet echte generaties bij de populairste modellen (jaartallen zijn een eerste gok, controleer ze). Draai dit na `rdw:discover` en vóór `rdw:calculate`. |
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.

@@ -4,7 +4,7 @@
 
     <p class="mt-3 text-sm font-semibold text-slate-700">Per merk</p>
     <ul class="mt-2 flex flex-wrap gap-2">
-        @foreach ($brands as $b)
+        @foreach ($brands->filter(fn ($b) => $b->carModels()->withStats()->exists()) as $b)
             <li><a href="{{ route('ranking', ['merk', $b->slug]) }}" class="chip">{{ $b->name }}</a></li>
         @endforeach
     </ul>

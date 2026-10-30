@@ -78,6 +78,24 @@ class RdwClient
     }
 
     /**
+     * The biggest passenger car brands by number of cars in the register.
+     *
+     * @return array<int, array{merk: string, n: string}>
+     */
+    public function topBrands(int $limit): array
+    {
+        $config = $this->datasetConfig('vehicles');
+
+        return $this->get("/resource/{$config['id']}.json", [
+            '$select' => 'merk,count(*) as n',
+            '$where' => "voertuigsoort = 'Personenauto'",
+            '$group' => 'merk',
+            '$order' => 'n DESC',
+            '$limit' => $limit,
+        ]);
+    }
+
+    /**
      * Average catalogue price per trade name and first-registration year for one brand (cars with a price only).
      *
      * @return array<int, array{handelsbenaming: string, jaar?: string, n: string, prijs: string}>
