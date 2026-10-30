@@ -16,3 +16,6 @@ Schedule::command('apk:remind')->dailyAt('08:00')->withoutOverlapping();
 
 // A copy of the database every night, on the live server only
 Schedule::command('backup:database')->dailyAt('02:30')->environments(['production']);
+
+// The database cache keeps expired rows (car data, rate limits with an IP address) until the same key is asked for again
+Schedule::command('cache:clean-expired')->hourly();
