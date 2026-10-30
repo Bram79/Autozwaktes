@@ -35,7 +35,7 @@ class AdviceWriter
             'bouwjaar' => $year,
             'aantal_voertuigen' => $top['total'],
             'meest_voorkomend' => $top['defects']->take(3)->map(fn ($d) => [
-                'gebrek' => $d->description, 'percentage' => $d->percentage, 'gemiddeld_percentage' => $d->average,
+                'gebrek' => DefectText::plain($d->description), 'percentage' => $d->percentage, 'gemiddeld_percentage' => $d->average,
             ])->values()->all(),
             'vaker_dan_gemiddeld' => array_map(fn ($p) => $this->point($p), $comparison['weak'] ?? []),
             'minder_vaak_dan_gemiddeld' => array_map(fn ($p) => $this->point($p), $comparison['strong'] ?? []),
@@ -91,7 +91,7 @@ class AdviceWriter
 
     private function point(array $p): array
     {
-        return ['gebrek' => $p['description'], 'percentage' => $p['percentage'], 'gemiddeld_percentage' => $p['average'], 'keer_vaker' => $p['ratio']];
+        return ['gebrek' => DefectText::plain($p['description']), 'percentage' => $p['percentage'], 'gemiddeld_percentage' => $p['average'], 'keer_vaker' => $p['ratio']];
     }
 
     private function number(int|float $n): string

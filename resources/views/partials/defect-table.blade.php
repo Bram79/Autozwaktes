@@ -26,7 +26,7 @@
                     <tr class="border-b border-brand-100 align-top transition hover:bg-brand-50">
                         <td class="py-3 pr-2 text-slate-600">{{ $i + 1 }}</td>
                         <td class="py-3 pr-2 sm:pr-4">
-                            {{ $defect->description }}
+                            {{ \App\Site\DefectText::plain($defect->description) }}
                             @if (($category = \App\Models\PartsCategory::forDefect($defect->description)) && ($brandName ?? null))
                                 <a href="{{ \App\Site\AffiliateLink::url('parts', 'gebrek: '.$category['name'], $brandName, $modelName ?? '', $yearLabel ?? '', $category['id']) }}"
                                    rel="sponsored nofollow noopener" target="_blank" class="mt-1 block py-1 text-sm font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (affiliate)</a>
@@ -65,7 +65,7 @@
             @foreach ($result['defects']->take(5) as $defect)
                 <li class="flex gap-2">
                     <span aria-hidden="true">☐</span>
-                    <span>Controleer: {{ \Illuminate\Support\Str::lcfirst($defect->description) }}</span>
+                    <span>Controleer: {{ \Illuminate\Support\Str::lcfirst(\App\Site\DefectText::plain($defect->description)) }}</span>
                 </li>
             @endforeach
         </ul>

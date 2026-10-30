@@ -48,7 +48,7 @@
                 <tbody>
                     @foreach ($result['defects'] as $defect)
                         <tr class="border-b border-brand-100">
-                            <td class="py-3 pr-4">{{ $defect['description'] }}</td>
+                            <td class="py-3 pr-4">{{ \App\Site\DefectText::plain($defect['description']) }}</td>
                             @foreach (['a', 'b'] as $side)
                                 @php $isBetter = $defect['a'] !== $defect['b'] && $defect[$side] === min($defect['a'], $defect['b']); @endphp
                                 <td class="py-3 pr-4 text-right {{ $isBetter ? 'font-bold text-green-800' : '' }} {{ $loop->last ? 'pr-0' : '' }}">
