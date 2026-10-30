@@ -27,7 +27,7 @@
         <div class="lg:col-span-2">
             @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
 
-            @include('partials.data-advice', ['paragraphs' => app(\App\Site\AdviceWriter::class)->paragraphs($generation, $year)])
+            @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])
 
             <p class="mt-6"><a href="{{ $genUrl }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">Alle bouwjaren van de {{ $name }}</a></p>
         </div>

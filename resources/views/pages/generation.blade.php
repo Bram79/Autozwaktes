@@ -42,7 +42,7 @@
             <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken</h2>
             <livewire:generation-stats :generation-id="$generation->id" />
 
-            @include('partials.data-advice', ['paragraphs' => app(\App\Site\AdviceWriter::class)->paragraphs($generation)])
+            @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation)])
 
             @if (filled($generation->buying_advice))
                 <section class="mt-8" aria-labelledby="advies">

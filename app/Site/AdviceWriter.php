@@ -5,8 +5,8 @@ namespace App\Site;
 use App\Models\Generation;
 
 /**
- * Writes a short text about a generation (or one build year) from our own statistics.
- * Every number in the text comes straight from the database; the wording changes per page (but is the same on every visit).
+ * Turns our own statistics for a generation (or one build year) into the facts and the table on the page.
+ * Every number comes straight from the database.
  */
 class AdviceWriter
 {
@@ -43,8 +43,12 @@ class AdviceWriter
         ];
     }
 
-    /** @return string[] paragraphs of plain text (no HTML) */
-    public function paragraphs(Generation $generation, ?int $year = null): array
+    /**
+     * The numbers as table rows for the page ("Nieuwprijs | € 47.254"). Every number comes straight from the facts.
+     *
+     * @return array<int, array{label: string, lines: string[], tone: string|null}> tone: good, bad or null
+     */
+    public function rows(Generation $generation, ?int $year = null): array
     {
         $facts = $this->facts($generation, $year);
 
@@ -52,64 +56,37 @@ class AdviceWriter
             return [];
         }
 
-        $seed = fn (string $slot, array $variants) => $variants[crc32("{$generation->id}-{$year}-{$slot}") % count($variants)];
-        $auto = $facts['auto'];
-        $of = $year ? "uit {$year}" : '('.$facts['bouwjaren'].')';
-        $total = $this->number($facts['aantal_voertuigen']);
-
-        $paragraphs = [];
-
-        $paragraphs[] = $seed('intro', [
-            "De cijfers over de {$auto} {$of} komen van {$total} voertuigen die bij de RDW geregistreerd staan.",
-            "In dit overzicht zitten {$total} voertuigen van de {$auto} {$of}, gevolgd via de APK-gegevens van de RDW.",
-            "We hebben {$total} geregistreerde {$auto} {$of} gevolgd in de APK-gegevens van de RDW.",
-        ]);
-
-        $top = $facts['meest_voorkomend'];
-        $first = $top[0];
-        $line = $seed('top', [
-            "Het vaakst wordt {$this->lower($first['gebrek'])} geconstateerd: bij {$this->percent($first['percentage'])} van de auto's.",
-            "Bovenaan staat {$this->lower($first['gebrek'])}, bij {$this->percent($first['percentage'])} van de auto's.",
-            "{$this->upper($first['gebrek'])} komt het meest voor ({$this->percent($first['percentage'])} van de auto's).",
-        ]);
-        if (count($top) > 1) {
-            $rest = array_map(fn ($d) => "{$this->lower($d['gebrek'])} ({$this->percent($d['percentage'])})", array_slice($top, 1));
-            $line .= ' '.$seed('top-next', ['Daarna volgen', 'Op de volgende plaatsen staan', 'Hierna komen'])." {$this->join($rest)}.";
-        }
-        $paragraphs[] = $line;
-
-        if ($facts['vaker_dan_gemiddeld'] !== []) {
-            $items = array_map(fn ($p) => "{$this->lower($p['gebrek'])} ({$this->times($p['keer_vaker'])} vaker: {$this->percent($p['percentage'])} tegenover {$this->percent($p['gemiddeld_percentage'])})", $facts['vaker_dan_gemiddeld']);
-            $paragraphs[] = $seed('weak', [
-                ($year ? "Let bij bouwjaar {$year} vooral op " : 'Let vooral op ').$this->join($items).'.',
-                "Hier scoort de {$auto} slechter dan andere modellen: ".$this->join($items).'.',
-                'Duidelijk vaker dan gemiddeld wordt geconstateerd: '.$this->join($items).'.',
-            ]);
-        } else {
-            $paragraphs[] = $seed('no-weak', [
-                'Geen enkel veelvoorkomend gebrek komt duidelijk vaker voor dan bij andere modellen.',
-                "Bij de gebreken die vaak voorkomen, wijkt de {$auto} niet sterk negatief af van het gemiddelde.",
-            ]);
-        }
-
-        if ($facts['minder_vaak_dan_gemiddeld'] !== []) {
-            $items = array_map(fn ($p) => "{$this->lower($p['gebrek'])} ({$this->percent($p['percentage'])} tegenover {$this->percent($p['gemiddeld_percentage'])})", $facts['minder_vaak_dan_gemiddeld']);
-            $paragraphs[] = $seed('strong', [
-                "Beter dan gemiddeld scoort de {$auto} op ".$this->join($items).'.',
-                'Minder vaak dan bij andere modellen wordt geconstateerd: '.$this->join($items).'.',
-                'Een positief punt: '.$this->join($items).'.',
-            ]);
-        }
+        $rows = [];
 
         if ($facts['nieuwprijs_gemiddeld_euro']) {
-            $price = '€ '.$this->number($facts['nieuwprijs_gemiddeld_euro']);
-            $paragraphs[] = $seed('price', [
-                "De gemiddelde nieuwprijs (catalogusprijs volgens de RDW) was {$price}.",
-                "Volgens de RDW was de catalogusprijs, dus de nieuwprijs, gemiddeld {$price}.",
-            ]);
+            $rows[] = ['label' => 'Nieuwprijs', 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro']).' (gemiddelde catalogusprijs volgens de RDW)'], 'tone' => null];
         }
 
-        return $paragraphs;
+        $rows[] = ['label' => 'Voertuigen', 'lines' => [$this->number($facts['aantal_voertuigen']).' geregistreerd bij de RDW'], 'tone' => null];
+
+        $rows[] = [
+            'label' => 'Vaakst voorkomend',
+            'lines' => array_map(fn ($d) => $this->upper($d['gebrek']).': '.$this->percent($d['percentage']), $facts['meest_voorkomend']),
+            'tone' => null,
+        ];
+
+        $rows[] = [
+            'label' => 'Vaker dan gemiddeld',
+            'lines' => $facts['vaker_dan_gemiddeld'] === []
+                ? ['Geen enkel veelvoorkomend gebrek valt duidelijk negatief op.']
+                : array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->times($p['keer_vaker']).' vaker ('.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']).')', $facts['vaker_dan_gemiddeld']),
+            'tone' => $facts['vaker_dan_gemiddeld'] === [] ? null : 'bad',
+        ];
+
+        if ($facts['minder_vaak_dan_gemiddeld'] !== []) {
+            $rows[] = [
+                'label' => 'Beter dan gemiddeld',
+                'lines' => array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']), $facts['minder_vaak_dan_gemiddeld']),
+                'tone' => 'good',
+            ];
+        }
+
+        return $rows;
     }
 
     private function point(array $p): array
@@ -132,21 +109,8 @@ class AdviceWriter
         return number_format($ratio, 1, ',', '.').' keer';
     }
 
-    private function lower(string $text): string
-    {
-        return mb_strtolower(mb_substr($text, 0, 1)).mb_substr($text, 1);
-    }
-
     private function upper(string $text): string
     {
         return mb_strtoupper(mb_substr($text, 0, 1)).mb_substr($text, 1);
-    }
-
-    /** "a, b en c" */
-    private function join(array $items): string
-    {
-        $last = array_pop($items);
-
-        return $items === [] ? $last : implode(', ', $items).' en '.$last;
     }
 }

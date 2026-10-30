@@ -23,16 +23,16 @@ beforeEach(function () {
     $this->generation = Generation::where('slug', 'b8')->first();
 });
 
-it('writes a text in which every number comes from the statistics', function () {
-    $paragraphs = app(AdviceWriter::class)->paragraphs($this->generation);
+it('shows a table in which every number comes from the statistics', function () {
+    $rows = app(AdviceWriter::class)->rows($this->generation);
     $facts = app(AdviceWriter::class)->facts($this->generation);
-    $text = implode(' ', $paragraphs);
+    $text = collect($rows)->pluck('lines')->flatten()->implode(' ');
 
-    expect($paragraphs)->not->toBeEmpty();
+    expect(collect($rows)->pluck('label')->all())->toContain('Voertuigen', 'Vaakst voorkomend', 'Vaker dan gemiddeld');
     expect($text)->toContain(number_format($facts['aantal_voertuigen'], 0, ',', '.'));
     expect($text)->toContain(number_format($facts['meest_voorkomend'][0]['percentage'], 1, ',', '.').'%');
 
-    // the same checker that guards the AI: no number in the text may be missing from the facts
+    // the same checker that guards the AI: no number in the table may be missing from the facts
     expect(AdviceDrafter::unknownNumbers($text, $facts))->toBe([]);
 });
 
@@ -52,28 +52,34 @@ it('names the clearly weak and strong points, with the exact ratio', function ()
     // the ratio in the data is the percentage of this model divided by the percentage of the others
     expect($comparison['weak'][0]['ratio'])->toBe(round($comparison['weak'][0]['percentage'] / $comparison['weak'][0]['average'], 1));
 
-    $text = implode(' ', app(AdviceWriter::class)->paragraphs($this->generation));
-    expect($text)->toContain(number_format($comparison['weak'][0]['ratio'], 1, ',', '.').' keer vaker');
+    $weakRow = collect(app(AdviceWriter::class)->rows($this->generation))->firstWhere('label', 'Vaker dan gemiddeld');
+    expect($weakRow['tone'])->toBe('bad');
+    expect(implode(' ', $weakRow['lines']))->toContain(number_format($comparison['weak'][0]['ratio'], 1, ',', '.').' keer vaker');
 });
 
-it('varies the wording per page but always gives the same text for the same page', function () {
+it('gives the same table for the same page every time', function () {
     $writer = app(AdviceWriter::class);
-    $variants = Generation::whereIn('slug', ['b8', 'mk7', 'mk6', 'mk5'])->get()->map(fn ($g) => $writer->paragraphs($g)[0] ?? null)->filter()->map(fn ($p) => preg_replace('/[\d.,]+/', '#', preg_replace('/(Audi|Volkswagen) \w+ \w+/', 'X', $p)))->unique();
 
-    expect($writer->paragraphs($this->generation))->toBe($writer->paragraphs($this->generation));
-    expect($variants->count())->toBeGreaterThanOrEqual(1);
+    expect($writer->rows($this->generation))->toBe($writer->rows($this->generation));
+    expect($writer->rows($this->generation, 2010))->not->toBe($writer->rows($this->generation));   // a single year has its own numbers
 });
 
-it('writes nothing when there are too few cars', function () {
+it('shows nothing when there are too few cars', function () {
     config(['site.min_sample' => 10_000_000]);
     Cache::flush();
 
-    expect(app(AdviceWriter::class)->paragraphs($this->generation))->toBe([]);
+    expect(app(AdviceWriter::class)->rows($this->generation))->toBe([]);
 });
 
-it('shows the text on the generation page and the year page', function () {
-    $this->get('/audi/a4/b8')->assertOk()->assertSee('Wat de cijfers zeggen');
-    $this->get('/audi/a4/b8/2010')->assertOk()->assertSee('Wat de cijfers zeggen')->assertSee('uit 2010');
+it('shows the table in a dropdown on the generation page and the year page', function () {
+    foreach (['/audi/a4/b8', '/audi/a4/b8/2010'] as $url) {
+        $html = $this->get($url)->assertOk()->assertSee('Wat de cijfers zeggen')->getContent();
+
+        // a <details> dropdown that is closed at first and works without JavaScript, with the figures in a table
+        expect($html)->toContain('<details class="group');
+        expect($html)->not->toMatch('/<details[^>]* open/');
+        expect($html)->toMatch('/<th scope="row"[^>]*>\s*Vaakst voorkomend\s*<\/th>/');
+    }
 });
 
 it('shows the new price only when the RDW has prices for the model', function () {
@@ -86,7 +92,11 @@ it('shows the new price only when the RDW has prices for the model', function ()
     Cache::flush();
 
     expect(app(AdviceWriter::class)->facts($this->generation)['nieuwprijs_gemiddeld_euro'])->toBe(42500);   // weighted: (30*40000 + 10*50000) / 40
-    expect(implode(' ', app(AdviceWriter::class)->paragraphs($this->generation)))->toContain('€ 42.500')->toContain('nieuwprijs');
+
+    // "Nieuwprijs" is the first row, with a bold label on the left and the amount next to it
+    $price = app(AdviceWriter::class)->rows($this->generation)[0];
+    expect($price['label'])->toBe('Nieuwprijs')->and(implode(' ', $price['lines']))->toContain('€ 42.500');
+    $this->get('/audi/a4/b8')->assertSee('€ 42.500')->assertSee('Nieuwprijs');
 });
 
 it('finds numbers in an AI text that are not in the facts', function () {
