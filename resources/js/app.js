@@ -1,3 +1,5 @@
+import { attachPlateFormatting } from './plate';
+
 // Laat elementen met de klasse "reveal" (en de balkjes) soepel verschijnen zodra ze in beeld komen.
 function observeReveals() {
     const items = document.querySelectorAll('.reveal:not(.is-visible), .bar-wrap:not(.is-visible)');
@@ -88,3 +90,6 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', () => { banner.hidden = false; });
     });
 });
+
+// Streepjes in het kenteken terwijl je typt
+document.addEventListener('DOMContentLoaded', attachPlateFormatting);

@@ -10,8 +10,7 @@
             <div class="pointer-events-none absolute bottom-10 right-1/4 size-16 animate-float rounded-2xl border-4 border-accent-300 rotate-12" aria-hidden="true"></div>
 
             <div class="relative mx-auto max-w-5xl px-4 py-8 sm:py-24">
-                <p class="reveal inline-block rounded-full bg-accent-400 px-3 py-0.5 text-xs font-bold sm:px-4 sm:py-1 sm:text-sm text-brand-900">Gebaseerd op RDW open data</p>
-                <h1 class="reveal mt-3 max-w-3xl text-3xl font-extrabold tracking-tight text-accent-300 sm:mt-5 sm:text-6xl" style="--i: 1">
+                <h1 class="reveal max-w-3xl text-3xl font-extrabold tracking-tight text-accent-300 sm:text-6xl" style="--i: 1">
                     Zwakke punten per automodel
                 </h1>
                 <p class="reveal mt-5 hidden max-w-2xl text-lg text-brand-100 sm:block" style="--i: 2">Weet waar jouw volgende auto mee zit. Zoek een merk of model en zie welke APK-gebreken het vaakst voorkomen, per generatie en bouwjaar.</p>
@@ -27,7 +26,7 @@
                         {{-- ziet eruit als een Nederlands kenteken --}}
                         <div class="flex w-full sm:max-w-60 overflow-hidden rounded-md border-2 border-brand-900 bg-accent-400 shadow-lg">
                             <span class="flex w-9 items-center justify-center bg-brand-600 text-xs font-bold text-white" aria-hidden="true">NL</span>
-                            <input id="kenteken" name="kenteken" type="text" required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
+                            <input id="kenteken" name="kenteken" type="text" data-plate-input required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
                                    placeholder="AB-123-C"
                                    class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/70 focus:outline-none focus:ring-4 focus:ring-inset focus:ring-brand-900">
                         </div>
