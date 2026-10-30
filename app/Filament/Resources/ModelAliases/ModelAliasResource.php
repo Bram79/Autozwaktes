@@ -47,7 +47,7 @@ class ModelAliasResource extends Resource
                 ->helperText('Wordt vergeleken met de RDW-handelsbenaming in hoofdletters, zonder merknaam. Voorbeeld: ^A4( |$) past op "A4", "A4 AVANT" en "A4 74 KW", maar niet op "A40".')
                 ->required()
                 ->rule(fn () => function (string $attribute, $value, \Closure $fail) {
-                    if (@preg_match('/'.str_replace('/', '\/', $value).'/u', '') === false) {
+                    if (@preg_match(\App\Rdw\ModelNormalizer::regex($value), '') === false) {
                         $fail('Dit is geen geldig regex-patroon.');
                     }
                 }),

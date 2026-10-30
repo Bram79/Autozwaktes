@@ -49,6 +49,35 @@ class RdwClient
     }
 
     /**
+     * Number of passenger cars per trade name, RDW type code and first-registration year for one brand.
+     * (Grouped by the RDW itself, so this is a small answer, not millions of rows.)
+     *
+     * @return array<int, array{handelsbenaming: string, type?: string, jaar?: string, n: string}>
+     */
+    public function typeCounts(string $rdwBrand): array
+    {
+        $config = $this->datasetConfig('vehicles');
+        $rows = [];
+
+        for ($offset = 0; ; $offset += 50000) {
+            $page = $this->get("/resource/{$config['id']}.json", [
+                '$select' => 'handelsbenaming,type,date_extract_y(datum_eerste_toelating_dt) as jaar,count(*) as n',
+                '$where' => "voertuigsoort = 'Personenauto' AND merk = '".str_replace("'", "''", $rdwBrand)."'",
+                '$group' => 'handelsbenaming,type,jaar',
+                '$order' => 'handelsbenaming,type,jaar',
+                '$limit' => 50000,
+                '$offset' => $offset,
+            ]);
+
+            array_push($rows, ...$page);
+
+            if (count($page) < 50000) {
+                return $rows;
+            }
+        }
+    }
+
+    /**
      * Look up one vehicle by license plate (letters and digits only, uppercase).
      * Uses a short timeout: a visitor is waiting for the answer.
      *

@@ -32,3 +32,8 @@ it('does not match other models', function (string $brand, string $raw) {
     ['BMW', 'A4'],                      // brand we don't track
     ['VOLKSWAGEN', 'POLOS'],
 ]);
+
+it('handles a slash in an alias pattern, escaped or not', function () {
+    expect(preg_match(\App\Rdw\ModelNormalizer::regex('^(?:TRANSIT\/TOURNEO)( |$)'), 'TRANSIT/TOURNEO'))->toBe(1);
+    expect(preg_match(\App\Rdw\ModelNormalizer::regex('^A/B( |$)'), 'A/B CUSTOM'))->toBe(1);
+});

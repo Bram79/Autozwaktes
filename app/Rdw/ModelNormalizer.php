@@ -33,12 +33,18 @@ class ModelNormalizer
         $name = $this->clean($modelRaw, Str::upper(trim($brandRaw)));
 
         foreach ($this->aliases[$brandId] ?? [] as $alias) {
-            if (preg_match('/'.str_replace('/', '\/', $alias['pattern']).'/u', $name)) {
+            if (preg_match(self::regex($alias['pattern']), $name)) {
                 return $alias['car_model_id'];
             }
         }
 
         return null;
+    }
+
+    /** Wrap an alias pattern in delimiters; a "/" in it is escaped unless it already is. */
+    public static function regex(string $pattern): string
+    {
+        return '/'.preg_replace('#(?<!\\\\)/#', '\\/', $pattern).'/u';
     }
 
     /** Uppercase, collapse spaces, drop a leading brand name or numeric code. */
