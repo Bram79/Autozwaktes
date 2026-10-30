@@ -31,6 +31,9 @@ return [
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 
+    // A generation needs at least this many cars to appear in a ranking.
+    'min_ranking_sample' => (int) env('SITE_MIN_RANKING_SAMPLE', 500),
+
     // How many defects the top list shows.
     'top_defects' => 10,
 

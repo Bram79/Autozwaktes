@@ -1,6 +1,7 @@
 <x-layouts.app
     :title="$brand->name.': zwakke punten en APK-problemen per model'"
-    :description="'Alle '.$brand->name.'-modellen met de meest voorkomende APK-gebreken per generatie en bouwjaar.'">
+    :description="'Alle '.$brand->name.'-modellen met de meest voorkomende APK-gebreken per generatie en bouwjaar.'"
+    :robots="$models->isEmpty() ? 'noindex,follow' : null">
 
     <x-breadcrumbs :items="[['Home', route('home')], [$brand->name, route('brand', $brand)]]" />
 

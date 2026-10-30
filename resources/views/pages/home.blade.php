@@ -56,4 +56,10 @@
             </ul>
         </section>
     @endif
+
+    <section class="mt-12 rounded-2xl bg-brand-50 p-6" aria-labelledby="ranglijsten">
+        <h2 id="ranglijsten" class="reveal text-2xl font-extrabold text-brand-900">Welke auto heeft de minste gebreken?</h2>
+        <p class="reveal mt-2 max-w-2xl text-slate-700" style="--i: 1">Bekijk de ranglijsten met de beste en de slechtste generaties, per merk, brandstof en bouwjaar.</p>
+        <p class="reveal mt-4" style="--i: 2"><a href="{{ route('rankings') }}" class="btn">Naar de ranglijsten</a></p>
+    </section>
 </x-layouts.app>

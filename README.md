@@ -22,6 +22,8 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 
 Scheduler lokaal: `php artisan schedule:work`. Fouten staan in `storage/logs/laravel.log` en in de tabel `import_runs`.
 
+De site heeft ook ranglijsten (`/ranglijsten`: minste en meeste gebreken per 100 auto's, per merk, brandstof en bouwjaar) en vergelijkingspagina's (`/vergelijk/merk-model-vs-merk-model`). Een vergelijking bestaat alleen voor modellen die tegelijk verkocht werden (minstens 3 bouwjaren in gemeen, elk met 300+ auto's) en ongeveer evenveel kostten als nieuw (catalogusprijs binnen een derde), maximaal 3 per model. Pagina's met te weinig data krijgen `noindex` of een 404. Draai `rdw:types` (voor de prijzen) voor de vergelijkingen.
+
 ## Beheer (`/admin`)
 
 Gebouwd met Filament. Maak een beheerder aan met:

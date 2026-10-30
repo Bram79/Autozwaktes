@@ -1,7 +1,8 @@
 @php $name = \App\Site\Seo::modelName($model); @endphp
 <x-layouts.app
     :title="$name.': generaties, zwakke punten en APK-problemen'"
-    :description="'Overzicht van alle generaties van de '.$name.' met de meest voorkomende APK-gebreken.'">
+    :description="'Overzicht van alle generaties van de '.$name.' met de meest voorkomende APK-gebreken.'"
+    :robots="$generations->isEmpty() ? 'noindex,follow' : null">
 
     <x-breadcrumbs :items="[['Home', route('home')], [$model->brand->name, route('brand', $model->brand)], [$model->name, route('model', [$model->brand, $model->slug])]]" />
 
@@ -28,6 +29,18 @@
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" position="modelpagina" />
         </div>
     @endunless
+
+    @php $suggestions = app(\App\Site\ComparisonService::class)->suggestions($model); @endphp
+    @if ($suggestions)
+        <section class="mt-10" aria-labelledby="vergelijken">
+            <h2 id="vergelijken" class="text-xl font-bold">Vergelijk de {{ $name }} met</h2>
+            <ul class="mt-3 flex flex-wrap gap-2">
+                @foreach ($suggestions as $suggestion)
+                    <li><a href="{{ route('comparison', $suggestion['slug']) }}" class="chip">{{ $suggestion['name'] }}</a></li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 
     @if ($similar->isNotEmpty())
         <section class="mt-10" aria-labelledby="meer">

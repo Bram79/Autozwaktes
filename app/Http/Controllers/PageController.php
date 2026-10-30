@@ -94,6 +94,29 @@ class PageController extends Controller
                 }
             }
 
+            // rankings with enough rows to be worth indexing, and the comparison pages that exist
+            $rankings = app(\App\Site\RankingService::class);
+            $urls[] = route('rankings');
+            $urls[] = route('ranking', ['alles']);
+            foreach (Brand::orderBy('slug')->get() as $brand) {
+                if (count($rankings->scores($brand->id)) >= 5) {
+                    $urls[] = route('ranking', ['merk', $brand->slug]);
+                }
+            }
+            foreach ($rankings->fuels() as $slug => $fuel) {
+                if (count($rankings->scores(null, $fuel)) >= 5) {
+                    $urls[] = route('ranking', ['brandstof', $slug]);
+                }
+            }
+            foreach ($rankings->years() as $year) {
+                if (count($rankings->scores(null, null, $year)) >= 5) {
+                    $urls[] = route('ranking', ['bouwjaar', $year]);
+                }
+            }
+            foreach (app(\App\Site\ComparisonService::class)->pairs() as $pair) {
+                $urls[] = route('comparison', \App\Site\ComparisonService::slug(...$pair));
+            }
+
             return view('sitemap', ['urls' => $urls])->render();
         });
 

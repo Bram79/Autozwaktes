@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }}</title>
     <meta name="description" content="{{ $description }}">
+    @if (! empty($robots))
+        <meta name="robots" content="{{ $robots }}">
+    @endif
     <link rel="canonical" href="{{ $canonical ?? url()->current() }}">
     <meta property="og:title" content="{{ $title }}">
     <meta property="og:description" content="{{ $description }}">
@@ -42,6 +45,7 @@
             </a>
             <nav aria-label="Hoofdmenu" class="text-sm font-medium">
                 <a href="{{ route('home') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">Zoeken</a>
+                <a href="{{ route('rankings') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">Ranglijsten</a>
                 <a href="{{ route('apk') }}" class="rounded-full px-4 py-1.5 text-brand-700 transition hover:bg-accent-300 hover:text-brand-900">APK-herinnering</a>
             </nav>
         </div>
