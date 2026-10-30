@@ -3,7 +3,7 @@
         <label for="zoek" class="sr-only">Zoek een merk of model</label>
         <input id="zoek" name="q" type="search" wire:model.live.debounce.250ms="query" autocomplete="off"
                placeholder="Bijvoorbeeld: audi a4 of polo"
-               class="w-full rounded-full border-2 border-white/0 bg-white px-5 py-3 text-brand-900 shadow-lg placeholder:text-slate-500 focus:border-accent-400 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
+               class="w-full rounded-full border-2 border-white/0 bg-white px-5 py-3 text-brand-900 shadow-lg transition-shadow duration-500 ease-lux placeholder:text-slate-500 hover:shadow-xl focus:border-accent-400 focus:outline-none focus:ring-4 focus:ring-accent-300/60">
         <button type="submit" class="btn">Zoek</button>
     </form>
 
