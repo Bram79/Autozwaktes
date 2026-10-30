@@ -59,9 +59,8 @@
     </div>
     <p class="mt-2 text-sm text-slate-600">* Gemiddeld voor de andere modellen op deze site met dezelfde bouwjaren.</p>
 
-    <section class="mt-8" aria-labelledby="checklist">
-        <h2 id="checklist" class="text-xl font-bold">Koopchecklist</h2>
-        <p class="mt-1 text-sm text-slate-700">Let hierop bij het bekijken van een occasion:</p>
+    <x-dropdown title="Koopchecklist" id="checklist">
+        <p class="mt-3 text-sm text-slate-700">Let hierop bij het bekijken van een occasion:</p>
         <ul class="mt-3 space-y-2">
             @foreach ($result['defects']->take(5) as $defect)
                 <li class="flex gap-2">
@@ -70,5 +69,5 @@
                 </li>
             @endforeach
         </ul>
-    </section>
+    </x-dropdown>
 @endif
