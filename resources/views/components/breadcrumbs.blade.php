@@ -17,7 +17,7 @@
                 @if ($loop->last)
                     <span aria-current="page" class="font-medium text-slate-900">{{ $item[0] }}</span>
                 @else
-                    <a href="{{ $item[1] }}" class="text-blue-800 underline underline-offset-2">{{ $item[0] }}</a>
+                    <a href="{{ $item[1] }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">{{ $item[0] }}</a>
                 @endif
             </li>
         @endforeach

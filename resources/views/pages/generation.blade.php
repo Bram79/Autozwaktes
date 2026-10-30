@@ -31,7 +31,7 @@
         [$generation->code, $url],
     ]" />
 
-    <h1 class="text-3xl font-bold">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
+    <h1 class="text-3xl sm:text-4xl">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
@@ -58,7 +58,7 @@
             <h2 id="jaren" class="text-xl font-bold">Per bouwjaar</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($years as $y => $total)
-                    <li><a href="{{ route('year', [$model->brand, $model->slug, $generation->slug, $y]) }}" class="rounded border border-slate-200 px-3 py-1 text-blue-800 hover:bg-slate-50">{{ $name }} {{ $y }}</a></li>
+                    <li><a href="{{ route('year', [$model->brand, $model->slug, $generation->slug, $y]) }}" class="chip">{{ $name }} {{ $y }}</a></li>
                 @endforeach
             </ul>
         </section>
@@ -69,7 +69,7 @@
             <h2 id="generaties" class="text-xl font-bold">Andere generaties</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($siblings as $other)
-                    <li><a href="{{ route('generation', [$model->brand, $model->slug, $other->slug]) }}" class="rounded border border-slate-200 px-3 py-1 text-blue-800 hover:bg-slate-50">{{ $model->name }} {{ $other->code }} ({{ \App\Site\Seo::yearsLabel($other) }})</a></li>
+                    <li><a href="{{ route('generation', [$model->brand, $model->slug, $other->slug]) }}" class="chip">{{ $model->name }} {{ $other->code }} ({{ \App\Site\Seo::yearsLabel($other) }})</a></li>
                 @endforeach
             </ul>
         </section>
@@ -80,7 +80,7 @@
             <h2 id="vergelijkbaar" class="text-xl font-bold">Andere {{ $model->brand->name }}-modellen</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($similar as $other)
-                    <li><a href="{{ route('model', [$model->brand, $other->slug]) }}" class="rounded border border-slate-200 px-3 py-1 text-blue-800 hover:bg-slate-50">{{ $other->name }}</a></li>
+                    <li><a href="{{ route('model', [$model->brand, $other->slug]) }}" class="chip">{{ $other->name }}</a></li>
                 @endforeach
             </ul>
         </section>

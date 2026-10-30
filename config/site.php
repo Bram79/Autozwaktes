@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'name' => 'Autozwaktes.nl',
+    'name' => 'Auto Zwaktes',
 
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),

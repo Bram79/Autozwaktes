@@ -3,7 +3,94 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
+/* Kleuren van Auto Zwaktes: wit, blauw en geel. Pas ze hier aan, dan verandert de hele site mee. */
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-brand-50: #eff6ff;
+    --color-brand-100: #dbeafe;
+    --color-brand-600: #1d4ed8;
+    --color-brand-700: #1e40af;
+    --color-brand-900: #0f1f4d;
+    --color-accent-300: #fde047;
+    --color-accent-400: #facc15;
+    --color-accent-500: #eab308;
+
+    --animate-marquee: marquee 30s linear infinite;
+    --animate-float: float 7s ease-in-out infinite;
+    --animate-float-slow: float 11s ease-in-out infinite reverse;
+
+    @keyframes marquee {
+        to { transform: translateX(-50%); }
+    }
+    @keyframes float {
+        50% { transform: translateY(-24px) rotate(4deg); }
+    }
+}
+
+@layer base {
+    h1 {
+        @apply font-extrabold tracking-tight text-brand-900;
+    }
+    h2 {
+        @apply text-brand-900;
+    }
+}
+
+/* Onderdelen die op meerdere pagina's terugkomen */
+@layer components {
+    .chip {
+        @apply inline-block rounded-full border border-brand-100 bg-white px-4 py-1.5 text-brand-700 shadow-sm transition
+            hover:-translate-y-0.5 hover:border-accent-400 hover:bg-accent-300 hover:text-brand-900 hover:shadow-md
+            focus:outline-none focus:ring-2 focus:ring-brand-600;
+    }
+    .card-link {
+        @apply block rounded-xl border border-brand-100 bg-white px-4 py-3 font-medium text-brand-700 shadow-sm transition
+            hover:-translate-y-1 hover:border-accent-400 hover:shadow-lg hover:shadow-brand-100
+            focus:outline-none focus:ring-2 focus:ring-brand-600;
+    }
+    .btn {
+        @apply inline-block rounded-full bg-accent-400 px-5 py-2 font-semibold text-brand-900 shadow transition
+            hover:-translate-y-0.5 hover:bg-accent-300 hover:shadow-md
+            focus:outline-none focus:ring-2 focus:ring-brand-900 focus:ring-offset-2;
+    }
+}
+
+/* Elementen glijden zacht in beeld bij het scrollen (zie resources/js/app.js) */
+.reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+    transition-delay: calc(var(--i, 0) * 60ms);
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Balkjes in de gebrekkentabel groeien van links naar rechts */
+.bar {
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.is-visible .bar,
+.is-visible.bar {
+    transform: scaleX(1);
+}
+
+/* Geen beweging voor mensen die dat liever uitzetten */
+@media (prefers-reduced-motion: reduce) {
+    .reveal,
+    .bar {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+    .animate-marquee,
+    .animate-float,
+    .animate-float-slow {
+        animation: none;
+    }
 }

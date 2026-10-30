@@ -1,4 +1,4 @@
-# Autozwaktes.nl
+# Auto Zwaktes
 
 APK-gebreken per automodel en bouwjaar, op basis van RDW open data (CC-0).
 

@@ -14,7 +14,7 @@
         <table class="w-full text-left text-sm">
             <caption class="sr-only">Meest voorkomende APK-gebreken</caption>
             <thead>
-                <tr class="border-b-2 border-slate-300">
+                <tr class="border-b-2 border-accent-400">
                     <th scope="col" class="py-2 pr-2">#</th>
                     <th scope="col" class="py-2 pr-4">Gebrek</th>
                     <th scope="col" class="py-2 pr-2 sm:pr-4">Aandeel</th>
@@ -23,13 +23,13 @@
             </thead>
             <tbody>
                 @foreach ($result['defects'] as $i => $defect)
-                    <tr class="border-b border-slate-200 align-top">
+                    <tr class="border-b border-brand-100 align-top transition hover:bg-brand-50">
                         <td class="py-3 pr-2 text-slate-600">{{ $i + 1 }}</td>
                         <td class="py-3 pr-2 sm:pr-4">{{ $defect->description }}</td>
                         <td class="py-3 pr-2 sm:pr-4">
                             <div class="flex items-center gap-2">
-                                <div class="h-3 w-10 shrink-0 rounded bg-slate-200 sm:w-40" aria-hidden="true">
-                                    <div class="h-3 rounded bg-blue-800" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
+                                <div class="bar-wrap h-3 w-10 shrink-0 overflow-hidden rounded-full bg-brand-100 sm:w-40" aria-hidden="true">
+                                    <div class="bar h-3 rounded-full bg-gradient-to-r from-brand-600 to-accent-400" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
                                 </div>
                                 <span class="font-semibold">{{ number_format($defect->percentage, 1, ',', '.') }}%</span>
                             </div>

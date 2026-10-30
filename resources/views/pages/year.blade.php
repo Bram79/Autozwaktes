@@ -17,13 +17,13 @@
         [(string) $year, $url],
     ]" />
 
-    <h1 class="text-3xl font-bold">{{ $name }} uit {{ $year }}: APK-gebreken</h1>
+    <h1 class="text-3xl sm:text-4xl">{{ $name }} uit {{ $year }}: APK-gebreken</h1>
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
             @include('partials.defect-table', ['result' => $result])
 
-            <p class="mt-6"><a href="{{ $genUrl }}" class="text-blue-800 underline underline-offset-2">Alle bouwjaren van de {{ $name }}</a></p>
+            <p class="mt-6"><a href="{{ $genUrl }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">Alle bouwjaren van de {{ $name }}</a></p>
         </div>
         <div class="space-y-4">
             <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" :year="$year" />
@@ -36,7 +36,7 @@
         <ul class="mt-3 flex flex-wrap gap-2">
             @foreach ($years as $y => $total)
                 @if ($y !== $year)
-                    <li><a href="{{ route('year', [$model->brand, $model->slug, $generation->slug, $y]) }}" class="rounded border border-slate-200 px-3 py-1 text-blue-800 hover:bg-slate-50">{{ $y }}</a></li>
+                    <li><a href="{{ route('year', [$model->brand, $model->slug, $generation->slug, $y]) }}" class="chip">{{ $y }}</a></li>
                 @endif
             @endforeach
         </ul>
