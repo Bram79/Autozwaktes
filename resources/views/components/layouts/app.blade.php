@@ -28,7 +28,7 @@
 <body class="bg-white text-slate-900 antialiased">
     <a href="#inhoud" class="sr-only focus:not-sr-only focus:absolute focus:left-2 focus:top-2 focus:z-50 focus:rounded focus:bg-white focus:px-3 focus:py-2 focus:font-semibold focus:text-brand-700 focus:shadow-lg">Ga naar de inhoud</a>
 
-    <div class="overflow-hidden bg-brand-900 py-2 text-sm font-medium text-accent-300" aria-hidden="true">
+    <div class="hidden overflow-hidden bg-brand-900 py-2 sm:block text-sm font-medium text-accent-300" aria-hidden="true">
         <div class="flex w-max animate-marquee gap-12 whitespace-nowrap">
             @for ($i = 0; $i < 2; $i++)
                 <div class="flex gap-12">
