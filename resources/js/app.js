@@ -1,5 +1,4 @@
 import { attachPlateFormatting } from './plate';
-import { attachPointerEffects } from './hero';
 
 // Laat elementen met de klasse "reveal" (en de balkjes) soepel verschijnen zodra ze in beeld komen.
 function observeReveals() {
@@ -94,7 +93,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Streepjes in het kenteken terwijl je typt
 document.addEventListener('DOMContentLoaded', attachPlateFormatting);
-
-// Lichtvlek in de hero en kantelende kaarten (alleen met muis, niet bij minder beweging)
-document.addEventListener('DOMContentLoaded', attachPointerEffects);
-document.addEventListener('livewire:navigated', attachPointerEffects);
