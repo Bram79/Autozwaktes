@@ -77,7 +77,7 @@ class PageController extends Controller
             $urls = [url('/'), route('privacy'), route('apk')];
 
             // only brands that have a page worth indexing: the brand page is noindex without models with numbers
-            foreach (Brand::whereHas('carModels', fn ($q) => $q->withStats())->orderBy('slug')->get() as $brand) {
+            foreach (Brand::withStats()->orderBy('slug')->get() as $brand) {
                 $urls[] = route('brand', $brand);
             }
 
