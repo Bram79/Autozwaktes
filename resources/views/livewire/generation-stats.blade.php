@@ -1,5 +1,5 @@
 <div>
-    <form method="get" class="mb-6 flex flex-wrap items-end gap-4 rounded-2xl border border-brand-100 bg-brand-50 p-4">
+    <form method="get" class="mb-6 flex flex-wrap items-end gap-4 rounded-lg border border-brand-100 bg-brand-50 p-4">
         <div>
             <label for="jaar" class="block text-sm font-medium">Bouwjaar</label>
             <select id="jaar" name="jaar" wire:model.live="year" class="mt-1 min-h-11 rounded-lg border border-slate-500 bg-white px-3 py-2 focus:border-brand-600 focus:ring-2 focus:ring-accent-400">

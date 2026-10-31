@@ -21,18 +21,18 @@
     <section class="mt-6 grid gap-3 sm:grid-cols-2" aria-label="Score per model">
         @foreach ([[$nameA, $scoreA], [$nameB, $scoreB]] as [$cardName, $cardScore])
             @php $wins = $better === $cardName; @endphp
-            <div class="rounded-2xl border-2 {{ $wins ? 'border-accent-400 bg-accent-300/20' : 'border-brand-100 bg-brand-50' }} p-4">
+            <div class="rounded-lg border-2 {{ $wins ? 'border-accent-400 bg-accent-300/20' : 'border-brand-100 bg-brand-50' }} p-4">
                 <div class="flex items-center justify-between gap-2">
-                    <p class="font-bold text-brand-900">{{ $cardName }}</p>
+                    <p class="font-semibold text-brand-900">{{ $cardName }}</p>
                     @if ($wins)<span class="badge-best">Lager</span>@endif
                 </div>
-                <p class="mt-2 text-3xl font-extrabold tabular-nums text-brand-900">{{ $fmt($cardScore) }} <span class="text-sm font-medium text-slate-700">gebreken per 100 auto's</span></p>
+                <p class="mt-2 text-3xl font-semibold tabular-nums text-brand-900">{{ $fmt($cardScore) }} <span class="text-sm font-medium text-ink-soft">gebreken per 100 auto's</span></p>
                 <div class="score-track mt-3" aria-hidden="true"><span class="bar score-fill {{ $wins ? 'score-fill-best' : '' }}" style="--w: {{ round($cardScore / $maxPair * 100) }}%"></span></div>
             </div>
         @endforeach
     </section>
 
-    <div class="mt-6 max-w-3xl space-y-3 text-slate-800">
+    <div class="mt-6 max-w-3xl space-y-3 text-brand-900">
         <p>
             We vergelijken de bouwjaren {{ $first }} tot en met {{ $last }}, de jaren waarin beide auto's veel werden gebouwd.
             De {{ $nameA }} heeft in deze jaren gemiddeld {{ $fmt($scoreA) }} geconstateerde APK-gebreken per 100 auto's, de {{ $nameB }} {{ $fmt($scoreB) }}.
@@ -42,7 +42,7 @@
                 Ze scoren dus precies gelijk.
             @endif
         </p>
-        <p class="text-sm text-slate-600">
+        <p class="text-sm text-ink-soft">
             Gebaseerd op {{ $fmt($result['models'][$a->id]['total'], 0) }} auto's van het model {{ $a->name }} en {{ $fmt($result['models'][$b->id]['total'], 0) }} van het model {{ $b->name }}, uit de RDW-cijfers.
             We vergelijken alleen auto's die ongeveer evenveel kostten toen ze nieuw waren. Gebreken per 100 auto's: elk soort gebrek telt één keer per auto, dus een auto kan meerdere gebreken hebben en het getal kan boven de 100 uitkomen.
             Verschillen in kilometers, onderhoud, gebruik en in de verdeling over bouwjaren en brandstof zijn hierin niet verwerkt: zie het als een indicatie.
@@ -50,12 +50,12 @@
     </div>
 
     <section class="mt-8" aria-labelledby="gebreken">
-        <h2 id="gebreken" class="text-xl font-bold">De meest voorkomende gebreken naast elkaar</h2>
+        <h2 id="gebreken" class="text-xl font-semibold">De meest voorkomende gebreken naast elkaar</h2>
         <div class="mt-3 overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <caption class="sr-only">Percentage auto's met dit gebrek, per model</caption>
                 <thead>
-                    <tr class="border-b-2 border-accent-400">
+                    <tr class="border-b border-brand-600">
                         <th scope="col" class="py-2 pr-4">Gebrek</th>
                         <th scope="col" class="py-2 pr-4 text-right">{{ $nameA }}</th>
                         <th scope="col" class="py-2 text-right">{{ $nameB }}</th>
@@ -67,7 +67,7 @@
                             <td class="py-3 pr-4">{{ \App\Site\DefectText::plain($defect['description']) }}</td>
                             @foreach (['a', 'b'] as $side)
                                 @php $isBetter = $defect['a'] !== $defect['b'] && $defect[$side] === min($defect['a'], $defect['b']); @endphp
-                                <td class="py-3 pr-4 text-right {{ $isBetter ? 'font-bold text-green-800' : '' }} {{ $loop->last ? 'pr-0' : '' }}">
+                                <td class="py-3 pr-4 text-right {{ $isBetter ? 'font-semibold text-green-800' : '' }} {{ $loop->last ? 'pr-0' : '' }}">
                                     {{ $fmt($defect[$side]) }}%@if ($isBetter) <span class="sr-only">(lager is beter)</span>@endif
                                 </td>
                             @endforeach
@@ -76,7 +76,7 @@
                 </tbody>
             </table>
         </div>
-        <p class="mt-2 text-xs text-slate-600">Het percentage is het aandeel auto's waarbij het gebrek minstens één keer is geconstateerd. Groen: het laagste van de twee.</p>
+        <p class="mt-2 text-xs text-ink-soft">Het percentage is het aandeel auto's waarbij het gebrek minstens één keer is geconstateerd. Groen: het laagste van de twee.</p>
     </section>
 
     <section class="mt-10 grid gap-4 md:grid-cols-2" aria-label="Meer over deze auto's">

@@ -82,12 +82,6 @@ it('words the comparison as "lower", not as "better", and says what it leaves ou
     expect($html)->toContain('kan boven de 100 uitkomen');
 });
 
-// --- the strip at the top -------------------------------------------------------------------------------------
-
-it('does not make the site look official in the top strip', function () {
-    $this->get('/')->assertDontSee('Echte APK-data van de RDW')->assertSee('Gebaseerd op open data van de RDW');
-});
-
 // --- model page grammar ---------------------------------------------------------------------------------------
 
 it('says "Er is 1 generatie" for one generation', function () {

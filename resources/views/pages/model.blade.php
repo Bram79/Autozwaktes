@@ -18,7 +18,7 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }}: generaties</h1>
     @unless ($generations->isEmpty())
-        <p class="mt-3 max-w-2xl text-slate-700">{{ $generations->count() === 1 ? 'Er is 1 generatie' : 'Er zijn '.$generations->count().' generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
+        <p class="mt-3 max-w-2xl text-ink-soft">{{ $generations->count() === 1 ? 'Er is 1 generatie' : 'Er zijn '.$generations->count().' generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
     @endunless
 
     {{-- Someone who looked up a plate and ended here (no numbers for that year) still sees the vehicle report first --}}
@@ -28,7 +28,7 @@
     @endif
 
     @if ($generations->isEmpty())
-        <div class="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-5 text-slate-700">
+        <div class="mt-6 panel text-ink-soft">
             <p class="font-semibold text-brand-900">Nog geen cijfers</p>
             <p class="mt-1 text-sm">Voor dit model zijn nog geen cijfers beschikbaar. Kijk bij <a href="{{ route('brand', $model->brand) }}" class="font-medium text-brand-700 underline underline-offset-2">alle {{ $model->brand->name }}-modellen</a>.</p>
         </div>
@@ -59,9 +59,9 @@
 
     @php $suggestions = app(\App\Site\ComparisonService::class)->suggestions($model); @endphp
     @if ($suggestions)
-        <section class="mt-10 rounded-2xl border border-brand-100 bg-brand-50 p-5" aria-labelledby="vergelijken">
-            <h2 id="vergelijken" class="text-xl font-bold">Vergelijk de {{ $name }} met</h2>
-            <p class="mt-1 text-sm text-slate-700">Zie welke van de twee bij de APK de minste gebreken heeft.</p>
+        <section class="mt-10 panel" aria-labelledby="vergelijken">
+            <h2 id="vergelijken" class="text-xl font-semibold">Vergelijk de {{ $name }} met</h2>
+            <p class="mt-1 text-sm text-ink-soft">Zie welke van de twee bij de APK de minste gebreken heeft.</p>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($suggestions as $suggestion)
                     <li><a href="{{ route('comparison', $suggestion['slug']) }}" class="chip">{{ $suggestion['name'] }}</a></li>
@@ -72,7 +72,7 @@
 
     @if ($similar->isNotEmpty())
         <section class="mt-10" aria-labelledby="meer">
-            <h2 id="meer" class="text-xl font-bold">Andere {{ $model->brand->name }}-modellen</h2>
+            <h2 id="meer" class="text-xl font-semibold">Andere {{ $model->brand->name }}-modellen</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($similar as $other)
                     <li><a href="{{ route('model', [$model->brand, $other->slug]) }}" class="chip">{{ $other->name }}</a></li>

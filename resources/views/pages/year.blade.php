@@ -35,7 +35,7 @@
     <h1 class="text-3xl sm:text-4xl">{{ $name }} uit {{ $year }}: APK-gebreken</h1>
 
     @if ($year > \App\Site\RankingService::lastInspectedYear())
-        <p class="mt-4 rounded-2xl border border-accent-400 bg-accent-300/20 p-4 text-sm text-brand-900">
+        <p class="mt-4 rounded-lg border border-accent-400 bg-accent-300/20 p-4 text-sm text-brand-900">
             Auto's van bouwjaar {{ $year }} hebben nog geen APK gehad (de eerste keuring is na {{ config('site.first_apk_after_years') }} jaar). Er zijn dus nog geen APK-gebreken om te laten zien. Bekijk de bouwjaren hieronder voor auto's die wel een APK hebben gehad.
         </p>
     @endif
@@ -48,7 +48,7 @@
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
             @if ($year <= \App\Site\RankingService::lastInspectedYear())
-                <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
+                <h2 class="mb-3 text-xl font-semibold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
                 @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
 
                 @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])
@@ -67,7 +67,7 @@
     </div>
 
     <section class="mt-10" aria-labelledby="jaren">
-        <h2 id="jaren" class="text-xl font-bold">Andere bouwjaren</h2>
+        <h2 id="jaren" class="text-xl font-semibold">Andere bouwjaren</h2>
         <ul class="mt-3 flex flex-wrap gap-2">
             @foreach ($years as $y => $total)
                 @if ($y !== $year)

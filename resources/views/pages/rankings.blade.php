@@ -6,7 +6,7 @@
     <x-breadcrumbs :items="[['Home', route('home')], ['Ranglijsten', route('rankings')]]" />
 
     <h1 class="text-3xl sm:text-4xl">Ranglijsten: de minste en meeste APK-gebreken</h1>
-    <p class="mt-3 max-w-2xl text-slate-700">Welke generaties hebben bij de APK het minst vaak gebreken? Elke lijst rangschikt auto's op het aantal geconstateerde gebreken per 100 auto's. Hoe lager, hoe beter.</p>
+    <p class="mt-3 max-w-2xl text-ink-soft">Welke generaties hebben bij de APK het minst vaak gebreken? Elke lijst rangschikt auto's op het aantal geconstateerde gebreken per 100 auto's. Hoe lager, hoe beter.</p>
 
     <p class="mt-6"><a href="{{ route('ranking', ['alles']) }}" class="btn">Alle auto's bij elkaar</a></p>
 

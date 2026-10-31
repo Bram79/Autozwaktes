@@ -8,11 +8,11 @@
     <article class="max-w-3xl space-y-8 leading-relaxed">
         <header>
             <h1 class="text-3xl sm:text-4xl">Privacyverklaring</h1>
-            <p class="mt-2 text-slate-600">Laatst bijgewerkt: 31 oktober 2026</p>
+            <p class="mt-2 text-ink-soft">Laatst bijgewerkt: 31 oktober 2026</p>
         </header>
 
         <section class="space-y-2" aria-labelledby="kort">
-            <h2 id="kort" class="text-xl font-bold">In het kort</h2>
+            <h2 id="kort" class="text-xl font-semibold">In het kort</h2>
             <p>Auto Zwaktes vraagt je geen account of naam. Je e-mailadres en kenteken vragen we alleen als je een APK-herinnering aanvraagt. Het kenteken dat je invult om een auto op te zoeken, bewaren we niet.</p>
             @if ($ads)
                 <p>Advertentie- of volgcookies plaatsen we alleen met jouw toestemming, en we gebruiken geen statistiekdienst die je volgt.</p>
@@ -23,7 +23,7 @@
         </section>
 
         <section class="space-y-2" aria-labelledby="verantwoordelijke">
-            <h2 id="verantwoordelijke" class="text-xl font-bold">Wie is verantwoordelijk</h2>
+            <h2 id="verantwoordelijke" class="text-xl font-semibold">Wie is verantwoordelijk</h2>
             @if (config('site.operator_name'))
                 <p>Auto Zwaktes wordt beheerd door {{ config('site.operator_name') }}@if (config('site.operator_kvk')) (KvK-nummer {{ config('site.operator_kvk') }})@endif. Die is verantwoordelijk voor de gegevens die op deze pagina staan.</p>
             @endif
@@ -33,25 +33,25 @@
         </section>
 
         <section class="space-y-2" aria-labelledby="kenteken">
-            <h2 id="kenteken" class="text-xl font-bold">Zoeken op kenteken</h2>
+            <h2 id="kenteken" class="text-xl font-semibold">Zoeken op kenteken</h2>
             <p>Als je een kenteken invult, sturen we dat naar de open data van de RDW om te zien om welke auto het gaat. Daarna sturen we je door naar de pagina met de zwakke punten van dat model.</p>
             <p>We bewaren je kenteken niet en schrijven het ook niet in onze logbestanden. Om de site snel te houden onthouden we de openbare modelgegevens (merk, model, bouwjaar en catalogusprijs) maximaal 24 uur, zonder kenteken, onder een sleutel die niemand zonder onze geheime sleutel kan terugrekenen.</p>
             <p>Verder onthouden we 30 minuten in je sessie dat je via het zoeken op kenteken kwam, het model en bouwjaar van die auto en wat de catalogusprijs (nieuwprijs) ervan is (zonder het kenteken zelf), zodat we je die prijs op de volgende pagina's kunnen blijven tonen en je een passende partnerlink kunnen tonen.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="apk">
-            <h2 id="apk" class="text-xl font-bold">APK-herinnering</h2>
+            <h2 id="apk" class="text-xl font-semibold">APK-herinnering</h2>
             <p>Als je een APK-herinnering aanvraagt, bewaren we je e-mailadres, je kenteken en de vervaldatum van de APK (die halen we uit de open data van de RDW). We gebruiken dit alleen om je elk jaar één mail te sturen ongeveer 30 dagen voordat de APK verloopt, zolang je herinnering loopt. De rechtsgrond is jouw toestemming. Staat er in de herinneringsmail een partnerlink, dan staat die duidelijk aangeduid als "Advertentie · Partnerlink"; je e-mailadres of kenteken gaat daarbij niet naar de partner.</p>
             <p>Dit werkt met dubbele bevestiging: we sturen eerst een mail met een bevestigingslink. Bevestig je niet binnen een week, dan verwijderen we je gegevens. Onderaan elke mail staat een link waarmee je je meteen uitschrijft; dan verwijderen we je e-mailadres en kenteken direct uit onze database. Is de APK meer dan een jaar verlopen zonder dat er een nieuwe datum bij de RDW staat (de auto is dan waarschijnlijk verkocht of gesloopt), dan verwijderen we je gegevens ook automatisch.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="cookies">
-            <h2 id="cookies" class="text-xl font-bold">Cookies</h2>
+            <h2 id="cookies" class="text-xl font-semibold">Cookies</h2>
             <p>De site gebruikt functionele cookies: een sessiecookie en een beveiligingscookie die nodig zijn om formulieren en de zoekfunctie te laten werken, en een cookie die onthoudt wat je in de cookiebanner koos. Daarvoor is geen toestemming nodig.</p>
             <table class="w-full text-left text-sm">
                 <caption class="sr-only">De cookies van deze site</caption>
                 <thead>
-                    <tr class="border-b-2 border-accent-400">
+                    <tr class="border-b border-brand-600">
                         <th scope="col" class="py-2 pr-4">Cookie</th>
                         <th scope="col" class="py-2 pr-4">Waarvoor</th>
                         <th scope="col" class="py-2">Hoe lang</th>
@@ -79,18 +79,18 @@
         </section>
 
         <section class="space-y-2" aria-labelledby="logs">
-            <h2 id="logs" class="text-xl font-bold">Technische gegevens</h2>
+            <h2 id="logs" class="text-xl font-semibold">Technische gegevens</h2>
             <p>Zodra je de site opent, maken we een sessie: een willekeurig nummer in een cookie, zonder je IP-adres of browser. Die bewaren we maximaal 2 uur, voor de werking en de beveiliging van de site. Onze server en hostingpartij leggen daarnaast tijdelijk technische gegevens vast, zoals je IP-adres en welke pagina je opvroeg, om storingen op te lossen en misbruik tegen te gaan.</p>
             <p>Bij het zoeken op kenteken en het aanvragen van een herinnering gebruiken we je IP-adres ongeveer één minuut om te veel verzoeken achter elkaar te voorkomen. Die technische regel wordt binnen een uur opgeruimd. Als je een herinnering aanvraagt, bewaren we daarnaast een uur lang een onleesbare code van je e-mailadres (geen leesbaar adres), zodat niemand je mailbox met aanvragen kan volstuuren. Foutmeldingen in ons logbestand bevatten geen e-mailadres of kenteken.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="affiliate">
-            <h2 id="affiliate" class="text-xl font-bold">Affiliate-links</h2>
+            <h2 id="affiliate" class="text-xl font-semibold">Affiliate-links</h2>
             <p>Op sommige pagina's staan links naar andere websites, bijvoorbeeld voor een kentekenrapport of een verzekering. Als je daarop klikt en iets afneemt, ontvangen wij een vergoeding. Voor jou verandert de prijs niet. We tellen hoe vaak er op zo'n link wordt geklikt, per partner en per pagina, zonder IP-adres of andere gegevens waarmee je te herkennen bent. De partner krijgt van ons het merk, model en bouwjaar van de pagina waar je vandaan komt, nooit je kenteken. Zodra je op de link klikt, gelden de privacyregels en cookies van die website.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="delen">
-            <h2 id="delen" class="text-xl font-bold">Met wie delen we gegevens</h2>
+            <h2 id="delen" class="text-xl font-semibold">Met wie delen we gegevens</h2>
             <ul class="list-disc space-y-1 pl-5">
                 <li><strong>RDW:</strong> krijgt het kenteken dat je opzoekt, en voor een APK-herinnering een controle van de vervaldatum zodra die bijna verstrijkt (staat er nog geen datum, dan eens per week). De RDW ziet daarbij het adres van onze server, niet het jouwe.</li>
                 <li><strong>Onze hostingpartij:</strong> de server waarop de site en de database staan. Zij verwerken alle gegevens in deze verklaring namens ons.</li>
@@ -104,12 +104,12 @@
         </section>
 
         <section class="space-y-2" aria-labelledby="bewaren">
-            <h2 id="bewaren" class="text-xl font-bold">Hoe lang bewaren we gegevens</h2>
+            <h2 id="bewaren" class="text-xl font-semibold">Hoe lang bewaren we gegevens</h2>
             <div class="overflow-x-auto">
                 <table class="w-full text-left text-sm">
                     <caption class="sr-only">Bewaartermijnen</caption>
                     <thead>
-                        <tr class="border-b-2 border-accent-400">
+                        <tr class="border-b border-brand-600">
                             <th scope="col" class="py-2 pr-4">Gegeven</th>
                             <th scope="col" class="py-2 pr-4">Waarvoor</th>
                             <th scope="col" class="py-2 pr-4">Grondslag</th>
@@ -143,12 +143,12 @@
         </section>
 
         <section class="space-y-2" aria-labelledby="bron">
-            <h2 id="bron" class="text-xl font-bold">Waar de cijfers vandaan komen</h2>
+            <h2 id="bron" class="text-xl font-semibold">Waar de cijfers vandaan komen</h2>
             <p>De cijfers komen uit de open data van de RDW (CC-0) en gaan over voertuigen, niet over personen. Auto Zwaktes is een onafhankelijke website en niet gelieerd aan de overheid of de RDW.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="rechten">
-            <h2 id="rechten" class="text-xl font-bold">Jouw rechten</h2>
+            <h2 id="rechten" class="text-xl font-semibold">Jouw rechten</h2>
             <p>Je mag vragen welke gegevens we van je hebben (inzage), ze laten corrigeren of laten verwijderen, de verwerking laten beperken en je gegevens laten overdragen. Je hebt het recht van bezwaar tegen verwerking die we op ons gerechtvaardigd belang baseren. Je kunt je toestemming op elk moment intrekken, bijvoorbeeld door je uit te schrijven via de link in een mail of door je cookie-instellingen aan te passen. Omdat we vrijwel niets van bezoekers bewaren, zal een verzoek meestal weinig opleveren.</p>
             <p>Mail je verzoek naar het contactadres hierboven. Ben je niet tevreden, dan kun je een klacht indienen bij de <a href="https://autoriteitpersoonsgegevens.nl" class="text-brand-700 underline underline-offset-2" rel="noopener">Autoriteit Persoonsgegevens</a>.</p>
         </section>
