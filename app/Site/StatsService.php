@@ -21,7 +21,7 @@ class StatsService
      */
     public function topDefects(Generation $generation, ?int $year = null, ?string $fuel = null): array
     {
-        $key = "stats:top:{$generation->id}:".($year ?? 'all').':'.($fuel ?? 'all');
+        $key = 'stats:top:'.RankingService::lastInspectedYear().":{$generation->id}:".($year ?? 'all').':'.($fuel ?? 'all');
 
         // only plain arrays go into the cache (objects can't be unserialized from it)
         $cached = Cache::rememberForever($key, function () use ($generation, $year, $fuel) {
@@ -76,7 +76,7 @@ class StatsService
      */
     public function comparison(Generation $generation, ?int $year = null): array
     {
-        return Cache::rememberForever("stats:compare:{$generation->id}:".($year ?? 'all'), fn () => $this->calculateComparison($generation, $year));
+        return Cache::rememberForever('stats:compare:'.RankingService::lastInspectedYear().":{$generation->id}:".($year ?? 'all'), fn () => $this->calculateComparison($generation, $year));
     }
 
     /** Average catalogue price (the new price according to the RDW) of a generation or one build year, if the RDW has enough prices. */
@@ -122,7 +122,7 @@ class StatsService
     private function calculateComparison(Generation $generation, ?int $year): array
     {
         $none = ['enough_data' => false, 'total' => 0, 'weak' => [], 'strong' => []];
-        $range = $this->yearRange($generation);
+        $range = $this->inspectedRange($generation);
 
         $scope = function ($query, string $table) use ($range, $year) {
             $query->whereBetween("{$table}.build_year", $range);
@@ -204,10 +204,19 @@ class StatsService
         return [$generation->year_from, $generation->year_to ?? (int) date('Y')];
     }
 
+    /**
+     * The build years of a generation that have had an APK. Newer cars have no defects yet, and counting them
+     * would pull every percentage down (a new Golf generation has thousands of cars that were never inspected).
+     */
+    public function inspectedRange(Generation $generation): array
+    {
+        return [$generation->year_from, min($generation->year_to ?? (int) date('Y'), RankingService::lastInspectedYear())];
+    }
+
     private function calculateTopDefects(Generation $generation, ?int $year, ?string $fuel): array
     {
         $apply = function ($query) use ($generation, $year, $fuel) {
-            $query->whereBetween('build_year', $this->yearRange($generation));
+            $query->whereBetween('build_year', $this->inspectedRange($generation));
             $year && $query->where('build_year', $year);
             $fuel && $query->where('fuel', $fuel);
 
@@ -254,7 +263,7 @@ class StatsService
 
         $apply = function ($query) use ($generation, $year, $fuel) {
             $query->where('car_model_id', '!=', $generation->car_model_id)
-                ->whereBetween('build_year', $this->yearRange($generation));
+                ->whereBetween('build_year', $this->inspectedRange($generation));
             $year && $query->where('build_year', $year);
             $fuel && $query->where('fuel', $fuel);
 

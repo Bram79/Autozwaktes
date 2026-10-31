@@ -91,7 +91,11 @@ class PageController extends Controller
 
                 foreach ($generations as $generation) {
                     $urls[] = route('generation', [$model->brand, $model->slug, $generation->slug]);
+                    // a build year that has had no APK yet has no numbers: not worth a place in the index
                     foreach (array_keys($this->stats->years($generation)) as $year) {
+                        if ($year > RankingService::lastInspectedYear()) {
+                            continue;
+                        }
                         $urls[] = route('year', [$model->brand, $model->slug, $generation->slug, $year]);
                     }
                 }

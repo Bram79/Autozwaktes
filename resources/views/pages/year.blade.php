@@ -7,7 +7,8 @@
 <x-layouts.app
     :title="$name.' ('.$year.'): APK-gebreken en zwakke punten'"
     :description="'De meest voorkomende APK-gebreken bij de '.$name.' uit '.$year.', met percentages en een koopchecklist.'"
-    :canonical="$url">
+    :canonical="$url"
+    :robots="$year > \App\Site\RankingService::lastInspectedYear() ? 'noindex,follow' : null">
 
     <x-breadcrumbs :items="[
         ['Home', route('home')],
@@ -21,7 +22,7 @@
 
     @if ($year > \App\Site\RankingService::lastInspectedYear())
         <p class="mt-4 rounded-2xl border border-accent-400 bg-accent-300/20 p-4 text-sm text-brand-900">
-            Auto's van bouwjaar {{ $year }} hebben nog geen APK gehad (de eerste keuring is na {{ config('site.first_apk_after_years') }} jaar). Wat je hieronder ziet, zijn dus nog geen gebreken van een eerste APK en de cijfers zijn nog niet te vergelijken met oudere auto's.
+            Auto's van bouwjaar {{ $year }} hebben nog geen APK gehad (de eerste keuring is na {{ config('site.first_apk_after_years') }} jaar). Er zijn dus nog geen APK-gebreken om te laten zien. Bekijk de bouwjaren hieronder voor auto's die wel een APK hebben gehad.
         </p>
     @endif
 
@@ -32,10 +33,12 @@
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
-            <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
-            @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
+            @if ($year <= \App\Site\RankingService::lastInspectedYear())
+                <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
+                @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
 
-            @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])
+                @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])
+            @endif
 
             <p class="mt-6"><a href="{{ $genUrl }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">Alle bouwjaren van de {{ $name }}</a></p>
         </div>
