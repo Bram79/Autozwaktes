@@ -1,6 +1,6 @@
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading">Welkom bij het beheer van Auto Zwaktes</x-slot>
+        <x-slot name="heading">Welkom bij het beheer van {{ config('site.name') }}</x-slot>
         <x-slot name="description">De cijfers komen automatisch van de RDW. Jij beheert wat erbij hoort: teksten, namen en affiliate-links.</x-slot>
 
         <ol class="grid gap-4 md:grid-cols-3">

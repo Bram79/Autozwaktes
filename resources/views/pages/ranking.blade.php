@@ -17,7 +17,7 @@
     };
 @endphp
 <x-layouts.app
-    :title="$title.' | Auto Zwaktes'"
+    :title="$title.' | '.config('site.name')"
     :description="$intro.' Gebaseerd op '.number_format(array_sum(array_column($rows, 'total')), 0, ',', '.').' voertuigen uit de RDW-cijfers.'"
     :canonical="$url"
     :robots="$count < 5 ? 'noindex,follow' : null">

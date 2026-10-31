@@ -6,7 +6,7 @@
         $popular = collect();
     }
 @endphp
-<x-layouts.app title="Pagina niet gevonden | Auto Zwaktes" description="Deze pagina bestaat niet (meer). Zoek een auto of bekijk de populaire modellen." robots="noindex,follow">
+<x-layouts.app :title="'Pagina niet gevonden | '.config('site.name')" description="Deze pagina bestaat niet (meer). Zoek een auto of bekijk de populaire modellen." robots="noindex,follow">
     <div class="max-w-2xl">
         <p class="text-sm font-semibold uppercase tracking-wide text-brand-700">Fout 404</p>
         <h1 class="mt-1 text-3xl sm:text-4xl">Deze pagina bestaat niet</h1>

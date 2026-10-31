@@ -1,4 +1,4 @@
-# Auto Zwaktes
+# Nuvik
 
 > Live gaan? Volg de checklist in [docs/LIVEGANG.md](docs/LIVEGANG.md) en `.env.production.example`.
 

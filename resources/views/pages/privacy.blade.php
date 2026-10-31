@@ -1,7 +1,7 @@
 @php $ads = config('site.ads.enabled') || config('site.consent_banner'); @endphp
 <x-layouts.app
-    title="Privacyverklaring | Auto Zwaktes"
-    description="Welke gegevens Auto Zwaktes verwerkt, waarom, hoe lang we ze bewaren en welke rechten je hebt.">
+    :title="'Privacyverklaring | '.config('site.name')"
+    :description="'Welke gegevens '.config('site.name').' verwerkt, waarom, hoe lang we ze bewaren en welke rechten je hebt.'">
 
     <x-breadcrumbs :items="[['Home', route('home')], ['Privacy', route('privacy')]]" />
 
@@ -13,7 +13,7 @@
 
         <section class="space-y-2" aria-labelledby="kort">
             <h2 id="kort" class="text-xl font-semibold">In het kort</h2>
-            <p>Auto Zwaktes vraagt je geen account of naam. Je e-mailadres en kenteken vragen we alleen als je een APK-herinnering aanvraagt. Het kenteken dat je invult om een auto op te zoeken, bewaren we niet.</p>
+            <p>{{ config('site.name') }} vraagt je geen account of naam. Je e-mailadres en kenteken vragen we alleen als je een APK-herinnering aanvraagt. Het kenteken dat je invult om een auto op te zoeken, bewaren we niet.</p>
             @if ($ads)
                 <p>Advertentie- of volgcookies plaatsen we alleen met jouw toestemming, en we gebruiken geen statistiekdienst die je volgt.</p>
             @else
@@ -25,7 +25,7 @@
         <section class="space-y-2" aria-labelledby="verantwoordelijke">
             <h2 id="verantwoordelijke" class="text-xl font-semibold">Wie is verantwoordelijk</h2>
             @if (config('site.operator_name'))
-                <p>Auto Zwaktes wordt beheerd door {{ config('site.operator_name') }}@if (config('site.operator_kvk')) (KvK-nummer {{ config('site.operator_kvk') }})@endif. Die is verantwoordelijk voor de gegevens die op deze pagina staan.</p>
+                <p>{{ config('site.name') }} wordt beheerd door {{ config('site.operator_name') }}@if (config('site.operator_kvk')) (KvK-nummer {{ config('site.operator_kvk') }})@endif. Die is verantwoordelijk voor de gegevens die op deze pagina staan.</p>
             @endif
             @if (config('site.contact_email'))
                 <p>Vragen over privacy of je gegevens? Mail naar <a href="mailto:{{ config('site.contact_email') }}" class="text-brand-700 underline underline-offset-2">{{ config('site.contact_email') }}</a>.</p>
@@ -144,7 +144,7 @@
 
         <section class="space-y-2" aria-labelledby="bron">
             <h2 id="bron" class="text-xl font-semibold">Waar de cijfers vandaan komen</h2>
-            <p>De cijfers komen uit de open data van de RDW (CC-0) en gaan over voertuigen, niet over personen. Auto Zwaktes is een onafhankelijke website en niet gelieerd aan de overheid of de RDW.</p>
+            <p>De cijfers komen uit de open data van de RDW (CC-0) en gaan over voertuigen, niet over personen. {{ config('site.name') }} is een onafhankelijke website en niet gelieerd aan de overheid of de RDW.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="rechten">

@@ -93,7 +93,7 @@ class WikidataClient
     private function request(): PendingRequest
     {
         return Http::withHeaders([
-            'User-Agent' => 'AutoZwaktes/1.0 (https://github.com/Bram79/Autozwaktes)',
+            'User-Agent' => config('site.name').'/1.0 (https://github.com/Bram79/Autozwaktes)',
             'Accept' => 'application/json',
         ])->timeout(30)->retry(2, 1000, throw: false);
     }

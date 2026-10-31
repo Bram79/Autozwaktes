@@ -1,4 +1,4 @@
-# Auto Zwaktes
+# Nuvik
 
 Laravel 13 + Livewire 4 + Tailwind 4 + Filament 5 (admin) + Pest 4, PHP 8.4. De site laat per automodel, generatie
 en bouwjaar de meest voorkomende APK-gebreken zien, berekend uit RDW open data (CC-0). Eigenaar is een student:
