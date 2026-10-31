@@ -2,18 +2,21 @@
 
 namespace App\Rdw;
 
+use App\Site\RateGate;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Small wrapper around the RDW open data (Socrata) API.
  */
 class RdwClient
 {
+    /** The RDW's name for the vehicle type that this site is about (not vans, motorbikes or trucks). */
+    public const PASSENGER_CAR = 'Personenauto';
+
     /** @return array<int, array<string, string>> */
     /** @param string[] $extraWhere extra SoQL conditions, joined with AND */
     public function fetchPage(string $dataset, int $offset, int $limit, array $extraWhere = []): array
@@ -63,7 +66,7 @@ class RdwClient
         for ($offset = 0; ; $offset += 50000) {
             $page = $this->get("/resource/{$config['id']}.json", [
                 '$select' => 'handelsbenaming,type,date_extract_y(datum_eerste_toelating_dt) as jaar,count(*) as n',
-                '$where' => "voertuigsoort = 'Personenauto' AND merk = '".str_replace("'", "''", $rdwBrand)."'",
+                '$where' => "voertuigsoort = '".self::PASSENGER_CAR."' AND merk = '".str_replace("'", "''", $rdwBrand)."'",
                 '$group' => 'handelsbenaming,type,jaar',
                 '$order' => 'handelsbenaming,type,jaar',
                 '$limit' => 50000,
@@ -89,7 +92,7 @@ class RdwClient
 
         return $this->get("/resource/{$config['id']}.json", [
             '$select' => 'merk,count(*) as n',
-            '$where' => "voertuigsoort = 'Personenauto'",
+            '$where' => "voertuigsoort = '".self::PASSENGER_CAR."'",
             '$group' => 'merk',
             '$order' => 'n DESC',
             '$limit' => $limit,
@@ -107,7 +110,7 @@ class RdwClient
 
         return $this->get("/resource/{$config['id']}.json", [
             '$select' => 'handelsbenaming,date_extract_y(datum_eerste_toelating_dt) as jaar,count(catalogusprijs) as n,avg(catalogusprijs) as prijs',
-            '$where' => "voertuigsoort = 'Personenauto' AND catalogusprijs > 0 AND merk = '".str_replace("'", "''", $rdwBrand)."'",
+            '$where' => "voertuigsoort = '".self::PASSENGER_CAR."' AND catalogusprijs > 0 AND merk = '".str_replace("'", "''", $rdwBrand)."'",
             '$group' => 'handelsbenaming,jaar',
             '$order' => 'handelsbenaming,jaar',
             '$limit' => 50000,
@@ -124,10 +127,9 @@ class RdwClient
     {
         // One limit for all visitors together, so that a flood of lookups cannot get our server blocked by the RDW.
         // Visitors see the normal "RDW not reachable" message.
-        if (RateLimiter::tooManyAttempts('rdw-lookups', (int) config('site.limits.rdw_lookups_per_minute'))) {
+        if (! RateGate::attempt('rdw-lookups', (int) config('site.limits.rdw_lookups_per_minute'))) {
             throw new RdwUnavailableException('Too many RDW lookups in the last minute');
         }
-        RateLimiter::hit('rdw-lookups', 60);
 
         $config = $this->datasetConfig('vehicles');
 

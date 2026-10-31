@@ -7,6 +7,7 @@ use App\Models\ApkReminder;
 use App\Rdw\RdwClient;
 use App\Rdw\RdwUnavailableException;
 use App\Site\PlateLookup;
+use App\Site\RateGate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -26,11 +27,10 @@ class ApkReminderController extends Controller
     /** Save the request and send the confirmation mail. The answer is the same whether or not the address is already known. */
     public function store(Request $request, RdwClient $rdw)
     {
-        $key = 'apk-reminder:'.$request->ip();
-        if (RateLimiter::tooManyAttempts($key, 5)) {
+        // The limit comes before the validation on purpose: also a form that is filled in wrongly again and again counts.
+        if (! RateGate::attempt('apk-reminder:'.$request->ip(), (int) config('site.limits.apk_request_per_minute'))) {
             return back()->withInput($request->except('kenteken'))->withErrors(['email' => 'Je probeert het te vaak. Wacht een minuut en probeer het opnieuw.']);
         }
-        RateLimiter::hit($key, 60);
 
         $data = $request->validate([
             'email' => ['required', 'email:rfc', 'max:190'],

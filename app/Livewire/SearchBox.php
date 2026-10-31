@@ -3,8 +3,8 @@
 namespace App\Livewire;
 
 use App\Models\CarModel;
+use App\Site\RateGate;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -33,13 +33,11 @@ class SearchBox extends Component
             return collect();
         }
 
-        $key = 'search:'.request()->ip();
-        if (RateLimiter::tooManyAttempts($key, (int) config('site.limits.search_per_minute'))) {
+        if (! RateGate::attempt('search:'.request()->ip(), (int) config('site.limits.search_per_minute'))) {
             $this->tooFast = true;
 
             return collect();
         }
-        RateLimiter::hit($key, 60);
 
         $models = CarModel::withStats()->with('brand')->limit(10);
 

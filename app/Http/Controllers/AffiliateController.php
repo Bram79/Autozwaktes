@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\AffiliateClick;
 use App\Models\PartsCategory;
 use App\Site\AffiliateLink;
+use App\Site\RateGate;
 use App\Support\Bots;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\RateLimiter;
 
 class AffiliateController extends Controller
 {
@@ -64,12 +64,6 @@ class AffiliateController extends Controller
             return false;
         }
 
-        $key = 'go:'.$request->ip();
-        if (RateLimiter::tooManyAttempts($key, (int) config('site.limits.go_per_minute'))) {
-            return false;
-        }
-        RateLimiter::hit($key, 60);
-
-        return true;
+        return RateGate::attempt('go:'.$request->ip(), (int) config('site.limits.go_per_minute'));
     }
 }
