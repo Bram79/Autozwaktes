@@ -30,7 +30,7 @@ Draai alles met `php artisan ...` vanuit de projectroot. De database draait in D
 
 ### Overig
 - `advice:draft` – optionele AI-concepten voor koopadvies (uit; `AI_ADVICE_ENABLED`).
-- `apk:remind` – verstuurt APK-herinneringen. `backup:database` – database-backup. `site:check` – is de site klaar voor livegang?
+- `apk:remind` – verstuurt APK-herinneringen. `backup:database` – database-backup (versleuteld als `BACKUP_PASSPHRASE` is gezet). `cache:clean-expired` – ruimt verlopen cache-rijen en rate-limits op (elk uur, via de scheduler). `site:check` – is de site klaar voor livegang?
 - Livegang: zie `docs/LIVEGANG.md`; update op de server met `bash scripts/deploy.sh`.
 
 ## Testen
@@ -38,7 +38,7 @@ Draai alles met `php artisan ...` vanuit de projectroot. De database draait in D
 - Bij een bugfix schrijf je eerst een test die de bug laat zien en faalt; pas daarna los je de bug op.
 - Draai na elke wijziging de relevante tests. Draai vóór elke commit `php artisan test` (alles) en `./vendor/bin/pint --test`.
 - Een taak is pas klaar als alle tests groen zijn. Pas nooit een test aan om hem te laten slagen: los het echte probleem op of vraag het mij.
-- Tests praten nooit met internet: gebruik `Http::fake()` voor RDW, Wikidata en Anthropic, `Mail::fake()` voor mail, `Process::fake()` voor `mysqldump`.
+- Tests praten nooit met internet: gebruik `Http::fake()` voor RDW, Wikidata en Anthropic (een niet-gefakete aanvraag laat de test falen, via `Http::preventStrayRequests()` in `tests/TestCase.php`), `Mail::fake()` voor mail, `Process::fake()` voor `mysqldump`.
 - Feature-tests gebruiken `RefreshDatabase` (staat in `tests/Pest.php`); begin ze met `$this->withoutVite()`.
 - Gebruik geen tijdelijke debug-tests in de repo; verwijder ze na gebruik.
 
@@ -57,6 +57,7 @@ Draai alles met `php artisan ...` vanuit de projectroot. De database draait in D
 - Geen zware queries tijdens een paginabezoek: lees uit de voorberekende tabellen (`vehicle_counts`, `defect_stats`, `model_prices`, `vehicle_types`) en cache via `StatsService`/`RankingService`/`ComparisonService`.
 - In de cache alleen gewone arrays, geen Eloquent-modellen of objecten (ze komen kapot terug). Cache legen gebeurt in `rdw:calculate` en bij het opslaan van modellen die `FlushesSiteCache` gebruiken.
 - Voorkom N+1: gebruik `with()` bij lijsten. Nieuwe lijst met modellen? Controleer het aantal queries.
+- Limieten ("zoveel per minuut") staan in `config/site.php` onder `limits` en lopen via `App\Site\RateGate`; zet geen losse getallen in controllers.
 - Houd controllers dun: logica hoort in `app/Site`, `app/Rdw`, `app/Generations`, `app/Ai` of `app/Wikidata`.
 - Een pad in de URL dat een merk kan zijn, moet in `$reserved` in `routes/web.php` als het een eigen route heeft.
 - Vraag mij eerst voordat je een nieuw Composer- of npm-pakket toevoegt.

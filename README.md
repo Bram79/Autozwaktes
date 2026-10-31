@@ -22,6 +22,7 @@ Draai altijd een queue worker (`php artisan queue:work`) naast de commando's.
 | `php artisan apk:remind [--days=30]` | Stuurt de APK-herinneringen die aan de beurt zijn en verwijdert onbevestigde aanvragen (ouder dan 7 dagen). Staat dagelijks om 08:00 in de scheduler. Zet in `.env` een echte mailserver (`MAIL_MAILER=smtp` en de rest), anders komt alles alleen in het log. |
 | `php artisan rdw:brands [--top=20] [--add]` | Toont de grootste personenautomerken in de RDW-data en welke nog ontbreken; met `--add` worden ze toegevoegd. Daarna: `rdw:update` (uren), `rdw:discover`, `rdw:types`, `generations:propose`. |
 | `php artisan site:check` | Controleert of de site klaar is voor livegang (instellingen, database, mail, data, affiliate-links) en zegt wat nog moet. |
+| `php artisan cache:clean-expired` | Ruimt verlopen rijen uit de cache-tabel op (ook de tellers voor de limieten). Draait elk uur via de scheduler. |
 | `php artisan backup:database [--keep=14]` | Gecomprimeerde kopie van de database in `storage/app/backups`, zonder de grote importtabellen. Draait 's nachts automatisch op de live server. |
 | `php artisan db:seed --class=ModelFixesSeeder` | Ruimt de modellen van `rdw:discover` op: voegt dubbelen samen, past namen aan en zet echte generaties bij de populairste modellen (jaartallen zijn een eerste gok, controleer ze). Draai dit na `rdw:discover` en vóór `rdw:calculate`. |
 

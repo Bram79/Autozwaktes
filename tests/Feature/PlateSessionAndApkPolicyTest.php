@@ -19,17 +19,6 @@ beforeEach(function () {
     config(['site.affiliates.vehicle_report.url' => 'https://partner.example/rapport?auto={merk}+{model}&jaar={jaar}']);
 });
 
-/** The RDW knows a plate: an Audi A4 from the given year, APK valid until $apk. */
-if (! function_exists('rdwHasAudi')) {
-    function rdwHasAudi(int $year = 2010, string $apk = '2027-06-13'): void
-    {
-        Http::fake(['opendata.rdw.nl/*' => Http::response([[
-            'kenteken' => 'AB123C', 'voertuigsoort' => 'Personenauto', 'merk' => 'AUDI', 'handelsbenaming' => 'A4',
-            'datum_eerste_toelating_dt' => "{$year}-05-04T00:00:00.000", 'vervaldatum_apk_dt' => "{$apk}T00:00:00.000",
-        ]])]);
-    }
-}
-
 // --- K3: the plate never goes to the session -------------------------------------------------------------------------
 
 it('does not keep the plate in the session after a failed search', function () {

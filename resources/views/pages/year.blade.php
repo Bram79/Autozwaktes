@@ -51,7 +51,7 @@
                 <h2 class="mb-3 text-xl font-semibold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
                 @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
 
-                @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])
+                @include('partials.data-advice', ['rows' => $adviceRows])
             @endif
 
             <p class="mt-6"><a href="{{ $genUrl }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">Alle bouwjaren van de {{ $name }}</a></p>

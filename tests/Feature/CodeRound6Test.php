@@ -78,3 +78,44 @@ it('has one small class for "so many per minute"', function () {
 it('has one name for the vehicle type that the site is about', function () {
     expect(RdwClient::PASSENGER_CAR)->toBe('Personenauto');
 });
+
+// --- settings are documented in both example files ------------------------------------------------------------------------
+
+it('lists every setting of config/site.php and config/rdw.php in .env.example and in .env.production.example', function (string $example) {
+    $keys = [];
+    foreach (['site', 'rdw'] as $file) {
+        preg_match_all("/env\('([A-Z0-9_]+)'/", file_get_contents(config_path("{$file}.php")), $m);
+        $keys = array_merge($keys, $m[1]);
+    }
+
+    $text = file_get_contents(base_path($example));
+    $missing = array_values(array_filter(array_unique($keys), fn ($key) => ! str_contains($text, $key.'=')));
+
+    expect($missing)->toBe([]);
+})->with(['.env.example', '.env.production.example']);
+
+it('documents the commands of the site in CLAUDE.md', function () {
+    $docs = file_get_contents(base_path('CLAUDE.md'));
+    $ours = collect(array_keys(Artisan::all()))->filter(fn ($name) => preg_match('/^((rdw|apk|backup|advice|generations|site):|cache:clean-expired$)/', $name));
+
+    expect($ours->reject(fn ($name) => str_contains($docs, $name))->values()->all())->toBe([]);
+});
+
+// --- the views only show, the controllers fetch --------------------------------------------------------------------------
+
+it('keeps services out of the page views: the controller hands over what the page needs', function () {
+    $found = [];
+    foreach (glob(resource_path('views/pages/*.blade.php')) as $file) {
+        if (str_contains(file_get_contents($file), 'app(\\App\\')) {
+            $found[] = basename($file);
+        }
+    }
+
+    expect($found)->toBe([]);
+});
+
+it('still shows the table of numbers, the suggestions and the year page as before', function () {
+    $this->get('/audi/a4/b8')->assertOk()->assertSee('Wat de cijfers zeggen');
+    $this->get('/audi/a4/b8/2010')->assertOk()->assertSee('Wat de cijfers zeggen');
+    $this->get('/volkswagen/golf')->assertOk();
+});
