@@ -1,6 +1,12 @@
 <x-layouts.app
     title="Auto Zwaktes: zwakke punten en APK-problemen per automodel"
-    description="Zoek je auto en zie welke APK-gebreken het vaakst voorkomen per merk, model, generatie en bouwjaar. Handig bij het kopen van een occasion.">
+    description="Zoek je auto en zie welke APK-gebreken het vaakst voorkomen per merk, model, generatie en bouwjaar. Handig bij het kopen van een occasion."
+    :robots="request()->filled('q') ? 'noindex,follow' : null">
+
+    <x-slot:head>
+        <x-json-ld :data="\App\Site\Schema::website()" />
+        <x-json-ld :data="\App\Site\Schema::organization()" />
+    </x-slot:head>
 
     <x-slot:hero>
         <section class="relative isolate overflow-hidden bg-brand-900 text-white">

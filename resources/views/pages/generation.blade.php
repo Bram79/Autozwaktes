@@ -3,17 +3,12 @@
     $name = \App\Site\Seo::generationName($generation);
     $range = \App\Site\Seo::yearsLabel($generation);
     $url = route('generation', [$model->brand, $model->slug, $generation->slug]);
-    $dataset = [
-        '@context' => 'https://schema.org',
-        '@type' => 'Dataset',
-        'name' => "APK-gebreken {$name} ({$range})",
-        'description' => "Percentage voertuigen met geconstateerde APK-gebreken voor de {$name}, per bouwjaar en brandstof.",
-        'url' => $url,
-        'inLanguage' => 'nl',
-        'license' => 'https://creativecommons.org/publicdomain/zero/1.0/',
-        'isBasedOn' => 'https://opendata.rdw.nl',
-        'temporalCoverage' => '2022/..',
-    ];
+    $dataset = \App\Site\Schema::dataset(
+        "APK-gebreken {$name} ({$range})",
+        "Percentage voertuigen met geconstateerde APK-gebreken voor de {$name}, per bouwjaar en brandstof.",
+        $url,
+        \App\Site\Seo::modelName($model),
+    );
 @endphp
 <x-layouts.app
     :title="$name.' ('.$range.'): zwakke punten en APK-problemen'"
@@ -21,7 +16,7 @@
     :canonical="$url">
 
     <x-slot:head>
-        <script type="application/ld+json">{!! json_encode($dataset, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}</script>
+        <x-json-ld :data="$dataset" />
     </x-slot:head>
 
     <x-breadcrumbs :items="[

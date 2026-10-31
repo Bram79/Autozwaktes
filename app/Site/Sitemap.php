@@ -104,7 +104,10 @@ class Sitemap
             if ($generations->isEmpty()) {
                 continue;
             }
-            $urls[] = route('model', [$model->brand, $model->slug]);
+            // with one generation the model page is the same search as that generation's page (its canonical points there)
+            if ($generations->count() > 1) {
+                $urls[] = route('model', [$model->brand, $model->slug]);
+            }
 
             foreach ($generations as $generation) {
                 $urls[] = route('generation', [$model->brand, $model->slug, $generation->slug]);

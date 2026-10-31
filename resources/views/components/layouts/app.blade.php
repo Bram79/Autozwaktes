@@ -76,7 +76,7 @@
                 <a href="{{ route('apk') }}" class="inline-flex min-h-11 items-center text-brand-100 underline underline-offset-2 hover:text-white">APK-herinnering</a>
             </nav>
             <p>Bron: RDW open data (CC-0). Auto Zwaktes is een onafhankelijke website en is niet gelieerd aan de overheid of de RDW.</p>
-            <p>De cijfers zijn een indicatie: ze zijn gebaseerd op geregistreerde voertuigen en geconstateerde APK-gebreken sinds 2022 en zeggen niets over een individuele auto. Laat een auto altijd zelf keuren voordat je koopt.</p>
+            <p>De cijfers zijn een indicatie: ze zijn gebaseerd op geregistreerde voertuigen en geconstateerde APK-gebreken en zeggen niets over een individuele auto. Laat een auto altijd zelf keuren voordat je koopt.</p>
         </div>
     </footer>
 </body>
