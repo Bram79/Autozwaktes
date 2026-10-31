@@ -31,6 +31,7 @@
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
+            <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken bij bouwjaar {{ $year }}</h2>
             @include('partials.defect-table', ['result' => $result, 'brandName' => $model->brand->name, 'modelName' => $model->name, 'yearLabel' => (string) $year])
 
             @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation, $year)])

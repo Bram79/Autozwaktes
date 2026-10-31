@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Generation;
+use App\Models\ImportRun;
 use App\Site\ComparisonService;
 use App\Site\RankingService;
 use App\Site\StatsService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 
 class PageController extends Controller
@@ -118,7 +120,14 @@ class PageController extends Controller
                 $urls[] = route('comparison', ComparisonService::slug(...$pair));
             }
 
-            return view('sitemap', ['urls' => $urls])->render();
+            // the data only changes when an import finishes, so that is the honest "last modified" of the data pages
+            $lastImport = ImportRun::where('status', 'finished')->latest('finished_at')->value('finished_at');
+
+            return view('sitemap', [
+                'urls' => $urls,
+                'lastmod' => $lastImport ? Carbon::parse($lastImport)->toDateString() : null,
+                'fixed' => [route('privacy'), route('apk')],
+            ])->render();
         });
 
         return response($xml, 200, ['Content-Type' => 'application/xml']);
