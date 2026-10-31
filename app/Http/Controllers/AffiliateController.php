@@ -6,6 +6,7 @@ use App\Models\AffiliateClick;
 use App\Models\PartsCategory;
 use App\Site\AffiliateLink;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 class AffiliateController extends Controller
 {
@@ -27,14 +28,15 @@ class AffiliateController extends Controller
         $target = AffiliateLink::target($partner, $brand, $model, $year, $category?->url);
         abort_if($target === null, 404);
 
-        // search engines and other bots follow links too: they are not customers
-        if (! preg_match('/bot|crawl|spider|slurp|preview/i', (string) $request->userAgent())) {
-            $page = $this->text($request, 'p') ?: '/';
+        if ($this->countsAsCustomer($request)) {
+            $page = $this->text($request, 'p');
+            $position = $this->text($request, 'plek');
 
             AffiliateClick::create([
                 'partner' => $partner,
-                'page' => str_starts_with($page, '/') ? mb_substr($page, 0, 190) : '/',
-                'position' => mb_substr(($category ? 'gebrek: '.$category->name : ($this->text($request, 'plek') ?: 'onbekend')), 0, 60),
+                // only the usual shapes: a path of our own site, and a short spot name. Nobody can fill the statistics with their own text.
+                'page' => preg_match('#^/[a-z0-9/_-]{0,189}$#i', $page) ? $page : '/',
+                'position' => $category ? mb_substr('gebrek: '.$category->name, 0, 60) : (preg_match('/^[a-z0-9-]{1,40}$/', $position) ? $position : 'onbekend'),
             ]);
         }
 
@@ -47,5 +49,27 @@ class AffiliateController extends Controller
         $value = $request->query($key);
 
         return is_string($value) ? $value : '';
+    }
+
+    /**
+     * Only real visitors are counted: not search engines, link previews, scripts, monitors, HEAD requests or requests without
+     * a user agent, and not someone who clicks more than a normal visitor does (that one is still sent on, but not counted).
+     */
+    private function countsAsCustomer(Request $request): bool
+    {
+        $agent = (string) $request->userAgent();
+
+        if (! $request->isMethod('GET') || $agent === ''
+            || preg_match('/bot|crawl|spider|slurp|preview|facebookexternalhit|headless|curl|wget|python|monitor|uptime|java|go-http|httpclient/i', $agent)) {
+            return false;
+        }
+
+        $key = 'go:'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, (int) config('site.limits.go_per_minute'))) {
+            return false;
+        }
+        RateLimiter::hit($key, 60);
+
+        return true;
     }
 }

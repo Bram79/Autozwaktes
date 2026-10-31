@@ -6,6 +6,8 @@ Plan op tijd een keuring, zodat je niet zonder geldige APK rijdt.
 
 @if ($partner)
 <x-mail::panel>
+**Advertentie · Partnerlink**
+
 **{{ $partner['title'] }}**
 
 {{ $partner['text'] }}

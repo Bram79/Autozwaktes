@@ -39,7 +39,7 @@ class PartsCategoryResource extends Resource
             TextInput::make('name')->label('Categorie (bijv. Remmen)')->required()->maxLength(80),
             TextInput::make('keywords')->label('Trefwoorden')->required()->maxLength(300)
                 ->helperText('Gescheiden door komma\'s. Staat een trefwoord in de naam van een gebrek, dan krijgt dat gebrek een onderdelenlink. Bijvoorbeeld: rem, remschijf, remblok.'),
-            TextInput::make('url')->label('Affiliate-URL van de onderdelenwinkel')->required()->url()->maxLength(1000)->columnSpanFull()
+            TextInput::make('url')->label('Affiliate-URL van de onderdelenwinkel')->required()->url()->rules(['regex:#^https?://#i'])->maxLength(1000)->columnSpanFull()
                 ->helperText('Je mag {merk}, {model} en {jaar} gebruiken.'),
             Toggle::make('enabled')->label('Actief')->default(true),
         ]);

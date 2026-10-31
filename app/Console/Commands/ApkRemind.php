@@ -8,7 +8,9 @@ use App\Models\ApkReminder;
 use App\Rdw\RdwClient;
 use App\Rdw\RdwUnavailableException;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class ApkRemind extends Command
 {
@@ -68,7 +70,15 @@ class ApkRemind extends Command
             $isDue = $expires && $expires->isFuture() && $expires->lte(now()->addDays($days)->endOfDay());
 
             if ($isDue && ! $reminder->last_reminded_for?->equalTo($expires)) {
-                Mail::to($reminder->email)->send(new ApkReminderMail($reminder));
+                try {
+                    Mail::to($reminder->email)->send(new ApkReminderMail($reminder));
+                } catch (Throwable $e) {
+                    // the error message of a mail server contains the address: log only the kind of error and try again tomorrow
+                    Log::error('APK reminder mail failed: '.class_basename($e));
+
+                    continue;
+                }
+
                 $reminder->update(['last_reminded_for' => $expires]);
                 $sent++;
             }

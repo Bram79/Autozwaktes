@@ -54,6 +54,7 @@ return [
     // Limits against abuse (all per minute unless it says otherwise). Overridable in .env for a busy launch day.
     'limits' => [
         'search_per_minute' => (int) env('LIMIT_SEARCH_PER_MINUTE', 60),
+        'go_per_minute' => (int) env('LIMIT_GO_PER_MINUTE', 30),   // counted affiliate clicks per visitor; more still redirect
         'apk_mail_per_hour' => (int) env('LIMIT_APK_MAIL_PER_HOUR', 3),
         // all visitors together: the RDW is a shared, free service
         'rdw_lookups_per_minute' => (int) env('LIMIT_RDW_LOOKUPS_PER_MINUTE', 120),
