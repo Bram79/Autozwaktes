@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Generation;
-use App\Models\ImportRun;
-use App\Site\ComparisonService;
-use App\Site\RankingService;
+use App\Site\Sitemap;
+use App\Site\SitemapBusyException;
 use App\Site\StatsService;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
+use Closure;
 
 class PageController extends Controller
 {
@@ -71,70 +69,26 @@ class PageController extends Controller
         ]);
     }
 
-    public function sitemap()
+    /** /sitemap.xml: the list, or the index of lists. */
+    public function sitemap(Sitemap $sitemap)
     {
-        $xml = Cache::rememberForever('sitemap', function () {
-            $urls = [url('/'), route('privacy'), route('apk')];
+        return $this->xml(fn () => $sitemap->index());
+    }
 
-            // only brands that have a page worth indexing: the brand page is noindex without models with numbers
-            foreach (Brand::withStats()->orderBy('slug')->get() as $brand) {
-                $urls[] = route('brand', $brand);
-            }
+    /** /sitemap-1.xml, /sitemap-2.xml, ... */
+    public function sitemapChunk(Sitemap $sitemap, int $chunk)
+    {
+        return $this->xml(fn () => $sitemap->chunk($chunk) ?? abort(404));
+    }
 
-            $models = CarModel::with(['brand', 'generations'])->get();
-            foreach ($models as $model) {
-                $generations = $this->stats->generationsWithData($model);
-                if ($generations->isEmpty()) {
-                    continue;
-                }
-                $urls[] = route('model', [$model->brand, $model->slug]);
-
-                foreach ($generations as $generation) {
-                    $urls[] = route('generation', [$model->brand, $model->slug, $generation->slug]);
-                    // a build year that has had no APK yet has no numbers: not worth a place in the index
-                    foreach (array_keys($this->stats->years($generation)) as $year) {
-                        if ($year > RankingService::lastInspectedYear()) {
-                            continue;
-                        }
-                        $urls[] = route('year', [$model->brand, $model->slug, $generation->slug, $year]);
-                    }
-                }
-            }
-
-            // rankings with enough rows to be worth indexing, and the comparison pages that exist
-            $rankings = app(RankingService::class);
-            $urls[] = route('rankings');
-            $urls[] = route('ranking', ['alles']);
-            foreach (Brand::orderBy('slug')->get() as $brand) {
-                if (count($rankings->scores($brand->id)) >= 5) {
-                    $urls[] = route('ranking', ['merk', $brand->slug]);
-                }
-            }
-            foreach ($rankings->fuels() as $slug => $fuel) {
-                if (count($rankings->scores(null, $fuel)) >= 5) {
-                    $urls[] = route('ranking', ['brandstof', $slug]);
-                }
-            }
-            foreach ($rankings->years() as $year) {
-                if (count($rankings->scores(null, null, $year)) >= 5) {
-                    $urls[] = route('ranking', ['bouwjaar', $year]);
-                }
-            }
-            foreach (app(ComparisonService::class)->pairs() as $pair) {
-                $urls[] = route('comparison', ComparisonService::slug(...$pair));
-            }
-
-            // the data only changes when an import finishes, so that is the honest "last modified" of the data pages
-            $lastImport = ImportRun::where('status', 'finished')->latest('finished_at')->value('finished_at');
-
-            return view('sitemap', [
-                'urls' => $urls,
-                'lastmod' => $lastImport ? Carbon::parse($lastImport)->toDateString() : null,
-                'fixed' => [route('privacy'), route('apk')],
-            ])->render();
-        });
-
-        return response($xml, 200, ['Content-Type' => 'application/xml']);
+    private function xml(Closure $build)
+    {
+        try {
+            return response($build(), 200, ['Content-Type' => 'application/xml']);
+        } catch (SitemapBusyException) {
+            // someone else is building it: bots come back later
+            return response('', 503, ['Retry-After' => '60']);
+        }
     }
 
     public function robots()

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AffiliateClick;
 use App\Models\PartsCategory;
 use App\Site\AffiliateLink;
+use App\Support\Bots;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -59,8 +60,7 @@ class AffiliateController extends Controller
     {
         $agent = (string) $request->userAgent();
 
-        if (! $request->isMethod('GET') || $agent === ''
-            || preg_match('/bot|crawl|spider|slurp|preview|facebookexternalhit|headless|curl|wget|python|monitor|uptime|java|go-http|httpclient/i', $agent)) {
+        if (! $request->isMethod('GET') || Bots::isBot($agent)) {
             return false;
         }
 
