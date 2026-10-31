@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Site\PlateLookup;
 use App\Site\PlateVisit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\RateLimiter;
 
 class PlateController extends Controller
@@ -36,6 +37,13 @@ class PlateController extends Controller
             return redirect($result['url']);
         }
 
-        return redirect()->route('home')->with('plate_error', self::MESSAGES[$result['status']]);
+        $redirect = redirect()->route('home')->with('plate_error', self::MESSAGES[$result['status']]);
+
+        // for a car we have no numbers for, the home page still offers the vehicle report (make, model and year only)
+        if ($result['status'] === 'unknown_model' && $result['brand'] !== '' && $result['model'] !== '') {
+            $redirect->with('plate_unknown_car', Arr::only($result, ['brand', 'model', 'year']));
+        }
+
+        return $redirect;
     }
 }

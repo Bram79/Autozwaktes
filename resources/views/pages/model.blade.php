@@ -11,6 +11,11 @@
         <p class="mt-3 max-w-2xl text-slate-700">Er zijn {{ $generations->count() }} {{ $generations->count() === 1 ? 'generatie' : 'generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
     @endunless
 
+    {{-- Someone who looked up a plate and ended here (no numbers for that year) still sees the vehicle report first --}}
+    @if (\App\Site\PlateVisit::active())
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-model" />
+    @endif
+
     @if ($generations->isEmpty())
         <div class="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-5 text-slate-700">
             <p class="font-semibold text-brand-900">Nog geen cijfers</p>
@@ -34,7 +39,9 @@
 
     @unless ($generations->isEmpty())
         <div class="mt-10 grid gap-4 md:grid-cols-2">
-            <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="modelpagina" :prominent="true" />
+            @unless (\App\Site\PlateVisit::active())
+                <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="modelpagina" :prominent="true" />
+            @endunless
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" position="modelpagina" />
         </div>
     @endunless
