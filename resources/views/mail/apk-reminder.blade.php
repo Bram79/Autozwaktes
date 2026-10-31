@@ -18,7 +18,7 @@ Plan op tijd een keuring, zodat je niet zonder geldige APK rijdt.
 </x-mail::panel>
 @endif
 
-Benieuwd waar je auto vaak mee naar de garage moet? Bekijk de zwakke punten per model op [Auto Zwaktes]({{ $homeUrl }}).
+Benieuwd waar je auto vaak mee naar de garage moet? Bekijk de zwakke punten per model op [{{ config('site.name') }}]({{ $homeUrl }}).
 
 Je krijgt deze mail omdat je een APK-herinnering hebt aangevraagd. [Stop de herinnering en verwijder mijn gegevens]({{ $unsubscribeUrl }}).
 </x-mail::message>

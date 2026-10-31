@@ -28,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Auto Zwaktes beheer')
+            ->brandName(fn () => config('site.name').' beheer')
             ->login()
             ->navigationGroups(['Inhoud', 'Inkomsten', 'Instellingen', 'Geavanceerd'])
             ->sidebarCollapsibleOnDesktop()

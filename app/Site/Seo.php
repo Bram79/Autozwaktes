@@ -40,7 +40,7 @@ class Seo
             return $title;
         }
 
-        $withoutSite = Str::replaceEnd(' | Auto Zwaktes', '', $title);
+        $withoutSite = Str::replaceEnd(' | '.config('site.name'), '', $title);
         $name = Str::before($withoutSite, ': ');
 
         // "Minste APK-gebreken bij Audi" already says it: adding ": APK-gebreken" would say it twice

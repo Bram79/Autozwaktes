@@ -1,7 +1,8 @@
 <?php
 
 return [
-    'name' => 'Auto Zwaktes',
+    // The name of the site: in the titles, the mails, the privacy statement, the admin and the structured data. Rename the site here (APP_NAME).
+    'name' => env('APP_NAME', 'Nuvik'),
 
     // Who is responsible for the site, shown on the privacy page (OPERATOR_NAME, optionally OPERATOR_KVK), and the contact address (CONTACT_EMAIL).
     'operator_name' => env('OPERATOR_NAME'),

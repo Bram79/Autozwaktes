@@ -1,5 +1,5 @@
 <x-layouts.app
-    title="Ranglijsten: welke auto's hebben de minste APK-gebreken? | Auto Zwaktes"
+    :title="'Ranglijsten: welke auto\'s hebben de minste APK-gebreken? | '.config('site.name')"
     description="Ranglijsten van auto's met de minste en de meeste APK-gebreken, per merk, brandstof en bouwjaar. Gebaseerd op RDW-cijfers."
     :canonical="route('rankings')">
 

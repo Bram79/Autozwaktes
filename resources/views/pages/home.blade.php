@@ -1,5 +1,5 @@
 <x-layouts.app
-    title="Auto Zwaktes: zwakke punten en APK-problemen per automodel"
+    :title="config('site.name').': zwakke punten en APK-problemen per automodel'"
     description="Zoek je auto en zie welke APK-gebreken het vaakst voorkomen per merk, model, generatie en bouwjaar. Handig bij het kopen van een occasion."
     :robots="request()->filled('q') ? 'noindex,follow' : null">
 

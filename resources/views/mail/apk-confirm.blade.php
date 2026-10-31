@@ -1,7 +1,7 @@
 <x-mail::message>
 # Bevestig je APK-herinnering
 
-Je hebt op Auto Zwaktes gevraagd om een herinnering voordat de APK van **{{ $plate }}** verloopt.
+Je hebt op {{ config('site.name') }} gevraagd om een herinnering voordat de APK van **{{ $plate }}** verloopt.
 
 <x-mail::button :url="$confirmUrl">
 Ja, stuur mij een herinnering

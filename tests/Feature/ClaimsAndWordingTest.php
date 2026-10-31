@@ -24,7 +24,7 @@ afterEach(fn () => Carbon::setTestNow());
 // --- titles ---------------------------------------------------------------------------------------------------
 
 it('does not add "APK-gebreken" to a title that already says it', function () {
-    $title = Seo::title('Minste APK-gebreken bij Mercedes-Benz: ranglijst per generatie | Auto Zwaktes');
+    $title = Seo::title('Minste APK-gebreken bij Mercedes-Benz: ranglijst per generatie | Nuvik');
 
     expect(mb_strlen($title))->toBeLessThanOrEqual(60);
     expect(substr_count($title, 'APK-gebreken'))->toBe(1);
@@ -32,7 +32,7 @@ it('does not add "APK-gebreken" to a title that already says it', function () {
 });
 
 it('drops the site name from a long title before it cuts into the text', function () {
-    expect(Seo::title("Auto's op benzine met de minste APK-gebreken: ranglijst | Auto Zwaktes"))->toBe("Auto's op benzine met de minste APK-gebreken: ranglijst");
+    expect(Seo::title("Auto's op benzine met de minste APK-gebreken: ranglijst | Nuvik"))->toBe("Auto's op benzine met de minste APK-gebreken: ranglijst");
 });
 
 // --- ranking pages --------------------------------------------------------------------------------------------

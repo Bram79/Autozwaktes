@@ -78,13 +78,13 @@ it('tells Google the name of the site and how its search works', function () {
     $html = $this->get('/')->assertOk()->getContent();
 
     $site = blockOfType($html, 'WebSite');
-    expect($site['name'])->toBe('Auto Zwaktes')->and($site['url'])->toBe(url('/'));
+    expect($site['name'])->toBe('Nuvik')->and($site['url'])->toBe(url('/'));
     expect($site['potentialAction']['@type'])->toBe('SearchAction');
     expect($site['potentialAction']['target'])->toBe(url('/').'?q={search_term_string}');
     expect($site['potentialAction']['query-input'])->toBe('required name=search_term_string');
 
     $organization = blockOfType($html, 'Organization');
-    expect($organization['name'])->toBe('Auto Zwaktes')->and($organization['url'])->toBe(url('/'));
+    expect($organization['name'])->toBe('Nuvik')->and($organization['url'])->toBe(url('/'));
 });
 
 it('describes the numbers of a generation and of a build year as a dataset, without a made-up period', function () {
@@ -93,7 +93,7 @@ it('describes the numbers of a generation and of a build year as a dataset, with
 
     foreach ([$generation, $year] as $html) {
         $dataset = blockOfType($html, 'Dataset');
-        expect($dataset['creator']['name'])->toBe('Auto Zwaktes');
+        expect($dataset['creator']['name'])->toBe('Nuvik');
         expect($dataset['keywords'])->toContain('APK')->toContain('Audi A4');
         expect($dataset)->not->toHaveKey('temporalCoverage');   // we do not know that from the data
     }

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>We zijn zo terug | Auto Zwaktes</title>
+    <title>We zijn zo terug | {{ config('site.name') }}</title>
     <style>
         body { font-family: system-ui, sans-serif; margin: 0; background: #fff; color: #0f1f4d; }
         main { max-width: 36rem; margin: 0 auto; padding: 4rem 1rem; }
@@ -13,7 +13,7 @@
 </head>
 <body>
     <main>
-        <p><strong>Auto Zwaktes</strong></p>
+        <p><strong>{{ config('site.name') }}</strong></p>
         <h1>We zijn zo terug</h1>
         <p>De site wordt even bijgewerkt. Probeer het over een paar minuten nog eens.</p>
         <a href="/">Naar de homepage</a>

@@ -8,15 +8,13 @@ namespace App\Site;
  */
 class Schema
 {
-    private const SITE_NAME = 'Auto Zwaktes';
-
     /** The site itself, with the search box: Google can show it in the results. */
     public static function website(): array
     {
         return [
             '@context' => 'https://schema.org',
             '@type' => 'WebSite',
-            'name' => self::SITE_NAME,
+            'name' => config('site.name'),
             'url' => url('/'),
             'inLanguage' => 'nl',
             'potentialAction' => [
@@ -29,7 +27,7 @@ class Schema
 
     public static function organization(): array
     {
-        return ['@context' => 'https://schema.org', '@type' => 'Organization', 'name' => self::SITE_NAME, 'url' => url('/')];
+        return ['@context' => 'https://schema.org', '@type' => 'Organization', 'name' => config('site.name'), 'url' => url('/')];
     }
 
     /** The numbers of one generation or build year. The source is the RDW open data, which we calculated from. */
@@ -45,7 +43,7 @@ class Schema
             'keywords' => ['APK', 'APK-gebreken', $car, 'RDW open data'],
             'license' => 'https://creativecommons.org/publicdomain/zero/1.0/',
             'isBasedOn' => 'https://opendata.rdw.nl',
-            'creator' => ['@type' => 'Organization', 'name' => self::SITE_NAME, 'url' => url('/')],
+            'creator' => ['@type' => 'Organization', 'name' => config('site.name'), 'url' => url('/')],
         ];
     }
 

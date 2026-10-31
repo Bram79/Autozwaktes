@@ -87,7 +87,7 @@ it('lets the admin edit the aliases of a model on the model screen', function ()
 it('shows a clear dashboard with a short guide and the status of the site', function () {
     $this->actingAs($this->admin)->get('/admin')->assertOk()->assertSee('Generaties en koopadvies');
 
-    Livewire::test(GettingStarted::class)->assertSee('Welkom bij het beheer van Auto Zwaktes');
+    Livewire::test(GettingStarted::class)->assertSee('Welkom bij het beheer van Nuvik');
     Livewire::test(SiteStatus::class)->assertSee('Generaties zonder koopadvies')->assertSee('Modellen online');
 });
 

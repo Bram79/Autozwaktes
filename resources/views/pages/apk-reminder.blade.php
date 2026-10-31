@@ -1,5 +1,5 @@
 <x-layouts.app
-    title="APK-herinnering: een mail voordat je APK verloopt | Auto Zwaktes"
+    :title="'APK-herinnering: een mail voordat je APK verloopt | '.config('site.name')"
     description="Vul je kenteken en e-mailadres in en ontvang elk jaar één mail ongeveer 30 dagen voordat de APK van je auto verloopt. Gratis en altijd uit te schrijven."
     :canonical="route('apk')">
 

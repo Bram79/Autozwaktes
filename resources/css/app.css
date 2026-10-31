@@ -3,7 +3,7 @@
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 
-/* Kleuren van Auto Zwaktes: wit, blauw en geel. Pas ze hier aan, dan verandert de hele site mee. */
+/* Kleuren van de site: wit, blauw en geel. Pas ze hier aan, dan verandert de hele site mee. */
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';

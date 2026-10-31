@@ -34,7 +34,7 @@ it('has no moving strip of text at the top of the page', function () {
 });
 
 it('still says in the footer that the site is independent and uses open RDW data', function () {
-    $this->get('/')->assertSee('Auto Zwaktes is een onafhankelijke website', false)->assertSee('Bron: RDW open data', false);
+    $this->get('/')->assertSee('Nuvik is een onafhankelijke website', false)->assertSee('Bron: RDW open data', false);
 });
 
 // --- one calm look -------------------------------------------------------------------------------------------------------
