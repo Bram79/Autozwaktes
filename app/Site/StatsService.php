@@ -92,6 +92,33 @@ class StatsService
         });
     }
 
+    /**
+     * The cheapest and the most expensive build year of a generation by catalogue price. A generation can cover many years,
+     * and the price of a 2011 car is not the price of a 2024 car, so there is no single average. Years with fewer than 20 prices are left out.
+     *
+     * @return array{van: array{bouwjaar: int, euro: int}, tot: array{bouwjaar: int, euro: int}}|null
+     */
+    public function newPriceRange(Generation $generation): ?array
+    {
+        return Cache::rememberForever("stats:price-range:{$generation->id}", function () use ($generation) {
+            $years = DB::table('model_prices')->where('car_model_id', $generation->car_model_id)
+                ->whereBetween('build_year', $this->yearRange($generation))->where('vehicles', '>=', 20)
+                ->orderBy('average_price')->orderBy('build_year')->get(['build_year', 'average_price']);
+
+            if ($years->isEmpty()) {
+                return null;
+            }
+
+            $cheapest = $years->first();
+            $dearest = $years->last();
+
+            return [
+                'van' => ['bouwjaar' => (int) $cheapest->build_year, 'euro' => (int) $cheapest->average_price],
+                'tot' => ['bouwjaar' => (int) $dearest->build_year, 'euro' => (int) $dearest->average_price],
+            ];
+        });
+    }
+
     private function calculateComparison(Generation $generation, ?int $year): array
     {
         $none = ['enough_data' => false, 'total' => 0, 'weak' => [], 'strong' => []];

@@ -82,21 +82,38 @@ it('shows the table in a dropdown on the generation page and the year page', fun
     }
 });
 
-it('shows the new price only when the RDW has prices for the model', function () {
-    expect(app(AdviceWriter::class)->facts($this->generation)['nieuwprijs_gemiddeld_euro'])->toBeNull();
+it('shows the new price per build year, never one average over a whole generation', function () {
+    expect(app(AdviceWriter::class)->facts($this->generation)['nieuwprijs_per_bouwjaar'])->toBeNull();
 
     DB::table('model_prices')->insert([
         ['car_model_id' => $this->generation->car_model_id, 'build_year' => 2010, 'vehicles' => 30, 'average_price' => 40000],
-        ['car_model_id' => $this->generation->car_model_id, 'build_year' => 2011, 'vehicles' => 10, 'average_price' => 50000],
+        ['car_model_id' => $this->generation->car_model_id, 'build_year' => 2011, 'vehicles' => 30, 'average_price' => 50000],
+        ['car_model_id' => $this->generation->car_model_id, 'build_year' => 2012, 'vehicles' => 10, 'average_price' => 90000],   // too few prices: left out
     ]);
     Cache::flush();
+    $writer = app(AdviceWriter::class);
 
-    expect(app(AdviceWriter::class)->facts($this->generation)['nieuwprijs_gemiddeld_euro'])->toBe(42500);   // weighted: (30*40000 + 10*50000) / 40
+    // generation page: no single average, but the lowest and highest year
+    $facts = $writer->facts($this->generation);
+    expect($facts['nieuwprijs_gemiddeld_euro'])->toBeNull();
+    expect($facts['nieuwprijs_per_bouwjaar'])->toBe(['van' => ['bouwjaar' => 2010, 'euro' => 40000], 'tot' => ['bouwjaar' => 2011, 'euro' => 50000]]);
+    $price = $writer->rows($this->generation)[0];
+    expect($price['label'])->toBe('Nieuwprijs')->and(implode(' ', $price['lines']))->toContain('€ 40.000 (2010)')->toContain('€ 50.000 (2011)')->not->toContain('€ 90.000');
+    $this->get('/audi/a4/b8')->assertSee('€ 40.000 (2010)')->assertDontSee('€ 45.000');
 
-    // "Nieuwprijs" is the first row, with a bold label on the left and the amount next to it
+    // year page: the price of that year
+    expect($writer->facts($this->generation, 2010)['nieuwprijs_gemiddeld_euro'])->toBe(40000);
+    $price = $writer->rows($this->generation, 2010)[0];
+    expect($price['label'])->toBe('Nieuwprijs bouwjaar 2010')->and(implode(' ', $price['lines']))->toContain('€ 40.000');
+    $this->get('/audi/a4/b8/2010')->assertSee('Nieuwprijs bouwjaar 2010')->assertSee('€ 40.000');
+});
+
+it('shows one price, not a range, when only one build year has enough prices', function () {
+    DB::table('model_prices')->insert([['car_model_id' => $this->generation->car_model_id, 'build_year' => 2010, 'vehicles' => 30, 'average_price' => 40000]]);
+
     $price = app(AdviceWriter::class)->rows($this->generation)[0];
-    expect($price['label'])->toBe('Nieuwprijs')->and(implode(' ', $price['lines']))->toContain('€ 42.500');
-    $this->get('/audi/a4/b8')->assertSee('€ 42.500')->assertSee('Nieuwprijs');
+
+    expect($price['label'])->toBe('Nieuwprijs')->and(implode(' ', $price['lines']))->toContain('€ 40.000 (2010)')->not->toContain('tot');
 });
 
 it('finds numbers in an AI text that are not in the facts', function () {

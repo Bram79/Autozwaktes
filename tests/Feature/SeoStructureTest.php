@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Generation;
 use App\Models\ImportRun;
 use App\Site\Seo;
 use Database\Seeders\DemoStatsSeeder;
@@ -73,4 +74,20 @@ it('gives the data pages in the sitemap a lastmod from the last finished import,
 
 it('leaves lastmod out when nothing was imported yet', function () {
     expect($this->get('/sitemap.xml')->getContent())->not->toContain('<lastmod>');
+});
+
+// --- the catch-all generation --------------------------------------------------------------------------------
+
+it('does not call a year "Alle bouwjaren 2010": the catch-all generation has no code worth showing', function () {
+    Generation::where('slug', 'b8')->update(['code' => 'Alle bouwjaren']);
+
+    $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
+
+    expect($html)->toContain('>Audi A4 2010</a>');
+    expect($html)->not->toContain('Alle bouwjaren 2010');
+    expect(Seo::generationName(Generation::where('slug', 'b8')->first()->load('carModel.brand')))->toBe('Audi A4');
+});
+
+it('still names a real generation with its code', function () {
+    expect(Seo::generationName(Generation::where('slug', 'b8')->first()->load('carModel.brand')))->toBe('Audi A4 B8');
 });

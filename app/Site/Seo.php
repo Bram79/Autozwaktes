@@ -9,9 +9,14 @@ use Illuminate\Support\Str;
 /** Builds titles and descriptions. Kept in one place so they stay consistent. */
 class Seo
 {
+    /** The code of the one generation that `rdw:discover` makes for a model: it is no real generation, so it is not part of the name. */
+    public const ALL_YEARS = 'Alle bouwjaren';
+
     public static function generationName(Generation $g): string
     {
-        return "{$g->carModel->brand->name} {$g->carModel->name} {$g->code}";
+        $name = "{$g->carModel->brand->name} {$g->carModel->name}";
+
+        return $g->code === self::ALL_YEARS ? $name : "{$name} {$g->code}";
     }
 
     public static function yearsLabel(Generation $g): string
