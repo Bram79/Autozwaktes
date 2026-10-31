@@ -34,6 +34,7 @@
     <h1 class="text-3xl sm:text-4xl">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
 
     @if (\App\Site\PlateVisit::active())
+        <x-plate-price />
         <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-generatie" />
     @endif
 

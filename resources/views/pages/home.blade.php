@@ -35,6 +35,7 @@
                         <p role="alert" class="mt-3 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">{{ session('plate_error') }}</p>
                         @if (session('plate_unknown_car'))
                             @php $car = session('plate_unknown_car'); @endphp
+                            <x-plate-price :price="$car['price'] ?? null" />
                             <x-plate-cta :brand="$car['brand']" :model="$car['model']" :year="$car['year']" position="kenteken-onbekend" />
                         @endif
                     @endif

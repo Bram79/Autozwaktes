@@ -72,7 +72,7 @@ Draai alles met `php artisan ...` vanuit de projectroot. De database draait in D
 ## Privacy en inhoud
 - Sla kentekens nooit op en log ze niet. Enige uitzondering: de APK-herinnering (`apk_reminders`), alleen met dubbele opt-in, zoals in `resources/views/pages/privacy.blade.php` staat. Pas die tekst aan bij elke wijziging in wat we bewaren.
 - Kentekens gaan via POST, niet in een URL. Affiliate-klikken bewaren geen IP-adres of andere persoonsgegevens.
-- Toon alleen geaggregeerde cijfers (minimaal `site.min_sample` auto's), nooit data per kenteken.
+- Toon alleen geaggregeerde cijfers (minimaal `site.min_sample` auto's), nooit data per kenteken. Enige uitzondering: direct na een kentekenzoekopdracht tonen we de catalogusprijs (nieuwprijs) van die ene auto aan de bezoeker zelf. Alleen het bedrag blijft 30 minuten in de sessie en een dag in de cache onder een hmac-sleutel, nooit het kenteken zelf (zie `PlateVisit`).
 - Alle getallen in teksten komen uit de database. Voeg geen feiten toe die niet in de data staan (geen motorproblemen, prijzen of reputatie uit het hoofd).
 - Scrape geen commerciële sites en neem geen teksten van andere sites over. Koopadvies is van de eigenaar of een goedgekeurd concept.
 - Gebruik de naam en het logo van de RDW niet zo dat het lijkt alsof de site van de overheid is; de footer zegt dat de site onafhankelijk is.
