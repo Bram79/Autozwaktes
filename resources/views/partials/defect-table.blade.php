@@ -4,7 +4,10 @@
         Voor deze selectie zijn te weinig voertuigen ({{ number_format($result['total'], 0, ',', '.') }}) om betrouwbare percentages te tonen.
     </p>
 @else
-    @php $max = max(1, $result['defects']->max('percentage')); @endphp
+    @php
+        $max = max(1, $result['defects']->max('percentage'));
+        $partsLinksLeft = (int) config('site.parts_links_per_table');
+    @endphp
 
     <p class="mb-3 text-slate-700">
         Gebaseerd op {{ number_format($result['total'], 0, ',', '.') }} voertuigen. Het percentage is het aandeel voertuigen waarbij dit gebrek minstens één keer is geconstateerd.
@@ -27,7 +30,8 @@
                         <td class="py-3 pr-2 text-slate-600 max-sm:py-0 max-sm:font-semibold">{{ $i + 1 }}</td>
                         <td class="py-3 pr-2 sm:pr-4 max-sm:py-0 max-sm:text-base max-sm:font-medium">
                             {{ \App\Site\DefectText::plain($defect->description) }}
-                            @if (($category = \App\Models\PartsCategory::forDefect($defect->description)) && ($brandName ?? null))
+                            @if ($partsLinksLeft > 0 && ($brandName ?? null) && ($category = \App\Models\PartsCategory::forDefect($defect->description)))
+                                @php $partsLinksLeft--; @endphp
                                 <a href="{{ \App\Site\AffiliateLink::url('parts', 'gebrek: '.$category['name'], $brandName, $modelName ?? '', $yearLabel ?? '', $category['id']) }}"
                                    rel="sponsored nofollow noopener" target="_blank" class="mt-1 block py-1 text-sm font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (partnerlink)</a>
                             @endif

@@ -269,3 +269,12 @@ it('keeps the new pages out of the way of the brand routes and lists them in the
     $this->get('/sitemap.xml')->assertSee('/apk-herinnering');
     $this->get('/robots.txt')->assertSee('Disallow: /go/');
 });
+
+it('shows at most a few parts links in one defect table, so the table stays a table and not a shop window', function () {
+    PartsCategory::create(['name' => 'Alles', 'keywords' => 'e', 'url' => 'https://parts.example/?auto={merk}']);
+    config(['site.affiliates.parts.url' => 'https://parts.example/', 'site.parts_links_per_table' => 2]);
+
+    $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
+
+    expect(substr_count($html, '(partnerlink)'))->toBe(2);
+});

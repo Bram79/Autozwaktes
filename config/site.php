@@ -33,6 +33,9 @@ return [
     // Verification code from Google Search Console ("HTML tag" method). Leave empty until you have it.
     'google_verification' => env('GOOGLE_SITE_VERIFICATION'),
 
+    // At most this many parts links in one defect table (the top defects first)
+    'parts_links_per_table' => 3,
+
     // Limits against abuse (all per minute unless it says otherwise). Overridable in .env for a busy launch day.
     'limits' => [
         'search_per_minute' => (int) env('LIMIT_SEARCH_PER_MINUTE', 60),
