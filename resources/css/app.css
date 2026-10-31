@@ -58,26 +58,6 @@
             hover:-translate-y-1 hover:border-accent-400 hover:shadow-lg hover:shadow-brand-100
             focus-visible:-translate-y-1 focus-visible:border-accent-400 focus-visible:shadow-lg focus-visible:shadow-brand-100;
     }
-    /* Popular-model cards: a light tilt and a soft highlight that follow the pointer (set by resources/js/hero.js) */
-    .card-link[data-tilt] {
-        position: relative;
-        isolation: isolate;
-        transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
-    }
-    .card-link[data-tilt]::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        border-radius: inherit;
-        background: radial-gradient(circle at var(--gx, 50%) var(--gy, 0%), var(--color-brand-50), transparent 65%);
-        opacity: 0;
-        transition: opacity 0.5s var(--ease-lux);
-    }
-    .card-link[data-tilt]:hover::before,
-    .card-link[data-tilt]:focus-visible::before {
-        opacity: 1;
-    }
     /* Score bar: a track with a fill whose width comes from --w (set per element, 0-100%) */
     .score-track {
         @apply h-2 overflow-hidden rounded-full bg-brand-100;
@@ -98,22 +78,6 @@
         @apply relative inline-flex min-h-11 items-center justify-center overflow-hidden rounded-full bg-accent-400 px-5 py-2 text-center font-semibold text-brand-900 shadow
             transition-[translate,scale,background-color,box-shadow] duration-500 ease-lux
             hover:-translate-y-0.5 hover:bg-accent-300 hover:shadow-md active:translate-y-0 active:scale-[0.98] active:duration-100;
-    }
-    /* A soft glint that sweeps over the button once on hover or keyboard focus (fine pointers only) */
-    .btn::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-        background: linear-gradient(105deg, transparent 35%, color-mix(in srgb, var(--color-white) 55%, transparent) 50%, transparent 65%);
-        translate: -130% 0;
-    }
-    @media (hover: hover) {
-        .btn:hover::after,
-        .btn:focus-visible::after {
-            translate: 130% 0;
-            transition: translate 0.9s var(--ease-lux);
-        }
     }
     /* Quiet outlined button for use on dark blue blocks */
     .btn-outline {
@@ -155,108 +119,29 @@
     transform: scaleX(1);
 }
 
-/* ---------- Homepage hero: a calm, slow-moving backdrop and a staged intro ---------- */
+/* ---------- Homepage hero: quiet, lots of space, one calm entrance ---------- */
 
-/* Fine grid that fades out towards the edges */
-.hero-grid {
+/* One soft, static light in the corner; no movement in the background */
+.hero-backdrop {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    background-image:
-        linear-gradient(to right, color-mix(in srgb, var(--color-white) 7%, transparent) 1px, transparent 1px),
-        linear-gradient(to bottom, color-mix(in srgb, var(--color-white) 7%, transparent) 1px, transparent 1px);
-    background-size: 56px 56px;
-    mask-image: radial-gradient(ellipse 70% 80% at 30% 40%, black, transparent);
+    background: radial-gradient(ellipse 60% 90% at 85% 0%, color-mix(in srgb, var(--color-brand-600) 55%, transparent), transparent 70%);
 }
 
-/* Soft blobs of colour that drift very slowly (transform and opacity only, so it stays cheap) */
-.aurora {
-    position: absolute;
-    pointer-events: none;
-    border-radius: 9999px;
-    opacity: 0;
-    will-change: transform;
-    animation:
-        aurora-in 2.4s var(--ease-lux) 0.1s forwards,
-        aurora-drift var(--t, 36s) ease-in-out infinite alternate;
+/* Thin line under the heading that draws from left to right */
+.hero-rule {
+    height: 1px;
+    max-width: 8rem;
+    background: color-mix(in srgb, var(--color-accent-300) 70%, transparent);
+    transform-origin: left;
+    animation: rule-draw 1.4s var(--ease-lux) 0.5s both;
 }
-.aurora-a {
-    --o: 0.75;
-    --t: 38s;
-    --dx: 5rem;
-    --dy: 3rem;
-    left: -8rem;
-    top: -10rem;
-    width: 26rem;
-    height: 26rem;
-    background: radial-gradient(closest-side, var(--color-brand-600), transparent);
-}
-.aurora-b {
-    --o: 0.2;
-    --t: 46s;
-    --dx: -6rem;
-    --dy: 4rem;
-    right: -9rem;
-    top: -6rem;
-    width: 24rem;
-    height: 24rem;
-    background: radial-gradient(closest-side, var(--color-accent-400), transparent);
-}
-.aurora-c {
-    --o: 0.45;
-    --t: 52s;
-    --dx: 7rem;
-    --dy: -3rem;
-    bottom: -12rem;
-    left: 30%;
-    width: 28rem;
-    height: 28rem;
-    background: radial-gradient(closest-side, var(--color-brand-100), transparent);
-}
-@media (min-width: 40rem) {
-    .aurora-a { width: 44rem; height: 44rem; left: -12rem; top: -16rem; }
-    .aurora-b { width: 34rem; height: 34rem; right: -10rem; top: -10rem; }
-    .aurora-c { width: 40rem; height: 40rem; bottom: -20rem; }
-}
-@keyframes aurora-in {
-    to { opacity: var(--o, 1); }
-}
-@keyframes aurora-drift {
-    to { transform: translate3d(var(--dx), var(--dy), 0) scale(1.15); }
+@keyframes rule-draw {
+    from { transform: scaleX(0); }
 }
 
-/* Dark block lower on the page: the same idea, smaller */
-.glow {
-    position: absolute;
-    pointer-events: none;
-    border-radius: 9999px;
-    background: radial-gradient(closest-side, var(--color-accent-400), transparent);
-    opacity: 0.22;
-    will-change: transform;
-    animation: aurora-drift 40s ease-in-out infinite alternate;
-    --dx: -3rem;
-    --dy: 2rem;
-}
-
-/* Light that follows the mouse (switched on by resources/js/hero.js, fine pointers only) */
-.hero-spotlight {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 30rem;
-    height: 30rem;
-    pointer-events: none;
-    border-radius: 9999px;
-    background: radial-gradient(closest-side, color-mix(in srgb, var(--color-brand-100) 20%, transparent), transparent);
-    opacity: 0;
-    transition: opacity 0.8s var(--ease-lux), transform 0.9s var(--ease-lux);
-    will-change: transform;
-}
-.hero-spotlight.is-active {
-    opacity: 1;
-}
-
-/* Staged entry: heading, text, search, plate. The delay (--d) sets the order. */
+/* Staged entry: text, search, plate. The delay (--d) sets the order. */
 .hero-in {
     animation: hero-rise 1s var(--ease-lux) calc(var(--d, 0) * 1s) both;
 }
@@ -264,7 +149,7 @@
     from { opacity: 0; transform: translateY(14px); }
 }
 
-/* Heading: the line slides up out of a mask, then one slow glint passes over the yellow */
+/* Heading: the line slides up out of a mask */
 .hero-mask {
     display: block;
     overflow: hidden;
@@ -275,38 +160,8 @@
     display: block;
     animation: line-rise 1.2s var(--ease-lux) 0.15s both;
 }
-@supports (background-clip: text) or (-webkit-background-clip: text) {
-    .hero-line {
-        background-image: linear-gradient(100deg, var(--color-accent-300) 40%, var(--color-white) 50%, var(--color-accent-300) 60%);
-        background-size: 250% 100%;
-        background-position: 100% 0;
-        -webkit-background-clip: text;
-        background-clip: text;
-        color: transparent;
-        -webkit-text-fill-color: transparent;
-        animation:
-            line-rise 1.2s var(--ease-lux) 0.15s both,
-            line-glint 2.6s ease-in-out 1.5s 1 both;
-    }
-}
 @keyframes line-rise {
     from { transform: translateY(110%); }
-}
-@keyframes line-glint {
-    from { background-position: 100% 0; }
-    to { background-position: 0 0; }
-}
-
-/* Line drawing of a car: each path draws itself, one after the other */
-.hero-car path,
-.hero-car circle {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 0;
-    animation: car-draw 2.2s var(--ease-lux) calc(0.9s + var(--n, 0) * 0.3s) both;
-}
-@keyframes car-draw {
-    from { stroke-dashoffset: 1; opacity: 0; }
-    4% { opacity: 1; }
 }
 
 /* Geen beweging voor mensen die dat liever uitzetten */
@@ -320,18 +175,8 @@
     .animate-marquee,
     .hero-in,
     .hero-line,
-    .hero-car path,
-    .hero-car circle,
-    .glow {
+    .hero-rule {
         animation: none;
-    }
-    .aurora {
-        animation: none;
-        opacity: var(--o, 1);
-    }
-    .btn::after,
-    .hero-spotlight {
-        display: none;
     }
     .card-link,
     .card-arrow,
