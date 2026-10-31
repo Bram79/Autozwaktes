@@ -9,6 +9,7 @@ use App\Http\Controllers\RankingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/sitemap.xml', [PageController::class, 'sitemap']);
+Route::get('/sitemap-{chunk}.xml', [PageController::class, 'sitemapChunk'])->where('chunk', '[0-9]+');
 Route::get('/robots.txt', [PageController::class, 'robots']);
 
 // A brand slug can't be one of these (they belong to the framework or the build).

@@ -61,7 +61,7 @@
 
     {{ $hero ?? '' }}
 
-    <main id="inhoud" class="mx-auto max-w-5xl px-4 py-8">
+    <main id="inhoud" tabindex="-1" class="mx-auto max-w-5xl px-4 py-8 focus:outline-none">
         {{ $slot }}
     </main>
 

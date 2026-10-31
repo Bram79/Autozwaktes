@@ -51,6 +51,10 @@ return [
     // At most this many parts links in one defect table (the top defects first)
     'parts_links_per_table' => 3,
 
+    // A sitemap file may hold 50,000 addresses; we stay below that. More pages: an index of several files.
+    'sitemap_max_urls' => 40000,
+    'sitemap_lock_wait' => 5,   // seconds that a request waits for another process that is building the sitemap
+
     // Limits against abuse (all per minute unless it says otherwise). Overridable in .env for a busy launch day.
     'limits' => [
         'search_per_minute' => (int) env('LIMIT_SEARCH_PER_MINUTE', 60),

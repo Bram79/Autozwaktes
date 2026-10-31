@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\FlushesSiteCache;
+use App\Support\RequestMemo;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 
@@ -20,7 +21,8 @@ class Setting extends Model
 
     public static function get(string $key, mixed $default = null): mixed
     {
-        $all = Cache::rememberForever('settings', fn () => static::pluck('value', 'key')->all());
+        // the cache is a database table, and a page asks for settings many times: so also remember them for this request
+        $all = app(RequestMemo::class)->remember('settings', fn () => Cache::rememberForever('settings', fn () => static::pluck('value', 'key')->all()));
 
         return $all[$key] ?? $default;
     }

@@ -13,7 +13,7 @@ class RankingController extends Controller
     public function index()
     {
         return view('pages.rankings', [
-            'brands' => Brand::orderBy('name')->get(),
+            'brands' => Brand::withStats()->orderBy('name')->get(),
             'fuels' => $this->rankings->fuels(),
             'years' => $this->rankings->years(),
         ]);
@@ -49,7 +49,7 @@ class RankingController extends Controller
             'fuel' => $fuel,
             'year' => $year,
             'label' => $label,
-            'brands' => Brand::orderBy('name')->get(),
+            'brands' => Brand::withStats()->orderBy('name')->get(),
             'fuels' => $this->rankings->fuels(),
             'years' => $this->rankings->years(),
             'url' => url()->current(),

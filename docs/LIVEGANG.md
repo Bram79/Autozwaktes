@@ -78,6 +78,11 @@ Open dan **/admin**, bekijk de *Generatievoorstellen* en keur ze goed, pas ze to
 4. Dien onder *Sitemaps* in: `https://jouwdomein.nl/sitemap.xml`.
 5. Kijk na een paar dagen bij *Pagina's* of ze geïndexeerd worden. Pagina's met te weinig data staan bewust op `noindex`.
 
+## Snelheid van de server
+- **Bestanden in `/build/`** hebben een hash in hun naam en mogen een jaar bewaard worden. Bij Apache staat dat al in `public/.htaccess`. Gebruik je nginx of Caddy, zet dan zelf `Cache-Control: public, max-age=31536000, immutable` voor `/build/`.
+- **Zet compressie aan** (gzip of brotli) op de server: een pagina van 60 KB wordt dan ongeveer 5 KB.
+- Zet opcache aan voor PHP-FPM.
+
 ## 7. Backups
 - `php artisan backup:database` maakt elke nacht om 02:30 een gecomprimeerde kopie in `storage/app/backups` (de laatste 14 dagen). De grote importtabellen laat het weg: die kun je opnieuw ophalen bij de RDW. Dit staat alleen in de scheduler als `APP_ENV=production`.
 - **Zet de backups óók ergens anders neer.** Een backup op dezelfde server helpt niet als de server weg is. Kies de automatische **server-snapshots** van je hoster (kost meestal een paar euro) en/of kopieer `storage/app/backups` naar andere opslag met bijvoorbeeld `rclone`.

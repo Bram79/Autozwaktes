@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Support\AnonymousSessionHandler;
+use App\Support\RequestMemo;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -14,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->scoped(RequestMemo::class);
     }
 
     /**
