@@ -37,11 +37,12 @@
         <div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 px-4 py-1">
             <a href="{{ route('home') }}" class="flex min-h-11 items-center gap-2 text-lg font-semibold tracking-tight text-brand-900">
                 @if ($logo = \App\Site\Brand::logoUrl())
-                    <img src="{{ $logo }}" alt="{{ config('site.name') }}" class="h-7 w-auto">
+                    {{-- Decorative: the name next to it already says what this is. --}}
+                    <img src="{{ $logo }}" alt="" width="28" height="28" class="size-7 shrink-0">
                 @else
                     <span class="inline-block size-2.5 rounded-full bg-accent-400" aria-hidden="true"></span>
-                    {{ config('site.name') }}
                 @endif
+                {{ config('site.name') }}
             </a>
             <nav aria-label="Hoofdmenu" class="-mx-3 flex flex-wrap text-sm font-medium sm:mx-0">
                 <a href="{{ route('home') }}" class="nav-link">Zoeken</a>

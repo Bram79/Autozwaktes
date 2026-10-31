@@ -80,7 +80,7 @@ Open dan **/admin**, bekijk de *Generatievoorstellen* en keur ze goed, pas ze to
 
 ## Naam en logo
 - De naam van de site staat op één plek: `APP_NAME` in `.env` (standaard "Nuvik"). Die komt in de titels, de mails, de privacyverklaring, de admin en de gestructureerde data. Een andere naam is één regel.
-- **Je eigen logo:** zet het bestand als `public/images/logo.svg` (of `logo.png`). Het vervangt in de header de naam met het gele puntje. Een SVG blijft scherp op elk scherm; houd de hoogte rond 28 px in gedachten (de header toont het op `h-7`). Maak ook een favicon (`public/favicon.ico`) als je dat wilt.
+- **Je eigen logo:** zet het bestand als `public/images/logo.svg` (of `logo.png`). Het staat in de header links van de naam en vervangt het gele puntje. Een SVG blijft scherp op elk scherm; houd de hoogte rond 28 px in gedachten (de header toont het op `h-7`). Maak ook een favicon (`public/favicon.ico`) als je dat wilt.
 - **Domein en e-mail:** registreer `nuvik.nl` (en eventueel `.com`) en zet het in `APP_URL`, `MAIL_FROM_ADDRESS` en `CONTACT_EMAIL`. De privacyverklaring gebruikt de naam uit `APP_NAME`; laat haar bij de juridische controle opnieuw nalopen.
 - De GitHub-repository heet nog `Autozwaktes`. Je mag hem hernoemen op GitHub; update dan `git remote set-url origin ...` en de URL in `docs/LIVEGANG.md`.
 

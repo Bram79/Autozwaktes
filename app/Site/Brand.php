@@ -5,7 +5,7 @@ namespace App\Site;
 /** The face of the site: the name, and the logo if there is a logo file. */
 class Brand
 {
-    /** Put your own logo in public/images as logo.svg (or logo.png): it replaces the name with the yellow dot in the header. */
+    /** Put your own logo in public/images as logo.svg (or logo.png): it replaces the yellow dot next to the name in the header. */
     public static function logoUrl(): ?string
     {
         foreach (['svg', 'png'] as $extension) {

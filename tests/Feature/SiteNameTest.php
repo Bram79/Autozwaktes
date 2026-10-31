@@ -90,26 +90,40 @@ it('shows the admin under the same name', function () {
 
 // --- the logo ------------------------------------------------------------------------------------------------------
 
+/** Points the app at an empty public folder, so these tests never depend on the real logo in public/images. */
+function useEmptyPublicFolder(): string
+{
+    $folder = sys_get_temp_dir().'/nuvik-public-'.uniqid();
+    mkdir($folder.'/images', 0755, true);
+    app()->usePublicPath($folder);
+
+    return $folder;
+}
+
 it('shows the name as text with the yellow dot while there is no logo file', function () {
+    useEmptyPublicFolder();
+
     expect(Brand::logoUrl())->toBeNull();
 
-    $this->get('/')->assertOk()->assertDontSee('images/logo', false)->assertSee('bg-accent-400', false);
+    $this->get('/')->assertOk()->assertDontSee('images/logo', false)->assertSee('size-2.5 rounded-full bg-accent-400', false)->assertSee(config('site.name'));
 });
 
-it('shows your own logo in the header when public/images/logo.svg exists', function () {
-    $path = public_path('images/logo.svg');
-    @mkdir(dirname($path), 0755, true);
-    file_put_contents($path, '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>');
+it('shows your own logo next to the name in the header when public/images/logo.svg exists', function () {
+    $folder = useEmptyPublicFolder();
+    file_put_contents($folder.'/images/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4"/></svg>');
 
-    try {
-        $html = $this->get('/')->assertOk()->getContent();
+    $html = $this->get('/')->assertOk()->getContent();
 
-        expect(Brand::logoUrl())->toEndWith('/images/logo.svg');
-        expect($html)->toContain('<img src="'.Brand::logoUrl().'"')->toContain('alt="'.config('site.name').'"');
-    } finally {
-        @unlink($path);
-        @rmdir(dirname($path));
-    }
+    expect(Brand::logoUrl())->toEndWith('/images/logo.svg');
+    expect($html)->toContain('<img src="'.Brand::logoUrl().'"')->not->toContain('size-2.5 rounded-full bg-accent-400');
+    $this->get('/')->assertSee(config('site.name'));
+});
+
+it('uses logo.png when there is no logo.svg', function () {
+    $folder = useEmptyPublicFolder();
+    file_put_contents($folder.'/images/logo.png', 'png');
+
+    expect(Brand::logoUrl())->toEndWith('/images/logo.png');
 });
 
 it('explains in the go-live notes where the name and the logo are set', function () {
