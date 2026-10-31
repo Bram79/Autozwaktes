@@ -51,7 +51,7 @@ class AdviceWriter
      *
      * @return array<int, array{label: string, lines: string[], tone: string|null}> tone: good, bad or null
      */
-    public function rows(Generation $generation, ?int $year = null): array
+    public function rows(Generation $generation, ?int $year = null, bool $withPrice = true): array
     {
         $facts = $this->facts($generation, $year);
 
@@ -61,12 +61,9 @@ class AdviceWriter
 
         $rows = [];
 
-        if ($facts['nieuwprijs_gemiddeld_euro']) {
-            $rows[] = ['label' => "Nieuwprijs bouwjaar {$year}", 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro'])], 'tone' => null];
-        } elseif ($range = $facts['nieuwprijs_per_bouwjaar']) {
-            $from = '€ '.$this->number($range['van']['euro']).' ('.$range['van']['bouwjaar'].')';
-            $to = '€ '.$this->number($range['tot']['euro']).' ('.$range['tot']['bouwjaar'].')';
-            $rows[] = ['label' => 'Nieuwprijs', 'lines' => [$range['van']['bouwjaar'] === $range['tot']['bouwjaar'] ? $from : "{$from} tot {$to}"], 'tone' => null];
+        // $withPrice is false when the page already shows the price of the car that was looked up: two prices would only confuse
+        if ($withPrice && ($priceRow = $this->priceRow($facts, $year))) {
+            $rows[] = $priceRow;
         }
 
         $rows[] = ['label' => 'Voertuigen', 'lines' => [$this->number($facts['aantal_voertuigen']).' geregistreerd bij de RDW'], 'tone' => null];
@@ -97,6 +94,23 @@ class AdviceWriter
         }
 
         return $rows;
+    }
+
+    /** The "Nieuwprijs" row: the price of one build year, or the cheapest and dearest year of a generation. Null without prices. */
+    private function priceRow(array $facts, ?int $year): ?array
+    {
+        if ($facts['nieuwprijs_gemiddeld_euro']) {
+            return ['label' => "Nieuwprijs bouwjaar {$year}", 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro'])], 'tone' => null];
+        }
+
+        if ($range = $facts['nieuwprijs_per_bouwjaar']) {
+            $from = '€ '.$this->number($range['van']['euro']).' ('.$range['van']['bouwjaar'].')';
+            $to = '€ '.$this->number($range['tot']['euro']).' ('.$range['tot']['bouwjaar'].')';
+
+            return ['label' => 'Nieuwprijs', 'lines' => [$range['van']['bouwjaar'] === $range['tot']['bouwjaar'] ? $from : "{$from} tot {$to}"], 'tone' => null];
+        }
+
+        return null;
     }
 
     private function point(array $p): array
