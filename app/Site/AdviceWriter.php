@@ -61,13 +61,12 @@ class AdviceWriter
 
         $rows = [];
 
-        $source = 'gemiddelde catalogusprijs per bouwjaar volgens de RDW';
         if ($facts['nieuwprijs_gemiddeld_euro']) {
-            $rows[] = ['label' => "Nieuwprijs bouwjaar {$year}", 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro']).' (gemiddelde catalogusprijs volgens de RDW)'], 'tone' => null];
+            $rows[] = ['label' => "Nieuwprijs bouwjaar {$year}", 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro'])], 'tone' => null];
         } elseif ($range = $facts['nieuwprijs_per_bouwjaar']) {
             $from = '€ '.$this->number($range['van']['euro']).' ('.$range['van']['bouwjaar'].')';
             $to = '€ '.$this->number($range['tot']['euro']).' ('.$range['tot']['bouwjaar'].')';
-            $rows[] = ['label' => 'Nieuwprijs', 'lines' => [$range['van']['bouwjaar'] === $range['tot']['bouwjaar'] ? "{$from}, {$source}" : "{$from} tot {$to}, {$source}"], 'tone' => null];
+            $rows[] = ['label' => 'Nieuwprijs', 'lines' => [$range['van']['bouwjaar'] === $range['tot']['bouwjaar'] ? $from : "{$from} tot {$to}"], 'tone' => null];
         }
 
         $rows[] = ['label' => 'Voertuigen', 'lines' => [$this->number($facts['aantal_voertuigen']).' geregistreerd bij de RDW'], 'tone' => null];
