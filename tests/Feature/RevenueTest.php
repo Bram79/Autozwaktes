@@ -104,6 +104,24 @@ it('shows the clicks per partner, page and spot in the admin', function () {
     Livewire::test(AffiliateClicks::class)->assertSee('/audi/a4')->assertSee('modelpagina')->assertDontSee('/ford/focus');
 });
 
+it('shows which partner gets clicks on which spot, and the clicks per day', function () {
+    config(['site.admin_emails' => ['beheer@example.com']]);
+    $this->actingAs(User::factory()->create(['email' => 'beheer@example.com']));
+    AffiliateClick::insert([
+        ['partner' => 'vehicle_report', 'page' => '/audi/a4', 'position' => 'modelpagina', 'created_at' => '2026-10-30 10:00:00'],
+        ['partner' => 'vehicle_report', 'page' => '/audi/a4', 'position' => 'zijbalk', 'created_at' => '2026-10-30 11:00:00'],
+        ['partner' => 'insurance', 'page' => '/audi/a4', 'position' => 'zijbalk', 'created_at' => '2026-10-29 11:00:00'],
+    ]);
+    Carbon::setTestNow('2026-10-31 12:00:00');
+
+    $data = Livewire::test(AffiliateClicks::class)->instance()->getViewData();
+    Carbon::setTestNow();
+
+    expect($data['combos']->map(fn ($r) => "{$r->partner}|{$r->position}|{$r->clicks}")->all())
+        ->toContain('vehicle_report|modelpagina|1', 'vehicle_report|zijbalk|1', 'insurance|zijbalk|1');
+    expect($data['perDay']->pluck('clicks', 'day')->all())->toBe(['2026-10-29' => 1, '2026-10-30' => 2]);
+});
+
 // --- advertisements and cookie banner ---------------------------------------------------------------------------
 
 it('has no cookie banner and no ad spots while ads are off', function () {
