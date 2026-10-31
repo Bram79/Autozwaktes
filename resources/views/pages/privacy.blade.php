@@ -35,8 +35,8 @@
         <section class="space-y-2" aria-labelledby="kenteken">
             <h2 id="kenteken" class="text-xl font-bold">Zoeken op kenteken</h2>
             <p>Als je een kenteken invult, sturen we dat naar de open data van de RDW om te zien om welke auto het gaat. Daarna sturen we je door naar de pagina met de zwakke punten van dat model.</p>
-            <p>We bewaren je kenteken niet en schrijven het ook niet in onze logbestanden. Om de site snel te houden onthouden we de openbare modelgegevens (merk, model en bouwjaar) maximaal 24 uur, zonder kenteken, onder een sleutel die niemand zonder onze geheime sleutel kan terugrekenen.</p>
-            <p>Verder onthouden we 30 minuten in je sessie dat je via het zoeken op kenteken kwam (zonder kenteken en zonder de auto), zodat we je een passende partnerlink kunnen tonen.</p>
+            <p>We bewaren je kenteken niet en schrijven het ook niet in onze logbestanden. Om de site snel te houden onthouden we de openbare modelgegevens (merk, model, bouwjaar en catalogusprijs) maximaal 24 uur, zonder kenteken, onder een sleutel die niemand zonder onze geheime sleutel kan terugrekenen.</p>
+            <p>Verder onthouden we 30 minuten in je sessie dat je via het zoeken op kenteken kwam en wat de catalogusprijs (nieuwprijs) van die auto is (zonder kenteken en zonder merk of model), zodat we je die prijs op de volgende pagina's kunnen blijven tonen en je een passende partnerlink kunnen tonen.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="apk">

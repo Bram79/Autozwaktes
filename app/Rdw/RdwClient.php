@@ -132,7 +132,7 @@ class RdwClient
         $config = $this->datasetConfig('vehicles');
 
         $rows = $this->get("/resource/{$config['id']}.json", [
-            '$select' => implode(',', ['kenteken', 'voertuigsoort', 'vervaldatum_apk_dt', ...array_slice($config['columns'], 2)]),
+            '$select' => implode(',', ['kenteken', 'voertuigsoort', 'vervaldatum_apk_dt', 'catalogusprijs', ...array_slice($config['columns'], 2)]),
             '$where' => "kenteken = '".str_replace("'", '', $plate)."'",
             '$limit' => 1,
         ], quick: true);

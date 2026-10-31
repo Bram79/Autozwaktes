@@ -44,7 +44,7 @@ class PlateLookup
             $vehicle = Cache::remember(
                 'plate:'.hash_hmac('sha256', $plate, (string) config('app.key')),
                 now()->addDay(),
-                fn () => Arr::only($this->rdw->findVehicle($plate) ?? [], ['voertuigsoort', 'merk', 'handelsbenaming', 'datum_eerste_toelating_dt']),
+                fn () => Arr::only($this->rdw->findVehicle($plate) ?? [], ['voertuigsoort', 'merk', 'handelsbenaming', 'datum_eerste_toelating_dt', 'catalogusprijs']),
             );
         } catch (RdwUnavailableException) {
             return ['status' => 'unavailable'];
@@ -61,6 +61,8 @@ class PlateLookup
         $modelId = $this->normalizer->match($vehicle['merk'] ?? '', $vehicle['handelsbenaming'] ?? '');
         $model = $modelId ? CarModel::with('brand')->find($modelId) : null;
         $year = (int) substr($vehicle['datum_eerste_toelating_dt'] ?? '', 0, 4);
+        // the catalogue price of this one car (new price, in euros); the RDW leaves it empty for some cars
+        $price = (int) round((float) ($vehicle['catalogusprijs'] ?? 0)) ?: null;
 
         if (! $model || $year === 0) {
             // The make, model and year are public details of the car type, not of the plate. They are used for the vehicle report link.
@@ -69,6 +71,7 @@ class PlateLookup
                 'brand' => Str::title((string) ($vehicle['merk'] ?? '')),
                 'model' => Str::title((string) ($vehicle['handelsbenaming'] ?? '')),
                 'year' => $year ?: '',
+                'price' => $price,
             ];
         }
 
@@ -78,13 +81,13 @@ class PlateLookup
         $generation = $this->stats->generationsWithData($model)->first(fn (Generation $g) => $g->coversYear($year));
 
         if (! $generation) {
-            return ['status' => 'no_stats', 'car' => $car, 'url' => route('model', [$model->brand, $model->slug])];
+            return ['status' => 'no_stats', 'car' => $car, 'url' => route('model', [$model->brand, $model->slug]), 'price' => $price];
         }
 
         $url = isset($this->stats->years($generation)[$year])
             ? route('year', [$model->brand, $model->slug, $generation->slug, $year])
             : route('generation', [$model->brand, $model->slug, $generation->slug]);
 
-        return ['status' => 'found', 'car' => $car, 'url' => $url];
+        return ['status' => 'found', 'car' => $car, 'url' => $url, 'price' => $price];
     }
 }

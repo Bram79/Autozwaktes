@@ -32,7 +32,7 @@ class PlateController extends Controller
 
         // "no_stats": no numbers for that year, so the visitor lands on the model page instead
         if (in_array($result['status'], ['found', 'no_stats'], true)) {
-            PlateVisit::mark();
+            PlateVisit::mark($result['price'] ?? null);
 
             return redirect($result['url']);
         }
@@ -41,7 +41,7 @@ class PlateController extends Controller
 
         // for a car we have no numbers for, the home page still offers the vehicle report (make, model and year only)
         if ($result['status'] === 'unknown_model' && $result['brand'] !== '' && $result['model'] !== '') {
-            $redirect->with('plate_unknown_car', Arr::only($result, ['brand', 'model', 'year']));
+            $redirect->with('plate_unknown_car', Arr::only($result, ['brand', 'model', 'year', 'price']));
         }
 
         return $redirect;

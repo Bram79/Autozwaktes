@@ -26,6 +26,7 @@
     @endif
 
     @if (\App\Site\PlateVisit::active())
+        <x-plate-price />
         <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="$year" />
     @endif
 

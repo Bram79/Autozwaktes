@@ -13,6 +13,7 @@
 
     {{-- Someone who looked up a plate and ended here (no numbers for that year) still sees the vehicle report first --}}
     @if (\App\Site\PlateVisit::active())
+        <x-plate-price />
         <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-model" />
     @endif
 
