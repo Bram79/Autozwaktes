@@ -9,13 +9,13 @@
     ]);
 @endphp
 
-<nav aria-label="Kruimelpad" class="mb-2 text-sm text-slate-700">
+<nav aria-label="Kruimelpad" class="mb-2 text-sm text-ink-soft">
     <ol class="flex flex-wrap items-center gap-x-2">
         @foreach ($items as $i => $item)
             <li class="flex min-h-11 items-center gap-2">
                 @if ($i > 0)<span aria-hidden="true">/</span>@endif
                 @if ($loop->last)
-                    <span aria-current="page" class="font-medium text-slate-900">{{ $item[0] }}</span>
+                    <span aria-current="page" class="font-medium text-brand-900">{{ $item[0] }}</span>
                 @else
                     <a href="{{ $item[1] }}" class="text-brand-700 underline underline-offset-2 hover:text-brand-900">{{ $item[0] }}</a>
                 @endif

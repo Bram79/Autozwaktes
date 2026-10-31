@@ -3,7 +3,7 @@
         <label for="zoek" class="sr-only">Zoek een merk of model</label>
         <input id="zoek" name="q" type="search" wire:model.live.debounce.250ms="query" autocomplete="off"
                placeholder="Bijvoorbeeld: audi a4 of polo"
-               class="w-full rounded-full border-2 border-white/0 bg-white px-5 py-3 text-brand-900 shadow-lg transition-shadow duration-500 ease-lux placeholder:text-slate-500 hover:shadow-xl focus:border-accent-400 focus:ring-4 focus:ring-accent-300/60">
+               class="w-full rounded-md border-2 border-white/0 bg-white px-5 py-3 text-brand-900 placeholder:text-slate-500 focus:border-accent-400 focus:ring-4 focus:ring-accent-300/60">
         <button type="submit" class="btn">Zoek</button>
     </form>
 
@@ -15,9 +15,9 @@
                 <p class="text-sm font-medium text-brand-100">Je zoekt te snel. Wacht even en probeer het opnieuw.</p>
             @endif
             @forelse ($results as $model)
-                @if ($loop->first)<ul class="divide-y divide-brand-100 overflow-hidden rounded-2xl bg-white shadow-lg">@endif
+                @if ($loop->first)<ul class="divide-y divide-brand-100 overflow-hidden rounded-lg bg-white">@endif
                 <li>
-                    <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="block px-4 py-3 text-brand-700 hover:bg-accent-300 focus-visible:bg-accent-300">
+                    <a href="{{ route('model', [$model->brand->slug, $model->slug]) }}" class="block px-4 py-3 text-brand-700 hover:bg-brand-50 focus-visible:bg-brand-50">
                         {{ $model->brand->name }} {{ $model->name }}
                     </a>
                 </li>

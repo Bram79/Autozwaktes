@@ -35,14 +35,14 @@
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
         <div class="lg:col-span-2">
-            <h2 class="mb-3 text-xl font-bold">Top {{ config('site.top_defects') }} APK-gebreken</h2>
+            <h2 class="mb-3 text-xl font-semibold">Top {{ config('site.top_defects') }} APK-gebreken</h2>
             <livewire:generation-stats :generation-id="$generation->id" />
 
             @include('partials.data-advice', ['rows' => app(\App\Site\AdviceWriter::class)->rows($generation)])
 
             @if (filled($generation->buying_advice))
                 <section class="mt-8" aria-labelledby="advies">
-                    <h2 id="advies" class="text-xl font-bold">Koopadvies</h2>
+                    <h2 id="advies" class="text-xl font-semibold">Koopadvies</h2>
                     <div class="mt-2 space-y-3">{!! nl2br(e($generation->buying_advice)) !!}</div>
                 </section>
             @endif
@@ -60,7 +60,7 @@
 
     @if ($years)
         <section class="mt-10" aria-labelledby="jaren">
-            <h2 id="jaren" class="text-xl font-bold">Per bouwjaar</h2>
+            <h2 id="jaren" class="text-xl font-semibold">Per bouwjaar</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($years as $y => $total)
                     <li><a href="{{ route('year', [$model->brand, $model->slug, $generation->slug, $y]) }}" class="chip">{{ $name }} {{ $y }}</a></li>
@@ -71,7 +71,7 @@
 
     @if ($siblings->isNotEmpty())
         <section class="mt-8" aria-labelledby="generaties">
-            <h2 id="generaties" class="text-xl font-bold">Andere generaties</h2>
+            <h2 id="generaties" class="text-xl font-semibold">Andere generaties</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($siblings as $other)
                     <li><a href="{{ route('generation', [$model->brand, $model->slug, $other->slug]) }}" class="chip">{{ $model->name }} {{ $other->code }} ({{ \App\Site\Seo::yearsLabel($other) }})</a></li>
@@ -82,7 +82,7 @@
 
     @if ($similar->isNotEmpty())
         <section class="mt-8" aria-labelledby="vergelijkbaar">
-            <h2 id="vergelijkbaar" class="text-xl font-bold">Andere {{ $model->brand->name }}-modellen</h2>
+            <h2 id="vergelijkbaar" class="text-xl font-semibold">Andere {{ $model->brand->name }}-modellen</h2>
             <ul class="mt-3 flex flex-wrap gap-2">
                 @foreach ($similar as $other)
                     <li><a href="{{ route('model', [$model->brand, $other->slug]) }}" class="chip">{{ $other->name }}</a></li>

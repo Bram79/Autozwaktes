@@ -7,10 +7,10 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $brand->name }}: modellen</h1>
 
-    <p class="mt-3 max-w-2xl text-slate-700">Kies een model om de generaties en de meest voorkomende APK-gebreken te zien.</p>
+    <p class="mt-3 max-w-2xl text-ink-soft">Kies een model om de generaties en de meest voorkomende APK-gebreken te zien.</p>
 
     @if ($models->isEmpty())
-        <p class="mt-6 rounded-2xl border border-brand-100 bg-brand-50 p-5 text-slate-700">Voor dit merk zijn nog geen modellen beschikbaar. <a href="{{ route('rankings') }}" class="font-medium text-brand-700 underline underline-offset-2">Bekijk de ranglijsten</a> of zoek een ander merk.</p>
+        <p class="mt-6 panel text-ink-soft">Voor dit merk zijn nog geen modellen beschikbaar. <a href="{{ route('rankings') }}" class="font-medium text-brand-700 underline underline-offset-2">Bekijk de ranglijsten</a> of zoek een ander merk.</p>
     @endif
 
     <ul class="mt-6 grid gap-2 sm:grid-cols-2 md:grid-cols-3">
