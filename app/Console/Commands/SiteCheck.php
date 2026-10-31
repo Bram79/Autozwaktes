@@ -54,6 +54,11 @@ class SiteCheck extends Command
         filled(config('site.contact_email')) ? $add('ok', 'CONTACT_EMAIL staat op de privacypagina') : $add($production ? 'fail' : 'warn', 'CONTACT_EMAIL ontbreekt: de privacyverklaring noemt geen contactadres');
         filled(config('site.operator_name')) ? $add('ok', 'OPERATOR_NAME staat op de privacypagina') : $add($production ? 'fail' : 'warn', 'OPERATOR_NAME ontbreekt: de privacyverklaring zegt niet wie verantwoordelijk is');
 
+        filled(config('site.backup_passphrase')) ? $add('ok', 'Backups worden versleuteld (BACKUP_PASSPHRASE)') : $add($production ? 'fail' : 'warn', 'BACKUP_PASSPHRASE ontbreekt: de backups bevatten e-mailadressen en kentekens en zijn dan niet versleuteld');
+        config('session.secure') ? $add('ok', 'Sessiecookie alleen over https') : $add($production ? 'fail' : 'warn', 'SESSION_SECURE_COOKIE staat uit: zet het op true op de live site');
+        filled(config('trustedproxy.proxies')) ? $add('ok', 'TRUSTED_PROXIES is ingesteld') : $add($production ? 'warn' : 'ok', 'TRUSTED_PROXIES is leeg: staat de site achter een proxy of Cloudflare, dan delen alle bezoekers één IP-adres en gelden de limieten voor iedereen samen');
+        config('site.csp') === 'off' ? $add('warn', 'CSP_MODE staat uit: de site stuurt geen Content Security Policy') : $add('ok', 'Content Security Policy: '.config('site.csp'));
+
         file_exists(public_path('build/manifest.json')) ? $add('ok', 'Vite-assets zijn gebouwd') : $add('fail', 'public/build ontbreekt (npm run build)');
         is_writable(storage_path()) && is_writable(base_path('bootstrap/cache')) ? $add('ok', 'storage en bootstrap/cache zijn schrijfbaar') : $add('fail', 'storage of bootstrap/cache is niet schrijfbaar');
 

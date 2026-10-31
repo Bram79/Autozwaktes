@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  * Set CSP_MODE to "report-only" to try it without blocking anything, or "off" to switch it off.
  *
  * - The admin panel (Filament) is left out: it needs inline scripts and styles.
- * - While advertisements are on, we cannot say where scripts and images come from, so only the safe parts stay.
+ * - While advertisements are on, scripts still need the nonce (or must be loaded by a script that has it); images, frames and connections may go to any https address.
  * - Styles may be inline: the site uses style="..." for bar widths and animation delays.
  */
 class ContentSecurityPolicy
@@ -41,24 +41,30 @@ class ContentSecurityPolicy
     private function policy(string $nonce): string
     {
         $directives = [
+            "default-src 'self'",
             "object-src 'none'",
             "base-uri 'self'",
             "form-action 'self'",
             "frame-ancestors 'self'",
         ];
 
-        if (! config('site.ads.enabled')) {
+        if (config('site.ads.enabled')) {
+            // An ad network loads scripts, images and frames from many hosts that we cannot list. So: our own script (with the nonce)
+            // may load other scripts ('strict-dynamic'), which is how the ad script gets in after the visitor said yes, but an
+            // injected script without the nonce still does not run. Images, frames and connections may go to any https address.
+            $directives[] = "script-src 'self' 'nonce-{$nonce}' 'strict-dynamic'";
+            $directives[] = "style-src 'self' 'unsafe-inline'";
+            $directives[] = "img-src 'self' data: https:";
+            $directives[] = 'frame-src https:';
+            $directives[] = "connect-src 'self' https:";
+        } else {
             // while `npm run dev` runs on your own computer, the browser also loads scripts and styles from the Vite server
             $dev = $this->viteDevServer();
 
-            array_unshift(
-                $directives,
-                "default-src 'self'",
-                trim("script-src 'self' 'nonce-{$nonce}' {$dev}"),
-                trim("style-src 'self' 'unsafe-inline' {$dev}"),
-                trim("connect-src 'self' ".str_replace('http', 'ws', $dev).' '.$dev),
-                "img-src 'self' data:",
-            );
+            $directives[] = trim("script-src 'self' 'nonce-{$nonce}' {$dev}");
+            $directives[] = trim("style-src 'self' 'unsafe-inline' {$dev}");
+            $directives[] = trim("connect-src 'self' ".str_replace('http', 'ws', $dev).' '.$dev);
+            $directives[] = "img-src 'self' data:";
         }
 
         return implode('; ', $directives);

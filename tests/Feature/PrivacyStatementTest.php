@@ -66,6 +66,8 @@ it('does not pass site:check on the live site without a responsible person and c
 
     $this->artisan('site:check')->assertFailed()->expectsOutputToContain('CONTACT_EMAIL')->expectsOutputToContain('OPERATOR_NAME');
 
-    config(['site.contact_email' => 'info@autozwaktes.example', 'site.operator_name' => 'Bram Meijer']);
+    // with a person and an address filled in, only the other live requirements are left
+    config(['site.contact_email' => 'info@autozwaktes.example', 'site.operator_name' => 'Bram Meijer',
+        'site.backup_passphrase' => 'een-lange-zin', 'session.secure' => true]);
     $this->artisan('site:check')->assertSuccessful();
 });
