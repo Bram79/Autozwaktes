@@ -43,11 +43,43 @@ export function formatPlate(typed) {
     return parts.join('-');
 }
 
+// Where the cursor goes after the dashes were added: behind the same number of letters and digits as before.
+// Without this the cursor jumps to the end when someone corrects a character in the middle.
+export function caretAfterFormat(before, caret, after) {
+    const alnumBefore = String(before).slice(0, caret).replace(/[^A-Za-z0-9]/g, '').length;
+    let seen = 0;
+
+    for (let i = 0; i < after.length; i += 1) {
+        if (seen === alnumBefore) {
+            return i;
+        }
+        if (/[A-Z0-9]/.test(after[i])) {
+            seen += 1;
+        }
+    }
+
+    return after.length;
+}
+
 // Every field marked data-plate-input gets the dashes as you type or paste.
 export function attachPlateFormatting() {
     document.querySelectorAll('[data-plate-input]').forEach((input) => {
         input.addEventListener('input', () => {
-            input.value = formatPlate(input.value);
+            const before = input.value;
+            const caret = input.selectionStart ?? before.length;
+            const after = formatPlate(before);
+
+            if (after === before) {
+                return;
+            }
+
+            input.value = after;
+
+            // keep the cursor where it was (only when it was not at the end, where it belongs anyway)
+            if (caret < before.length && typeof input.setSelectionRange === 'function') {
+                const position = caretAfterFormat(before, caret, after);
+                input.setSelectionRange(position, position);
+            }
         });
     });
 }

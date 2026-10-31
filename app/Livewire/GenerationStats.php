@@ -23,6 +23,19 @@ class GenerationStats extends Component
     #[Url(as: 'brandstof', except: '')]
     public string $fuel = '';
 
+    /** True after the visitor changed a filter: only then the "table updated" message is filled in. */
+    public bool $updated = false;
+
+    public function updatedYear(): void
+    {
+        $this->updated = true;
+    }
+
+    public function updatedFuel(): void
+    {
+        $this->updated = true;
+    }
+
     public function render(StatsService $stats)
     {
         $generation = Generation::with('carModel.brand')->findOrFail($this->generationId);

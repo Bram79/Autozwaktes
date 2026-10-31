@@ -48,19 +48,19 @@ class ContentSecurityPolicy
             "frame-ancestors 'self'",
         ];
 
+        // while `npm run dev` runs on your own computer, the browser also loads scripts and styles from the Vite server
+        $dev = $this->viteDevServer();
+
         if (config('site.ads.enabled')) {
             // An ad network loads scripts, images and frames from many hosts that we cannot list. So: our own script (with the nonce)
             // may load other scripts ('strict-dynamic'), which is how the ad script gets in after the visitor said yes, but an
             // injected script without the nonce still does not run. Images, frames and connections may go to any https address.
-            $directives[] = "script-src 'self' 'nonce-{$nonce}' 'strict-dynamic'";
-            $directives[] = "style-src 'self' 'unsafe-inline'";
+            $directives[] = trim("script-src 'self' 'nonce-{$nonce}' 'strict-dynamic' {$dev}");
+            $directives[] = trim("style-src 'self' 'unsafe-inline' {$dev}");
             $directives[] = "img-src 'self' data: https:";
             $directives[] = 'frame-src https:';
-            $directives[] = "connect-src 'self' https:";
+            $directives[] = trim("connect-src 'self' https: ".str_replace('http', 'ws', $dev));
         } else {
-            // while `npm run dev` runs on your own computer, the browser also loads scripts and styles from the Vite server
-            $dev = $this->viteDevServer();
-
             $directives[] = trim("script-src 'self' 'nonce-{$nonce}' {$dev}");
             $directives[] = trim("style-src 'self' 'unsafe-inline' {$dev}");
             $directives[] = trim("connect-src 'self' ".str_replace('http', 'ws', $dev).' '.$dev);

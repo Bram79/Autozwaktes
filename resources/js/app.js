@@ -75,6 +75,9 @@ document.addEventListener('DOMContentLoaded', () => {
             saveConsent(button.dataset.consent);
             banner.hidden = true;
 
+            // the focused button just disappeared: give the focus back to where the visitor was, so a keyboard user does not start at the top
+            (lastFocus && document.contains(lastFocus) ? lastFocus : document.getElementById('inhoud'))?.focus();
+
             if (button.dataset.consent === 'accepted') {
                 loadAds();
             } else {
@@ -86,10 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // "Cookie-instellingen" in the footer opens the banner again: move the focus into it (and back afterwards)
+    let lastFocus = null;
     document.querySelectorAll('[data-consent-open]').forEach((link) => {
-        link.addEventListener('click', () => { banner.hidden = false; });
+        link.addEventListener('click', () => {
+            lastFocus = link;
+            banner.hidden = false;
+            banner.querySelector('[data-consent]')?.focus();
+        });
     });
 });
+
+// A form that was sent back with errors: the focus goes to the block with the errors, so that a screen reader reads it
+document.addEventListener('DOMContentLoaded', () => document.getElementById('fouten')?.focus());
 
 // Streepjes in het kenteken terwijl je typt
 document.addEventListener('DOMContentLoaded', attachPlateFormatting);

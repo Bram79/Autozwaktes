@@ -27,6 +27,11 @@
 }
 
 @layer base {
+    /* A focused element must not hide behind the sticky header (top) or the cookie banner (bottom) */
+    html {
+        scroll-padding-top: 5rem;
+        scroll-padding-bottom: 9rem;
+    }
     h1 {
         @apply font-extrabold tracking-tight text-brand-900;
     }

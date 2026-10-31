@@ -11,8 +11,8 @@
                 <h1 class="max-w-3xl text-3xl font-extrabold leading-[1.1] tracking-tight text-accent-300 sm:text-6xl">
                     <span class="hero-mask"><span class="hero-line">Zwakke punten per automodel</span></span>
                 </h1>
-                <div class="hero-rule mt-6 hidden sm:block" aria-hidden="true"></div>
-                <p class="hero-in mt-6 hidden max-w-2xl text-lg text-brand-100 sm:block" style="--d: 0.45">Weet waar jouw volgende auto mee zit. Zoek een merk of model en zie welke APK-gebreken het vaakst voorkomen, per generatie en bouwjaar.</p>
+                <div class="hero-rule mt-6 max-sm:hidden" aria-hidden="true"></div>
+                <p class="hero-in mt-6 max-w-2xl text-lg text-brand-100 max-sm:sr-only" style="--d: 0.45">Weet waar jouw volgende auto mee zit. Zoek een merk of model en zie welke APK-gebreken het vaakst voorkomen, per generatie en bouwjaar.</p>
 
                 <div class="hero-in mt-4 max-w-xl sm:mt-8" style="--d: 0.6">
                     <livewire:search-box />
@@ -26,19 +26,20 @@
                         <div class="plate flex w-full sm:max-w-60 overflow-hidden rounded-md border-2 border-brand-900 bg-accent-400 shadow-lg">
                             <span class="flex w-9 items-center justify-center bg-brand-600 text-xs font-bold text-white" aria-hidden="true">NL</span>
                             <input id="kenteken" name="kenteken" type="text" data-plate-input required maxlength="10" autocomplete="off" autocapitalize="characters" spellcheck="false"
-                                   placeholder="AB-123-C"
+                                   placeholder="AB-123-C" aria-describedby="kenteken-hulp{{ session('plate_error') ? ' kenteken-fout' : '' }}" @if (session('plate_error')) aria-invalid="true" @endif
                                    class="w-full bg-transparent px-3 py-2 text-lg font-bold uppercase tracking-widest text-brand-900 placeholder:text-brand-900/70 focus:outline-none focus:ring-4 focus:ring-inset focus:ring-brand-900">
                         </div>
                         <button type="submit" class="btn max-sm:w-full">Bekijk mijn auto</button>
                     </div>
                     @if (session('plate_error'))
-                        <p role="alert" class="mt-3 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">{{ session('plate_error') }}</p>
+                        <p id="kenteken-fout" role="alert" class="mt-3 rounded-lg bg-white/15 px-4 py-2 text-sm font-medium text-white">{{ session('plate_error') }}</p>
                         @if (session('plate_unknown_car'))
                             @php $car = session('plate_unknown_car'); @endphp
                             <x-plate-price :price="$car['price'] ?? null" />
                             <x-plate-cta :brand="$car['brand']" :model="$car['model']" :year="$car['year']" position="kenteken-onbekend" />
                         @endif
                     @endif
+                    <p id="kenteken-hulp" class="sr-only">Je mag de streepjes weglaten.</p>
                     <p class="mt-2 text-sm text-brand-100">We zoeken de auto op bij de RDW en slaan je kenteken niet op.</p>
                 </form>
             </div>
