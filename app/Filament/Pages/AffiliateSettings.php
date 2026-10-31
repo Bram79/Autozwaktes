@@ -53,7 +53,7 @@ class AffiliateSettings extends Page implements HasSchemas
                 ->description('Zonder URL wordt dit blok niet getoond. Je kunt {merk}, {model} en {jaar} gebruiken in de URL en de teksten.')
                 ->schema([
                     Toggle::make("{$type}.enabled")->label('Blok tonen'),
-                    TextInput::make("{$type}.url")->label('Affiliate-URL')->url()->maxLength(1000),
+                    TextInput::make("{$type}.url")->label('Affiliate-URL')->url()->rules(['regex:#^https?://#i'])->maxLength(1000),
                     TextInput::make("{$type}.title")->label('Titel')->required()->maxLength(120),
                     Textarea::make("{$type}.text")->label('Tekst')->rows(2)->maxLength(300),
                     TextInput::make("{$type}.button")->label('Knoptekst')->required()->maxLength(50),

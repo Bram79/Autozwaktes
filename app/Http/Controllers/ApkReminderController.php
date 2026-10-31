@@ -9,10 +9,12 @@ use App\Rdw\RdwUnavailableException;
 use App\Site\PlateLookup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Throwable;
 
 class ApkReminderController extends Controller
 {
@@ -61,22 +63,31 @@ class ApkReminderController extends Controller
         }
 
         $email = Str::lower(trim($data['email']));
-        $reminder = ApkReminder::firstOrNew(['email' => $email, 'license_plate' => $plate]);
 
-        // Nobody may fill someone else's inbox: a few mails per address per hour. The answer stays the same either way.
-        // The key holds a hash, not the address itself.
-        $mailKey = 'apk-mail:'.hash_hmac('sha256', $email, (string) config('app.key'));
-        $mayMail = ! RateLimiter::tooManyAttempts($mailKey, (int) config('site.limits.apk_mail_per_hour'));
+        // A failing database or mail server puts the address or the plate in its error message, and that must not end up in the log:
+        // so we catch it here and log only what kind of error it was.
+        try {
+            $reminder = ApkReminder::firstOrNew(['email' => $email, 'license_plate' => $plate]);
 
-        if (! $reminder->isConfirmed() && $mayMail) {
-            RateLimiter::hit($mailKey, 3600);
+            // Nobody may fill someone else's inbox: a few mails per address per hour. The answer stays the same either way.
+            // The key holds a hash, not the address itself.
+            $mailKey = 'apk-mail:'.hash_hmac('sha256', $email, (string) config('app.key'));
+            $mayMail = ! RateLimiter::tooManyAttempts($mailKey, (int) config('site.limits.apk_mail_per_hour'));
 
-            $reminder->fill([
-                'apk_expires_at' => self::expiry($vehicle),
-                'token' => $reminder->token ?: Str::random(48),
-            ])->save();
+            if (! $reminder->isConfirmed() && $mayMail) {
+                RateLimiter::hit($mailKey, 3600);
 
-            Mail::to($email)->send(new ConfirmApkReminder($reminder));
+                $reminder->fill([
+                    'apk_expires_at' => self::expiry($vehicle),
+                    'token' => $reminder->token ?: Str::random(48),
+                ])->save();
+
+                Mail::to($email)->send(new ConfirmApkReminder($reminder));
+            }
+        } catch (Throwable $e) {
+            Log::error('APK reminder request failed: '.class_basename($e));
+
+            return back()->withInput($request->except('kenteken'))->withErrors(['email' => 'Het versturen van de mail is niet gelukt. Probeer het straks nog eens.']);
         }
 
         return view('pages.apk-message', [

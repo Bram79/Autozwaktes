@@ -40,13 +40,16 @@ it('can be switched off', function () {
     expect($this->get('/')->headers->has('Content-Security-Policy'))->toBeFalse();
 });
 
-it('does not limit where scripts and images come from while advertisements are on, but keeps the safe parts', function () {
+it('keeps a script policy while advertisements are on: only our own script with the nonce, and what that script loads', function () {
     config(['site.ads.enabled' => true, 'site.ads.script_url' => 'https://ads.example/ads.js']);
 
     $policy = $this->get('/')->headers->get('Content-Security-Policy');
 
-    expect($policy)->not->toContain('script-src')->not->toContain('default-src')
+    expect($policy)->toContain("default-src 'self'")
+        ->toMatch("/script-src 'self' 'nonce-[A-Za-z0-9+\/=]{16,}' 'strict-dynamic'/")   // a script that we load (the ad script) may load more
+        ->toContain("img-src 'self' data: https:")->toContain('frame-src https:')->toContain("connect-src 'self' https:")
         ->toContain("object-src 'none'")->toContain("frame-ancestors 'self'");
+    expect($policy)->not->toContain('script-src *');
 });
 
 it('leaves the admin panel alone, because Filament needs inline scripts', function () {

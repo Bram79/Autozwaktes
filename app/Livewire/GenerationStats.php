@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Generation;
 use App\Site\StatsService;
+use Livewire\Attributes\Locked;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -13,6 +14,7 @@ use Livewire\Component;
  */
 class GenerationStats extends Component
 {
+    #[Locked]
     public int $generationId;
 
     #[Url(as: 'jaar', except: '')]

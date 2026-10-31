@@ -78,6 +78,7 @@ it('is happy with a correct live configuration', function () {
     config([
         'app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
         'site.contact_email' => 'info@example.com', 'site.operator_name' => 'Bram Meijer', 'site.google_verification' => 'abc',
+        'site.backup_passphrase' => 'een-lange-zin', 'session.secure' => true, 'trustedproxy.proxies' => '10.0.0.1',
     ]);
 
     $this->artisan('site:check')->assertSuccessful()->expectsOutputToContain('APP_URL is https://autozwaktes.example');
@@ -180,7 +181,43 @@ it('stops the deploy script from leaving the site in maintenance mode when a ste
     $script = file_get_contents(base_path('scripts/deploy.sh'));
 
     expect(strpos($script, 'trap '))->toBeInt()->toBeLessThan(strpos($script, 'php artisan down'));
+    // after the new code is pulled, a failure keeps the site in maintenance mode: new code on an old database must not be live
+    expect($script)->toContain('CODE_CHANGED');
     expect(Process::run(['bash', '-n', base_path('scripts/deploy.sh')])->successful())->toBeTrue();
+});
+
+it('does not let a live site start without an encrypted backup, a secure session cookie and a known proxy', function () {
+    app()->detectEnvironment(fn () => 'production');
+    config([
+        'app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
+        'site.contact_email' => 'info@example.com', 'site.operator_name' => 'Bram Meijer', 'site.google_verification' => 'abc',
+        'site.backup_passphrase' => null, 'session.secure' => false, 'trustedproxy.proxies' => null, 'site.csp' => 'off',
+    ]);
+
+    $this->artisan('site:check')->assertFailed()
+        ->expectsOutputToContain('BACKUP_PASSPHRASE ontbreekt')
+        ->expectsOutputToContain('SESSION_SECURE_COOKIE staat uit')
+        ->expectsOutputToContain('TRUSTED_PROXIES is leeg')
+        ->expectsOutputToContain('CSP_MODE staat uit');
+});
+
+it('warns about a backup without passphrase and still makes the backup', function () {
+    app()->detectEnvironment(fn () => 'production');
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes'], 'site.backup_passphrase' => null]);
+    @mkdir(storage_path('app/backups'), 0700, true);
+    Process::fake(function ($process) {
+        foreach ($process->command as $argument) {
+            if (str_starts_with($argument, '--result-file=')) {
+                file_put_contents(substr($argument, 14), '-- dump');
+            }
+        }
+
+        return Process::result('');
+    });
+
+    $this->artisan('backup:database --connection=backup_test')->assertSuccessful()->expectsOutputToContain('niet versleuteld');
+
+    array_map('unlink', glob(storage_path('app/backups').'/*.sql.gz'));
 });
 
 it('reports a failed backup', function () {

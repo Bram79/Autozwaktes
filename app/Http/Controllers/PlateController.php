@@ -28,7 +28,7 @@ class PlateController extends Controller
         }
         RateLimiter::hit($key, 60);
 
-        $result = $lookup->find((string) $request->input('kenteken'));
+        $result = $lookup->find(is_string($request->input('kenteken')) ? $request->input('kenteken') : '');
 
         // "no_stats": no numbers for that year, so the visitor lands on the model page instead
         if (in_array($result['status'], ['found', 'no_stats'], true)) {

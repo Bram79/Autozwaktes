@@ -45,6 +45,11 @@ class BackupDatabase extends Command
         $this->compress($file);
         $saved = $file.'.gz';
 
+        if (blank(config('site.backup_passphrase')) && app()->environment('production')) {
+            // not a reason to skip the backup (no backup is worse), but the owner must know
+            $this->warn('Backup is niet versleuteld: zet BACKUP_PASSPHRASE in .env. Het bestand bevat e-mailadressen en kentekens.');
+        }
+
         if (filled(config('site.backup_passphrase'))) {
             $saved = $this->encrypt($saved);
 
