@@ -33,21 +33,39 @@ class Seo
 
     private const DESCRIPTION_MAX = 160;
 
-    /** A title that fits in the search results: too long becomes "<name>: APK-gebreken", or just the name, or cut at a word. */
+    /** A title that fits in the search results: first without the site name, then "<name>: APK-gebreken", then just the name, then cut at a word. */
     public static function title(string $title): string
     {
         if (mb_strlen($title) <= self::TITLE_MAX) {
             return $title;
         }
 
-        $name = Str::before($title, ': ');
-        foreach ([$name.': APK-gebreken', $name] as $candidate) {
+        $withoutSite = Str::replaceEnd(' | Auto Zwaktes', '', $title);
+        $name = Str::before($withoutSite, ': ');
+
+        // "Minste APK-gebreken bij Audi" already says it: adding ": APK-gebreken" would say it twice
+        $candidates = [$withoutSite, str_contains($name, 'APK-gebreken') ? null : $name.': APK-gebreken', $name];
+
+        foreach (array_filter($candidates) as $candidate) {
             if (mb_strlen($candidate) <= self::TITLE_MAX) {
                 return $candidate;
             }
         }
 
         return Str::limit($name, self::TITLE_MAX - 1, '…', preserveWords: true);
+    }
+
+    /** Fuel as a noun for in a sentence: "elektrische auto's", "benzineauto's". */
+    public static function fuelCars(string $fuel): string
+    {
+        return match (mb_strtolower($fuel)) {
+            'elektriciteit' => "elektrische auto's",
+            'hybride' => "hybride auto's",
+            'benzine' => "benzineauto's",
+            'diesel' => "dieselauto's",
+            'lpg' => "LPG-auto's",
+            default => mb_strtolower($fuel)."-auto's",
+        };
     }
 
     /** A description that is not cut off by the search engine: at most 160 characters, cut at a word. */

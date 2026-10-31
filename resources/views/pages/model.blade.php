@@ -8,7 +8,7 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }}: generaties</h1>
     @unless ($generations->isEmpty())
-        <p class="mt-3 max-w-2xl text-slate-700">Er zijn {{ $generations->count() }} {{ $generations->count() === 1 ? 'generatie' : 'generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
+        <p class="mt-3 max-w-2xl text-slate-700">{{ $generations->count() === 1 ? 'Er is 1 generatie' : 'Er zijn '.$generations->count().' generaties' }} van de {{ $name }} met cijfers. Kies de generatie die je overweegt voor de top-gebreken, een koopchecklist en het verschil per bouwjaar.</p>
     @endunless
 
     {{-- Someone who looked up a plate and ended here (no numbers for that year) still sees the vehicle report first --}}

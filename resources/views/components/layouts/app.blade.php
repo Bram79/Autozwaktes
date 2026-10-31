@@ -37,7 +37,7 @@
         <div class="flex w-max animate-marquee gap-12 whitespace-nowrap">
             @for ($i = 0; $i < 2; $i++)
                 <div class="flex gap-12">
-                    @foreach (['Echte APK-data van de RDW', 'Zwakke punten per model en bouwjaar', 'Check het voordat je een occasion koopt', 'Onafhankelijk en gratis'] as $text)
+                    @foreach (['Gebaseerd op open data van de RDW', 'Zwakke punten per model en bouwjaar', 'Check het voordat je een occasion koopt', 'Onafhankelijk en gratis'] as $text)
                         <span>{{ $text }}</span><span>●</span>
                     @endforeach
                 </div>

@@ -1,8 +1,8 @@
 @php
     $title = match ($scope) {
         'merk' => "Minste APK-gebreken bij {$label}: ranglijst per generatie",
-        'brandstof' => "Auto's op {$label} met de minste APK-gebreken: ranglijst",
-        'bouwjaar' => "Betrouwbaarste occasions {$label}: de minste APK-gebreken",
+        'brandstof' => ucfirst(\App\Site\Seo::fuelCars($fuel)).' met de minste APK-gebreken: ranglijst',
+        'bouwjaar' => "Occasions {$label} met de minste APK-gebreken",
         default => "Auto's met de minste APK-gebreken: ranglijst per generatie",
     };
     $count = count($rows);
@@ -11,7 +11,7 @@
     $firstYear = \App\Site\RankingService::firstRankedYear();
     $intro = match ($scope) {
         'merk' => "Hoe scoren de {$label}-generaties bij de APK? Deze lijst rangschikt ze op hun APK-gebreken, vergeleken met andere auto's van dezelfde bouwjaren.",
-        'brandstof' => "Welke {$label}-auto's hebben bij de APK het minst vaak gebreken? Dit zijn de beste en de slechtste generaties.",
+        'brandstof' => 'Welke '.\App\Site\Seo::fuelCars($fuel).' hebben bij de APK het minst vaak gebreken? Dit zijn de generaties met de minste en de meeste gebreken.',
         'bouwjaar' => "Kijk je naar een occasion {$label}? Dit zijn de generaties met de minste en de meeste APK-gebreken in dat bouwjaar.",
         default => "De generaties met de minste en de meeste APK-gebreken, van alle auto's op deze site.",
     };
@@ -35,7 +35,8 @@
         </div>
     @else
         <div class="mt-3 max-w-2xl space-y-1 text-sm text-slate-600">
-            <p><strong>Score: 100 = gemiddeld.</strong> We vergelijken elke generatie met het gemiddelde van alle auto's van dezelfde bouwjaren en brandstof. Een score van 80 is dus 20% beter dan gemiddeld, 120 is 20% slechter. Zo hoeft een oudere auto niet te boeten voor zijn leeftijd. Lager is beter; de balk toont de score ten opzichte van de hoogste in deze lijst.</p>
+            <p><strong>Score: 100 = gemiddeld.</strong> We vergelijken elke generatie met het gemiddelde van alle auto's op deze site van dezelfde bouwjaren en brandstof. Een score van 80 is dus 20% beter dan gemiddeld, 120 is 20% slechter. Zo hoeft een oudere auto niet te boeten voor zijn leeftijd. Lager is beter; de balk toont de score ten opzichte van de hoogste in deze lijst.</p>
+            <p>De score zegt niets over kilometers, onderhoud of gebruik (bijvoorbeeld als bedrijfswagen). Zie het als een indicatie, niet als een oordeel over de auto.</p>
             <p>Alleen auto's van bouwjaar {{ $firstYear }} tot en met bouwjaar {{ $lastYear }} tellen mee: nieuwere auto's hebben nog geen APK gehad en lijken daardoor onterecht foutloos, en van veel oudere auto's blijven vooral de best onderhouden exemplaren over. Alleen generaties met minstens {{ number_format(config('site.min_ranking_sample'), 0, ',', '.') }} auto's doen mee.</p>
         </div>
 
