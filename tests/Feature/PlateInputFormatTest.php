@@ -42,7 +42,28 @@ it('puts the dashes in a typed license plate, for every Dutch format', function 
     [' 70 gxl 2 ', '70-GXL-2'],    // pasted with spaces
 ]);
 
-it('leaves an unfinished plate without dashes, and cuts off what is too long', function (string $typed, string $expected) {
+it('shows the first dash as soon as three characters make clear where it goes', function (string $typed, string $expected) {
+    if (Process::path(base_path())->run(['node', '-v'])->failed()) {
+        $this->markTestSkipped('Node is not installed.');
+    }
+
+    expect(formatted($typed))->toBe($expected);
+})->with([
+    ['AB1', 'AB-1'],         // two letters and a digit: only 99-.. formats start like this, so the dash is after the second character
+    ['AB12', 'AB-12'],
+    ['70G', '70-G'],         // two digits and a letter
+    ['70GXL', '70-GXL'],     // the second dash is still open: 99-XX-XX and 99-XXX-9 both fit
+    ['1AB', '1-AB'],         // one digit, then letters: the dash is after the first character
+    ['A12', 'A-12'],
+    ['A12BC', 'A-12-BC'],    // here both dashes are known
+    ['AB12C', 'AB-12-C'],
+    ['ABCD', 'AB-CD'],       // four letters: XX-XX-99 or XX-XX-.. only
+    ['ABC1', 'ABC-1'],       // three letters and a digit
+    ['1234', '12-34'],
+    ['123A', '123-A'],
+]);
+
+it('leaves the dash out while the formats still disagree, and cuts off what is too long', function (string $typed, string $expected) {
     if (Process::path(base_path())->run(['node', '-v'])->failed()) {
         $this->markTestSkipped('Node is not installed.');
     }
@@ -50,8 +71,11 @@ it('leaves an unfinished plate without dashes, and cuts off what is too long', f
     expect(formatted($typed))->toBe($expected);
 })->with([
     ['', ''],
-    ['70g', '70G'],
-    ['70GXL', '70GXL'],
+    ['A', 'A'],
+    ['AB', 'AB'],
+    ['ABC', 'ABC'],          // 99-XXX-9 and XX-XXX-9 start like this, but also XX-XX-..: not clear yet
+    ['123', '123'],
+    ['A1B', 'A1B'],          // no Dutch format looks like this: left alone
     ['70GXL2X', '70-GXL-2'],
     ['@#!', ''],
 ]);

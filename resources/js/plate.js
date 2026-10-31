@@ -1,6 +1,6 @@
 // Puts the dashes in a Dutch license plate while it is typed: "70GXL2" becomes "70-GXL-2".
 // The 14 formats the RDW knows differ in where the letters (L) and digits (D) are, so the letters and digits that were typed
-// tell where the dashes go. Until six characters are typed there is no way to know, so the text stays as it is.
+// tell where the dashes go. A dash appears as soon as all formats that fit what was typed agree on where it goes: often after three characters.
 const LAYOUTS = {
     LLDDDD: [2, 2, 2],
     DDDDLL: [2, 2, 2],
@@ -21,26 +21,32 @@ const LAYOUTS = {
 export function formatPlate(typed) {
     const plate = String(typed).toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 6);
 
-    if (plate.length < 6) {
-        return plate;
-    }
-
     // one pass: replacing digits by "D" first would make the next replace take that D for a letter
     const shape = plate.replace(/[0-9A-Z]/g, (character) => (/[0-9]/.test(character) ? 'D' : 'L'));
-    const lengths = LAYOUTS[shape];
 
-    if (! lengths) {
+    // The formats that can still be meant by what was typed so far. With three characters there is often only one answer
+    // for the first dash ("AB1" is always "AB-1", "1AB" always "1-AB"); "ABC" and "123" are not clear yet.
+    const candidates = Object.entries(LAYOUTS).filter(([format]) => format.startsWith(shape)).map(([, lengths]) => lengths);
+
+    if (plate.length === 0 || candidates.length === 0) {
         return plate;
     }
 
-    const parts = [];
-    let start = 0;
-    lengths.forEach((length) => {
-        parts.push(plate.slice(start, start + length));
-        start += length;
-    });
+    // a dash goes behind position `boundary` when every candidate has it there and there is a character after it
+    const boundaries = [candidates.map((lengths) => lengths[0]), candidates.map((lengths) => lengths[0] + lengths[1])];
+    const dashes = boundaries
+        .filter((positions) => positions.every((position) => position === positions[0]) && plate.length > positions[0])
+        .map((positions) => positions[0]);
 
-    return parts.join('-');
+    let result = '';
+    for (let i = 0; i < plate.length; i += 1) {
+        if (dashes.includes(i)) {
+            result += '-';
+        }
+        result += plate[i];
+    }
+
+    return result;
 }
 
 // Where the cursor goes after the dashes were added: behind the same number of letters and digits as before.
