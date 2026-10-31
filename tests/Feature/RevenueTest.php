@@ -86,7 +86,7 @@ it('gives a defect a parts link when a category keyword matches, and counts that
     $category = PartsCategory::create(['name' => 'Remmen', 'keywords' => 'rem, remleiding', 'url' => 'https://parts.example/remmen?auto={merk}']);
     config(['site.affiliates.parts.url' => 'https://parts.example/']);
 
-    $this->get('/audi/a4/b8')->assertSee('Onderdelen: remmen', false)->assertSee("cat={$category->id}", false);
+    $this->get('/audi/a4/b8')->assertSee('Onderdelen: remmen', false)->assertSee("cat={$category->id}", false)->assertSee('(partnerlink)', false);
 
     $this->get("/go/parts?cat={$category->id}&merk=Audi&p=/audi/a4/b8")->assertRedirect('https://parts.example/remmen?auto=Audi');
     expect(AffiliateClick::first()->position)->toBe('gebrek: Remmen');
