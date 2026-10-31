@@ -5,6 +5,7 @@ use App\Mail\ApkReminderMail;
 use App\Mail\ConfirmApkReminder;
 use App\Models\AffiliateClick;
 use App\Models\ApkReminder;
+use App\Models\CarModel;
 use App\Models\PartsCategory;
 use App\Models\User;
 use Database\Seeders\DemoStatsSeeder;
@@ -75,7 +76,7 @@ it('puts every affiliate block behind /go, with sponsored nofollow and a visible
 });
 
 it('shows the vehicle report prominently after a license plate search, and on model pages', function () {
-    $this->withSession(['from_plate_until' => now()->addMinutes(10)->timestamp])->get('/audi/a4/b8/2010')->assertSee('kenteken-resultaat', false);
+    $this->withSession(['from_plate_until' => now()->addMinutes(10)->timestamp, 'from_plate_model' => CarModel::where('slug', 'a4')->value('id')])->get('/audi/a4/b8/2010')->assertSee('kenteken-resultaat', false);
     $this->flushSession();
     $this->get('/audi/a4/b8/2010')->assertDontSee('kenteken-resultaat', false);
 

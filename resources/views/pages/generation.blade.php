@@ -33,9 +33,9 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
 
-    @if (\App\Site\PlateVisit::active())
+    @if (\App\Site\PlateVisit::forModel($model->id))
         <x-plate-price />
-        <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-generatie" />
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="\App\Site\PlateVisit::year() ?? ''" position="kenteken-resultaat-generatie" />
     @endif
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
@@ -54,7 +54,7 @@
         </div>
 
         <div class="space-y-4">
-            @unless (\App\Site\PlateVisit::active())
+            @unless (\App\Site\PlateVisit::forModel($model->id))
                 <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="generatiepagina-rapport" />
             @endunless
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" />

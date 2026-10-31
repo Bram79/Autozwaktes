@@ -26,9 +26,9 @@
         </p>
     @endif
 
-    @if (\App\Site\PlateVisit::active())
+    @if (\App\Site\PlateVisit::forModel($model->id))
         <x-plate-price />
-        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="$year" />
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="\App\Site\PlateVisit::year() ?? $year" />
     @endif
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
@@ -44,7 +44,7 @@
         </div>
         <div class="space-y-4">
             {{-- after a plate search the report is already shown above, so not a second time --}}
-            @unless (\App\Site\PlateVisit::active())
+            @unless (\App\Site\PlateVisit::forModel($model->id))
                 <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" :year="$year" position="zijbalk" />
             @endunless
             <x-ad-slot name="zijbalk" />

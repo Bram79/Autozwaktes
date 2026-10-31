@@ -81,13 +81,13 @@ class PlateLookup
         $generation = $this->stats->generationsWithData($model)->first(fn (Generation $g) => $g->coversYear($year));
 
         if (! $generation) {
-            return ['status' => 'no_stats', 'car' => $car, 'url' => route('model', [$model->brand, $model->slug]), 'price' => $price];
+            return ['status' => 'no_stats', 'car' => $car, 'url' => route('model', [$model->brand, $model->slug]), 'price' => $price, 'model_id' => $model->id, 'year' => $year];
         }
 
         $url = isset($this->stats->years($generation)[$year])
             ? route('year', [$model->brand, $model->slug, $generation->slug, $year])
             : route('generation', [$model->brand, $model->slug, $generation->slug]);
 
-        return ['status' => 'found', 'car' => $car, 'url' => $url, 'price' => $price];
+        return ['status' => 'found', 'car' => $car, 'url' => $url, 'price' => $price, 'model_id' => $model->id, 'year' => $year];
     }
 }

@@ -12,9 +12,9 @@
     @endunless
 
     {{-- Someone who looked up a plate and ended here (no numbers for that year) still sees the vehicle report first --}}
-    @if (\App\Site\PlateVisit::active())
+    @if (\App\Site\PlateVisit::forModel($model->id))
         <x-plate-price />
-        <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-model" />
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="\App\Site\PlateVisit::year() ?? ''" position="kenteken-resultaat-model" />
     @endif
 
     @if ($generations->isEmpty())
@@ -40,7 +40,7 @@
 
     @unless ($generations->isEmpty())
         <div class="mt-10 grid gap-4 md:grid-cols-2">
-            @unless (\App\Site\PlateVisit::active())
+            @unless (\App\Site\PlateVisit::forModel($model->id))
                 <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="modelpagina" :prominent="true" />
             @endunless
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" position="modelpagina" />

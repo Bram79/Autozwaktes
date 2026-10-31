@@ -32,7 +32,7 @@ class PlateController extends Controller
 
         // "no_stats": no numbers for that year, so the visitor lands on the model page instead
         if (in_array($result['status'], ['found', 'no_stats'], true)) {
-            PlateVisit::mark($result['price'] ?? null);
+            PlateVisit::mark($result['model_id'] ?? null, $result['year'] ?? null, $result['price'] ?? null);
 
             return redirect($result['url']);
         }
