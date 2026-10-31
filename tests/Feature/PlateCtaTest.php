@@ -74,3 +74,31 @@ it('does not remember anything about the plate itself, only that a search was do
 
     expect(strtoupper(json_encode(session()->all())))->not->toContain('QQ123R')->not->toContain('QQ-123-R');
 });
+
+// --- B5: the vehicle report also appears when we have no numbers for the car ------------------------------------------
+
+it('shows the vehicle report on the model page when the plate search ends there because there are no numbers for that year', function () {
+    rdwHasAudi(1990);   // no generation of the A4 covers 1990
+
+    $html = $this->followingRedirects()->post('/kenteken', ['kenteken' => 'AB-123-C'])->assertOk()->getContent();
+
+    expect($html)->toContain('plek=kenteken-resultaat');
+});
+
+it('does not show it on the model page to someone who did not search a plate', function () {
+    $this->get('/audi/a4')->assertDontSee('plek=kenteken-resultaat', false);
+});
+
+it('shows the vehicle report for a car we do not know, using the make and model the RDW gave', function () {
+    Http::fake(['opendata.rdw.nl/*' => Http::response([[
+        'kenteken' => 'AB123C', 'voertuigsoort' => 'Personenauto', 'merk' => 'LANCIA', 'handelsbenaming' => 'DELTA',
+        'datum_eerste_toelating_dt' => '2012-05-04T00:00:00.000', 'vervaldatum_apk_dt' => '2027-06-13T00:00:00.000',
+    ]])]);
+
+    $html = $this->followingRedirects()->post('/kenteken', ['kenteken' => 'AB-123-C'])->assertOk()->getContent();
+
+    expect($html)->toContain('geen cijfers voor dit model');
+    expect($html)->toContain('plek=kenteken-onbekend');
+    expect($html)->toContain('Lancia Delta uit 2012');
+    expect(strtoupper(json_encode(session()->all())))->not->toContain('AB123C');   // still no plate in the session
+});

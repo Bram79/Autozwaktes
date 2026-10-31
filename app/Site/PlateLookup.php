@@ -63,7 +63,13 @@ class PlateLookup
         $year = (int) substr($vehicle['datum_eerste_toelating_dt'] ?? '', 0, 4);
 
         if (! $model || $year === 0) {
-            return ['status' => 'unknown_model'];
+            // The make, model and year are public details of the car type, not of the plate. They are used for the vehicle report link.
+            return [
+                'status' => 'unknown_model',
+                'brand' => Str::title((string) ($vehicle['merk'] ?? '')),
+                'model' => Str::title((string) ($vehicle['handelsbenaming'] ?? '')),
+                'year' => $year ?: '',
+            ];
         }
 
         $car = trim($model->brand->name.' '.$model->name.' '.$year);

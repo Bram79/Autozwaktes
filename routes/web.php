@@ -19,8 +19,11 @@ Route::post('/kenteken', [PlateController::class, 'lookup'])->name('plate');
 Route::get('/privacy', [PageController::class, 'privacy'])->name('privacy');
 Route::get('/apk-herinnering', [ApkReminderController::class, 'show'])->name('apk');
 Route::post('/apk-herinnering', [ApkReminderController::class, 'store'])->name('apk.store');
+// The links in the mails only show a page with a button: mail scanners open links, and that must not confirm or delete anything.
 Route::get('/apk-herinnering/bevestig/{token}', [ApkReminderController::class, 'confirm'])->middleware('signed')->name('apk.confirm');
+Route::post('/apk-herinnering/bevestig/{token}', [ApkReminderController::class, 'confirmStore'])->middleware('signed')->name('apk.confirm.store');
 Route::get('/apk-herinnering/uitschrijven/{token}', [ApkReminderController::class, 'unsubscribe'])->middleware('signed')->name('apk.unsubscribe');
+Route::post('/apk-herinnering/uitschrijven/{token}', [ApkReminderController::class, 'unsubscribeStore'])->middleware('signed')->name('apk.unsubscribe.store');
 Route::get('/ranglijsten', [RankingController::class, 'index'])->name('rankings');
 Route::get('/ranglijst/{scope}/{value?}', [RankingController::class, 'show'])->where('scope', 'alles|merk|brandstof|bouwjaar')->name('ranking');
 Route::get('/vergelijk/{pair}', [ComparisonController::class, 'show'])->where('pair', '[a-z0-9-]+-vs-[a-z0-9-]+')->name('comparison');

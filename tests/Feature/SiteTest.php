@@ -81,7 +81,7 @@ it('shows a year page with a canonical url and links to other years', function (
 });
 
 it('renders affiliate blocks only when a url is configured, with sponsored nofollow', function () {
-    $this->get('/audi/a4/b8')->assertDontSee('Affiliate-link');
+    $this->get('/audi/a4/b8')->assertDontSee('Partnerlink');
 
     config(['site.affiliates.insurance.url' => 'https://partner.example/verzekering?auto={merk}']);
 
@@ -89,7 +89,7 @@ it('renders affiliate blocks only when a url is configured, with sponsored nofol
         ->assertSee('rel="sponsored nofollow noopener"', false)
         ->assertSee('/go/insurance?', false)   // the visitor goes through our own redirect, so the click is counted
         ->assertDontSee('https://partner.example', false)
-        ->assertSee('Affiliate-link');
+        ->assertSee('Advertentie · Partnerlink');   // a label that says plainly that this is an advertisement
 });
 
 it('finds models through the search box', function () {

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 class ApkReminderController extends Controller
@@ -58,7 +59,14 @@ class ApkReminderController extends Controller
         $email = Str::lower(trim($data['email']));
         $reminder = ApkReminder::firstOrNew(['email' => $email, 'license_plate' => $plate]);
 
-        if (! $reminder->isConfirmed()) {
+        // Nobody may fill someone else's inbox: a few mails per address per hour. The answer stays the same either way.
+        // The key holds a hash, not the address itself.
+        $mailKey = 'apk-mail:'.hash_hmac('sha256', $email, (string) config('app.key'));
+        $mayMail = ! RateLimiter::tooManyAttempts($mailKey, (int) config('site.limits.apk_mail_per_hour'));
+
+        if (! $reminder->isConfirmed() && $mayMail) {
+            RateLimiter::hit($mailKey, 3600);
+
             $reminder->fill([
                 'apk_expires_at' => self::expiry($vehicle),
                 'token' => $reminder->token ?: Str::random(48),
@@ -73,12 +81,27 @@ class ApkReminderController extends Controller
         ]);
     }
 
-    public function confirm(string $token)
+    /** The link in the mail: only shows a button. Nothing changes until the visitor presses it. */
+    public function confirm(Request $request, string $token)
+    {
+        if (! ApkReminder::where('token', $token)->exists()) {
+            return $this->invalidLink();
+        }
+
+        return view('pages.apk-action', [
+            'title' => 'Bevestig je herinnering',
+            'text' => 'Klik op de knop om je APK-herinnering aan te zetten.',
+            'button' => 'Bevestig mijn herinnering',
+            'action' => URL::temporarySignedRoute('apk.confirm.store', now()->addDays(7), ['token' => $token]),
+        ]);
+    }
+
+    public function confirmStore(string $token)
     {
         $reminder = ApkReminder::where('token', $token)->first();
 
         if ($reminder === null) {
-            return view('pages.apk-message', ['title' => 'Link niet meer geldig', 'text' => 'Deze link is niet meer geldig. Vraag de herinnering gerust opnieuw aan.']);
+            return $this->invalidLink();
         }
 
         $reminder->confirmed_at ??= now();
@@ -91,12 +114,28 @@ class ApkReminderController extends Controller
         ]);
     }
 
-    /** Remove the reminder, and with it the e-mail address and the license plate. */
+    /** The link in the mail: only shows a button, like the confirmation link. */
     public function unsubscribe(string $token)
+    {
+        return view('pages.apk-action', [
+            'title' => 'Uitschrijven',
+            'text' => 'Wil je geen APK-herinneringen meer? Dan verwijderen we je e-mailadres en kenteken.',
+            'button' => 'Ja, schrijf me uit',
+            'action' => URL::signedRoute('apk.unsubscribe.store', ['token' => $token]),
+        ]);
+    }
+
+    /** Remove the reminder, and with it the e-mail address and the license plate. */
+    public function unsubscribeStore(string $token)
     {
         ApkReminder::where('token', $token)->delete();
 
         return view('pages.apk-message', ['title' => 'Je bent uitgeschreven', 'text' => 'We hebben je e-mailadres en kenteken verwijderd. Je krijgt geen herinneringen meer.']);
+    }
+
+    private function invalidLink()
+    {
+        return view('pages.apk-message', ['title' => 'Link niet meer geldig', 'text' => 'Deze link is niet meer geldig. Vraag de herinnering gerust opnieuw aan.']);
     }
 
     /** The APK expiry date from an RDW record, or null. */

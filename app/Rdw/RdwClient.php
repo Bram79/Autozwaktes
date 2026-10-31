@@ -7,6 +7,7 @@ use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\RateLimiter;
 
 /**
  * Small wrapper around the RDW open data (Socrata) API.
@@ -121,6 +122,13 @@ class RdwClient
      */
     public function findVehicle(string $plate): ?array
     {
+        // One limit for all visitors together, so that a flood of lookups cannot get our server blocked by the RDW.
+        // Visitors see the normal "RDW not reachable" message.
+        if (RateLimiter::tooManyAttempts('rdw-lookups', (int) config('site.limits.rdw_lookups_per_minute'))) {
+            throw new RdwUnavailableException('Too many RDW lookups in the last minute');
+        }
+        RateLimiter::hit('rdw-lookups', 60);
+
         $config = $this->datasetConfig('vehicles');
 
         $rows = $this->get("/resource/{$config['id']}.json", [

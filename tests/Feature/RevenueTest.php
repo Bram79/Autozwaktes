@@ -86,7 +86,7 @@ it('gives a defect a parts link when a category keyword matches, and counts that
     $category = PartsCategory::create(['name' => 'Remmen', 'keywords' => 'rem, remleiding', 'url' => 'https://parts.example/remmen?auto={merk}']);
     config(['site.affiliates.parts.url' => 'https://parts.example/']);
 
-    $this->get('/audi/a4/b8')->assertSee('Onderdelen: remmen', false)->assertSee("cat={$category->id}", false);
+    $this->get('/audi/a4/b8')->assertSee('Onderdelen: remmen', false)->assertSee("cat={$category->id}", false)->assertSee('(partnerlink)', false);
 
     $this->get("/go/parts?cat={$category->id}&merk=Audi&p=/audi/a4/b8")->assertRedirect('https://parts.example/remmen?auto=Audi');
     expect(AffiliateClick::first()->position)->toBe('gebrek: Remmen');
@@ -160,23 +160,45 @@ it('sends only a confirmation mail first (double opt-in) and gives the same answ
     Mail::assertSent(ConfirmApkReminder::class, 2);
 });
 
-it('confirms with the signed link, and refuses a link that was not signed by us', function () {
+it('does not confirm on a plain visit of the link, because mail scanners open links too', function () {
+    $reminder = ApkReminder::create(['email' => 'a@example.com', 'license_plate' => 'AB123C', 'token' => 'abc123']);
+
+    $this->get(URL::temporarySignedRoute('apk.confirm', now()->addDay(), ['token' => 'abc123']))
+        ->assertOk()
+        ->assertSee('Bevestig mijn herinnering');
+    expect($reminder->fresh()->isConfirmed())->toBeFalse();
+});
+
+it('confirms when the visitor presses the button, and refuses a link that was not signed by us', function () {
     $reminder = ApkReminder::create(['email' => 'a@example.com', 'license_plate' => 'AB123C', 'token' => 'abc123']);
 
     $this->get('/apk-herinnering/bevestig/abc123')->assertForbidden();
+    $this->post('/apk-herinnering/bevestig/abc123')->assertForbidden();
     expect($reminder->fresh()->isConfirmed())->toBeFalse();
 
-    $this->get(URL::temporarySignedRoute('apk.confirm', now()->addDay(), ['token' => 'abc123']))->assertOk()->assertSee('Je herinnering staat aan');
+    $this->post(URL::temporarySignedRoute('apk.confirm.store', now()->addDay(), ['token' => 'abc123']))
+        ->assertOk()
+        ->assertSee('Je herinnering staat aan');
     expect($reminder->fresh()->isConfirmed())->toBeTrue();
 });
 
-it('deletes the e-mail address and plate when someone unsubscribes', function () {
+it('does not unsubscribe on a plain visit of the link', function () {
+    ApkReminder::create(['email' => 'a@example.com', 'license_plate' => 'AB123C', 'token' => 'abc123', 'confirmed_at' => now()]);
+
+    $this->get(URL::signedRoute('apk.unsubscribe', ['token' => 'abc123']))
+        ->assertOk()
+        ->assertSee('Ja, schrijf me uit');
+    expect(ApkReminder::count())->toBe(1);
+});
+
+it('deletes the e-mail address and plate when someone presses the unsubscribe button', function () {
     ApkReminder::create(['email' => 'a@example.com', 'license_plate' => 'AB123C', 'token' => 'abc123', 'confirmed_at' => now()]);
 
     $this->get('/apk-herinnering/uitschrijven/abc123')->assertForbidden();
+    $this->post('/apk-herinnering/uitschrijven/abc123')->assertForbidden();
     expect(ApkReminder::count())->toBe(1);
 
-    $this->get(URL::signedRoute('apk.unsubscribe', ['token' => 'abc123']))->assertOk()->assertSee('Je bent uitgeschreven');
+    $this->post(URL::signedRoute('apk.unsubscribe.store', ['token' => 'abc123']))->assertOk()->assertSee('Je bent uitgeschreven');
     expect(ApkReminder::count())->toBe(0);
 });
 

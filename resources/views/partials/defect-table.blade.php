@@ -29,7 +29,7 @@
                             {{ \App\Site\DefectText::plain($defect->description) }}
                             @if (($category = \App\Models\PartsCategory::forDefect($defect->description)) && ($brandName ?? null))
                                 <a href="{{ \App\Site\AffiliateLink::url('parts', 'gebrek: '.$category['name'], $brandName, $modelName ?? '', $yearLabel ?? '', $category['id']) }}"
-                                   rel="sponsored nofollow noopener" target="_blank" class="mt-1 block py-1 text-sm font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (affiliate)</a>
+                                   rel="sponsored nofollow noopener" target="_blank" class="mt-1 block py-1 text-sm font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900">Onderdelen: {{ \Illuminate\Support\Str::lower($category['name']) }} (partnerlink)</a>
                             @endif
                         </td>
                         <td class="py-3 pr-2 sm:pr-4 max-sm:col-start-2 max-sm:py-0 max-sm:pr-0 max-sm:pt-2">
