@@ -153,7 +153,7 @@ class StatsService
             $percentage = $vehicles / $total * 100;
 
             // only defects that are common elsewhere, otherwise a ratio says nothing
-            if ($average < 2 || ! isset($descriptions[$code])) {
+            if ($average < config('site.compare.min_average') || ! isset($descriptions[$code])) {
                 continue;
             }
 
@@ -162,9 +162,9 @@ class StatsService
                 'percentage' => round($percentage, 1), 'average' => round($average, 1), 'ratio' => round($percentage / $average, 1),
             ];
 
-            if ($vehicles >= 20 && $point['ratio'] >= 1.5) {
+            if ($vehicles >= config('site.compare.min_vehicles') && $point['ratio'] >= config('site.compare.ratio_high')) {
                 $weak[] = $point;
-            } elseif ($point['ratio'] <= 0.6) {
+            } elseif ($point['ratio'] <= config('site.compare.ratio_low')) {
                 $strong[] = $point;
             }
         }

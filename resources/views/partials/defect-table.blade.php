@@ -47,9 +47,9 @@
                         <td role="cell" class="py-3 text-right tabular-nums text-slate-700 max-sm:col-start-2 max-sm:py-0 max-sm:pt-1 max-sm:text-left">
                             @if ($defect->average !== null)
                                 <span class="sm:hidden">Gemiddeld: </span>{{ number_format($defect->average, 1, ',', '.') }}%
-                                @if ($defect->percentage > $defect->average * 1.25)
+                                @if ($defect->percentage > $defect->average * config('site.compare.ratio_high'))
                                     <span class="block text-xs font-medium text-red-800">vaker dan gemiddeld</span>
-                                @elseif ($defect->percentage < $defect->average * 0.8)
+                                @elseif ($defect->percentage < $defect->average * config('site.compare.ratio_low'))
                                     <span class="block text-xs font-medium text-green-800">minder vaak</span>
                                 @endif
                             @else
