@@ -33,6 +33,9 @@ return [
     // Verification code from Google Search Console ("HTML tag" method). Leave empty until you have it.
     'google_verification' => env('GOOGLE_SITE_VERIFICATION'),
 
+    // Content Security Policy: enforce, report-only (only try it) or off
+    'csp' => env('CSP_MODE', 'enforce'),
+
     // When set, database backups are encrypted with this passphrase (store it somewhere safe, apart from the server)
     'backup_passphrase' => env('BACKUP_PASSPHRASE'),
 
