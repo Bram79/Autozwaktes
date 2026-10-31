@@ -3,12 +3,26 @@
     $name = \App\Site\Seo::generationName($generation);
     $url = route('year', [$model->brand, $model->slug, $generation->slug, $year]);
     $genUrl = route('generation', [$model->brand, $model->slug, $generation->slug]);
+    $topDefect = $result['enough_data'] ? $result['defects']->first() : null;
+    // numbers from the data in the description: a page for 2010 differs from a page for 2011 in more than the year
+    $description = $topDefect
+        ? $name.' uit '.$year.': het vaakst '.\Illuminate\Support\Str::lower(\App\Site\DefectText::plain($topDefect->description)).' ('.number_format($topDefect->percentage, 1, ',', '.').'%), op basis van '.number_format($result['total'], 0, ',', '.').' voertuigen. Met koopchecklist.'
+        : 'De meest voorkomende APK-gebreken bij de '.$name.' uit '.$year.', met percentages en een koopchecklist.';
 @endphp
 <x-layouts.app
     :title="$name.' ('.$year.'): APK-gebreken en zwakke punten'"
-    :description="'De meest voorkomende APK-gebreken bij de '.$name.' uit '.$year.', met percentages en een koopchecklist.'"
+    :description="$description"
     :canonical="$url"
     :robots="$year > \App\Site\RankingService::lastInspectedYear() ? 'noindex,follow' : null">
+
+    <x-slot:head>
+        <x-json-ld :data="\App\Site\Schema::dataset(
+            'APK-gebreken '.$name.' (bouwjaar '.$year.')',
+            'Percentage voertuigen met geconstateerde APK-gebreken voor de '.$name.' van bouwjaar '.$year.', per brandstof.',
+            $url,
+            \App\Site\Seo::modelName($model),
+        )" />
+    </x-slot:head>
 
     <x-breadcrumbs :items="[
         ['Home', route('home')],

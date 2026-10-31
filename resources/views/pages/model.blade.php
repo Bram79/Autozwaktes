@@ -1,7 +1,17 @@
-@php $name = \App\Site\Seo::modelName($model); @endphp
+@php
+    $name = \App\Site\Seo::modelName($model);
+    // with one generation this page and the page of that generation are the same search: the generation page is the one for Google
+    $canonical = $generations->count() === 1 ? route('generation', [$model->brand, $model->slug, $generations->first()->slug]) : route('model', [$model->brand, $model->slug]);
+    $from = $generations->min('year_from');
+    $to = $generations->contains(fn ($g) => $g->year_to === null) ? 'heden' : $generations->max('year_to');
+    $description = $generations->isEmpty()
+        ? 'Overzicht van alle generaties van de '.$name.' met de meest voorkomende APK-gebreken.'
+        : 'De '.$name.': '.($generations->count() === 1 ? '1 generatie' : $generations->count().' generaties').' ('.$from.'–'.$to.') met de meest voorkomende APK-gebreken, percentages en een koopchecklist per generatie en bouwjaar.';
+@endphp
 <x-layouts.app
     :title="$name.': generaties, zwakke punten en APK-problemen'"
-    :description="'Overzicht van alle generaties van de '.$name.' met de meest voorkomende APK-gebreken.'"
+    :description="$description"
+    :canonical="$canonical"
     :robots="$generations->isEmpty() ? 'noindex,follow' : null">
 
     <x-breadcrumbs :items="[['Home', route('home')], [$model->brand->name, route('brand', $model->brand)], [$model->name, route('model', [$model->brand, $model->slug])]]" />

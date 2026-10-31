@@ -22,6 +22,18 @@
     :canonical="$url"
     :robots="$count < 5 ? 'noindex,follow' : null">
 
+    @if ($count > 0)
+        <x-slot:head>
+            <x-json-ld :data="\App\Site\Schema::itemList($title, array_map(
+                fn ($row) => [
+                    'name' => trim($row['brand'].' '.$row['model'].' '.($row['code'] === \App\Site\Seo::ALL_YEARS ? '' : $row['code'])),
+                    'url' => route('generation', [$row['brand_slug'], $row['model_slug'], $row['generation_slug']]),
+                ],
+                array_slice($rows, 0, 10),
+            ))" />
+        </x-slot:head>
+    @endif
+
     <x-breadcrumbs :items="[['Home', route('home')], ['Ranglijsten', route('rankings')], [$label !== '' ? ucfirst($label) : 'Alles', $url]]" />
 
     <h1 class="text-3xl sm:text-4xl">{{ $title }}</h1>

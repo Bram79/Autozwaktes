@@ -36,7 +36,7 @@ class PageController extends Controller
     {
         $model = $this->findModel($brand, $model);
         $generations = $this->stats->generationsWithData($model);
-        $similar = $model->brand->carModels()->where('id', '!=', $model->id)->orderBy('name')->get();
+        $similar = $model->brand->carModels()->withStats()->where('id', '!=', $model->id)->orderBy('name')->get();
 
         return view('pages.model', compact('model', 'generations', 'similar'));
     }
@@ -49,7 +49,7 @@ class PageController extends Controller
             'generation' => $generation,
             'years' => $this->stats->years($generation),
             'siblings' => $this->stats->generationsWithData($generation->carModel)->where('id', '!=', $generation->id),
-            'similar' => $generation->carModel->brand->carModels()->where('id', '!=', $generation->car_model_id)->orderBy('name')->get(),
+            'similar' => $generation->carModel->brand->carModels()->withStats()->where('id', '!=', $generation->car_model_id)->orderBy('name')->get(),
         ]);
     }
 
