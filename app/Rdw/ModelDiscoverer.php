@@ -4,6 +4,7 @@ namespace App\Rdw;
 
 use App\Models\Brand;
 use App\Models\CarModel;
+use App\Site\Seo;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -108,7 +109,7 @@ class ModelDiscoverer
             // a model that was made by hand already has its own generations
             if (! $model->generations()->exists()) {
                 $model->generations()->create([
-                    'code' => 'Alle bouwjaren',
+                    'code' => Seo::ALL_YEARS,
                     'slug' => 'alle-bouwjaren',
                     'year_from' => $item['year_from'],
                     'year_to' => $item['year_to'],

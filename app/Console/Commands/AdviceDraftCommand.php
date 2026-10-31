@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Ai\AdviceDrafter;
 use App\Models\AdviceDraft;
 use App\Models\Generation;
+use App\Site\Seo;
 use Illuminate\Console\Command;
 
 class AdviceDraftCommand extends Command
@@ -32,7 +33,7 @@ class AdviceDraftCommand extends Command
 
         foreach ($generations as $generation) {
             $result = $drafter->draft($generation);
-            $name = "{$generation->carModel->brand->name} {$generation->carModel->name} {$generation->code}";
+            $name = Seo::generationName($generation);
 
             if ($result instanceof AdviceDraft) {
                 $this->line($result->status === AdviceDraft::CONCEPT ? "<info>draft</info>    {$name}" : "<comment>rejected</comment> {$name}: {$result->note}");

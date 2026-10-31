@@ -27,7 +27,9 @@ class AdviceWriter
         }
 
         $comparison = $this->stats->comparison($generation, $year);
-        $price = $this->stats->newPrice($generation, $year);
+        // one year: the price of that year. Whole generation: lowest and highest year, never one average over all years.
+        $price = $year ? $this->stats->newPrice($generation, $year) : null;
+        $priceRange = $year ? null : $this->stats->newPriceRange($generation);
 
         return [
             'auto' => Seo::generationName($generation),
@@ -40,6 +42,7 @@ class AdviceWriter
             'vaker_dan_gemiddeld' => array_map(fn ($p) => $this->point($p), $comparison['weak'] ?? []),
             'minder_vaak_dan_gemiddeld' => array_map(fn ($p) => $this->point($p), $comparison['strong'] ?? []),
             'nieuwprijs_gemiddeld_euro' => $price['average'] ?? null,
+            'nieuwprijs_per_bouwjaar' => $priceRange,
         ];
     }
 
@@ -58,8 +61,13 @@ class AdviceWriter
 
         $rows = [];
 
+        $source = 'gemiddelde catalogusprijs per bouwjaar volgens de RDW';
         if ($facts['nieuwprijs_gemiddeld_euro']) {
-            $rows[] = ['label' => 'Nieuwprijs', 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro']).' (gemiddelde catalogusprijs volgens de RDW)'], 'tone' => null];
+            $rows[] = ['label' => "Nieuwprijs bouwjaar {$year}", 'lines' => ['€ '.$this->number($facts['nieuwprijs_gemiddeld_euro']).' (gemiddelde catalogusprijs volgens de RDW)'], 'tone' => null];
+        } elseif ($range = $facts['nieuwprijs_per_bouwjaar']) {
+            $from = '€ '.$this->number($range['van']['euro']).' ('.$range['van']['bouwjaar'].')';
+            $to = '€ '.$this->number($range['tot']['euro']).' ('.$range['tot']['bouwjaar'].')';
+            $rows[] = ['label' => 'Nieuwprijs', 'lines' => [$range['van']['bouwjaar'] === $range['tot']['bouwjaar'] ? "{$from}, {$source}" : "{$from} tot {$to}, {$source}"], 'tone' => null];
         }
 
         $rows[] = ['label' => 'Voertuigen', 'lines' => [$this->number($facts['aantal_voertuigen']).' geregistreerd bij de RDW'], 'tone' => null];
