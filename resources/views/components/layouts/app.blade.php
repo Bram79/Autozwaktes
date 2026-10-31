@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
+    @php
+        // titles and descriptions that fit in the search results (see App\Site\Seo)
+        $title = \App\Site\Seo::title((string) $title);
+        $description = \App\Site\Seo::description((string) $description);
+    @endphp
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }}</title>

@@ -99,7 +99,7 @@
                             ['Modelgegevens in de cache', 'De site snel houden', 'Gerechtvaardigd belang', '24 uur, zonder kenteken'],
                             ['Sessie met IP-adres en browser', 'Werking en beveiliging', 'Gerechtvaardigd belang', '2 uur'],
                             ['IP-adres voor de limiet', 'Misbruik voorkomen', 'Gerechtvaardigd belang', 'Ongeveer 1 minuut actief, opgeruimd binnen een uur'],
-                            ['E-mailadres, kenteken en APK-datum', 'De APK-herinnering', 'Toestemming', 'Tot je je uitschrijft; onbevestigd 7 dagen; automatisch weg een jaar na een verlopen APK'],
+                            ['E-mailadres, kenteken en APK-datum', 'De APK-herinnering', 'Toestemming', 'Tot je je uitschrijft; onbevestigd 7 dagen; automatisch weg een jaar na een verlopen APK, of drie maanden na je bevestiging als de RDW geen APK-datum heeft'],
                             ['Foutmeldingen in het logbestand', 'Storingen oplossen', 'Gerechtvaardigd belang', '14 dagen'],
                             ['Back-ups van de database', 'Herstel na een storing', 'Gerechtvaardigd belang', '14 dagen'],
                             ['Klikken op affiliate-links', 'Statistiek', 'Gerechtvaardigd belang', 'Zonder persoonsgegevens, dus geen termijn'],

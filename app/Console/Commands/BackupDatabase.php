@@ -18,7 +18,9 @@ class BackupDatabase extends Command
     {
         $db = config('database.connections.'.($this->option('connection') ?: config('database.default')));
         $directory = storage_path('app/backups');
-        @mkdir($directory, 0775, true);
+        // The dump holds e-mail addresses and plates (APK reminders): only the owner of the server account may open it
+        @mkdir($directory, 0700, true);
+        @chmod($directory, 0700);
 
         $file = $directory.'/'.now()->format('Y-m-d_His').'.sql';
 
@@ -41,8 +43,19 @@ class BackupDatabase extends Command
         }
 
         $this->compress($file);
+        $saved = $file.'.gz';
+
+        if (filled(config('site.backup_passphrase'))) {
+            $saved = $this->encrypt($saved);
+
+            if ($saved === null) {
+                return self::FAILURE;
+            }
+        }
+
+        @chmod($saved, 0600);
         $this->prune($directory, (int) $this->option('keep'));
-        $this->info("Backup saved: {$file}.gz");
+        $this->info("Backup saved: {$saved}");
 
         return self::SUCCESS;
     }
@@ -61,10 +74,36 @@ class BackupDatabase extends Command
         unlink($file);
     }
 
+    /**
+     * Encrypt the compressed dump with openssl and remove the readable copy. Returns the new file, or null on failure.
+     * To restore: openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_PASSPHRASE -in backup.sql.gz.enc | gunzip | mysql ...
+     */
+    private function encrypt(string $file): ?string
+    {
+        $encrypted = $file.'.enc';
+
+        // the passphrase goes in the environment, like the database password
+        $result = Process::env(['BACKUP_PASSPHRASE' => (string) config('site.backup_passphrase')])->run([
+            'openssl', 'enc', '-aes-256-cbc', '-pbkdf2', '-salt', '-pass', 'env:BACKUP_PASSPHRASE', '-in', $file, '-out', $encrypted,
+        ]);
+
+        if ($result->failed() || ! is_file($encrypted)) {
+            $this->error('Encrypting the backup failed: '.trim($result->errorOutput()));
+            @unlink($encrypted);
+            @unlink($file);   // never leave the readable copy behind
+
+            return null;
+        }
+
+        unlink($file);
+
+        return $encrypted;
+    }
+
     /** Delete backups older than $days days. */
     private function prune(string $directory, int $days): void
     {
-        foreach (glob($directory.'/*.sql.gz') ?: [] as $old) {
+        foreach (glob($directory.'/*.sql.gz*') ?: [] as $old) {
             if (filemtime($old) < now()->subDays($days)->getTimestamp()) {
                 unlink($old);
             }

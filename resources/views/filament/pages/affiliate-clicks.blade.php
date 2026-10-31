@@ -30,5 +30,32 @@
                 </x-filament::section>
             @endforeach
         </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+            <x-filament::section heading="Partner en plek samen">
+                <table class="w-full text-sm">
+                    <tbody>
+                        @foreach ($combos as $row)
+                            <tr class="border-b border-gray-100 last:border-0 dark:border-white/10">
+                                <td class="py-2 pr-2">{{ $labels[$row->partner] ?? $row->partner }} <span class="text-gray-500">· {{ $row->position }}</span></td>
+                                <td class="py-2 text-right font-semibold">{{ number_format($row->clicks, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </x-filament::section>
+            <x-filament::section heading="Per dag">
+                <table class="w-full text-sm">
+                    <tbody>
+                        @foreach ($perDay as $row)
+                            <tr class="border-b border-gray-100 last:border-0 dark:border-white/10">
+                                <td class="py-2 pr-2">{{ \Illuminate\Support\Carbon::parse($row->day)->translatedFormat('j F Y') }}</td>
+                                <td class="py-2 text-right font-semibold">{{ number_format($row->clicks, 0, ',', '.') }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </x-filament::section>
+        </div>
     @endif
 </x-filament-panels::page>

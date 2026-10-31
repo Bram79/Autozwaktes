@@ -104,6 +104,24 @@ it('shows the clicks per partner, page and spot in the admin', function () {
     Livewire::test(AffiliateClicks::class)->assertSee('/audi/a4')->assertSee('modelpagina')->assertDontSee('/ford/focus');
 });
 
+it('shows which partner gets clicks on which spot, and the clicks per day', function () {
+    config(['site.admin_emails' => ['beheer@example.com']]);
+    $this->actingAs(User::factory()->create(['email' => 'beheer@example.com']));
+    AffiliateClick::insert([
+        ['partner' => 'vehicle_report', 'page' => '/audi/a4', 'position' => 'modelpagina', 'created_at' => '2026-10-30 10:00:00'],
+        ['partner' => 'vehicle_report', 'page' => '/audi/a4', 'position' => 'zijbalk', 'created_at' => '2026-10-30 11:00:00'],
+        ['partner' => 'insurance', 'page' => '/audi/a4', 'position' => 'zijbalk', 'created_at' => '2026-10-29 11:00:00'],
+    ]);
+    Carbon::setTestNow('2026-10-31 12:00:00');
+
+    $data = Livewire::test(AffiliateClicks::class)->instance()->getViewData();
+    Carbon::setTestNow();
+
+    expect($data['combos']->map(fn ($r) => "{$r->partner}|{$r->position}|{$r->clicks}")->all())
+        ->toContain('vehicle_report|modelpagina|1', 'vehicle_report|zijbalk|1', 'insurance|zijbalk|1');
+    expect($data['perDay']->pluck('clicks', 'day')->all())->toBe(['2026-10-29' => 1, '2026-10-30' => 2]);
+});
+
 // --- advertisements and cookie banner ---------------------------------------------------------------------------
 
 it('has no cookie banner and no ad spots while ads are off', function () {
@@ -268,4 +286,13 @@ it('keeps the new pages out of the way of the brand routes and lists them in the
     $this->get('/apk-herinnering')->assertOk()->assertSee('Nooit meer je APK vergeten');
     $this->get('/sitemap.xml')->assertSee('/apk-herinnering');
     $this->get('/robots.txt')->assertSee('Disallow: /go/');
+});
+
+it('shows at most a few parts links in one defect table, so the table stays a table and not a shop window', function () {
+    PartsCategory::create(['name' => 'Alles', 'keywords' => 'e', 'url' => 'https://parts.example/?auto={merk}']);
+    config(['site.affiliates.parts.url' => 'https://parts.example/', 'site.parts_links_per_table' => 2]);
+
+    $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
+
+    expect(substr_count($html, '(partnerlink)'))->toBe(2);
 });

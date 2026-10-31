@@ -114,6 +114,75 @@ it('backs up the database without the big import tables, without the password on
     array_map('unlink', $files);
 });
 
+it('keeps backups private: only the owner can open the folder and the files', function () {
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes']]);
+    $directory = storage_path('app/backups');
+    @mkdir($directory, 0775, true);
+    chmod($directory, 0775);
+    Process::fake(function ($process) {
+        foreach ($process->command as $argument) {
+            if (str_starts_with($argument, '--result-file=')) {
+                file_put_contents(substr($argument, 14), '-- dump');
+            }
+        }
+
+        return Process::result('');
+    });
+
+    $this->artisan('backup:database --connection=backup_test')->assertSuccessful();
+
+    $files = glob("{$directory}/*.sql.gz");
+    expect(fileperms($directory) & 0777)->toBe(0700);
+    expect(fileperms($files[0]) & 0777)->toBe(0600);
+
+    array_map('unlink', $files);
+});
+
+it('encrypts the backup when a passphrase is set, with the passphrase in the environment and not on the command line', function () {
+    config([
+        'database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes'],
+        'site.backup_passphrase' => 'een-lange-geheime-zin',
+    ]);
+    $directory = storage_path('app/backups');
+    @mkdir($directory, 0700, true);
+
+    $commands = [];
+    Process::fake(function ($process) use (&$commands) {
+        $commands[] = $process;
+        foreach ($process->command as $i => $argument) {
+            if (str_starts_with($argument, '--result-file=')) {
+                file_put_contents(substr($argument, 14), '-- dump');
+            }
+            if ($argument === '-out') {
+                file_put_contents($process->command[$i + 1], 'encrypted');   // what openssl would have written
+            }
+        }
+
+        return Process::result('');
+    });
+
+    $this->artisan('backup:database --connection=backup_test')->assertSuccessful();
+
+    $encrypted = glob("{$directory}/*.sql.gz.enc");
+    expect($encrypted)->toHaveCount(1);
+    expect(glob("{$directory}/*.sql.gz"))->toBe([]);                    // the readable copy is gone
+    expect(fileperms($encrypted[0]) & 0777)->toBe(0600);
+
+    $openssl = collect($commands)->first(fn ($p) => $p->command[0] === 'openssl');
+    expect($openssl->command)->toContain('-aes-256-cbc')->toContain('-pbkdf2');
+    expect(implode(' ', $openssl->command))->not->toContain('een-lange-geheime-zin');
+    expect($openssl->environment)->toBe(['BACKUP_PASSPHRASE' => 'een-lange-geheime-zin']);
+
+    array_map('unlink', $encrypted);
+});
+
+it('stops the deploy script from leaving the site in maintenance mode when a step fails', function () {
+    $script = file_get_contents(base_path('scripts/deploy.sh'));
+
+    expect(strpos($script, 'trap '))->toBeInt()->toBeLessThan(strpos($script, 'php artisan down'));
+    expect(Process::run(['bash', '-n', base_path('scripts/deploy.sh')])->successful())->toBeTrue();
+});
+
 it('reports a failed backup', function () {
     config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes']]);
     Process::fake(['*' => Process::result('', 'Access denied', 2)]);

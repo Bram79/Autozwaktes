@@ -26,7 +26,10 @@ class ApkRemind extends Command
 
         // only look up the ones that are (almost) due: the others have a date that is still far away
         $due = ApkReminder::whereNotNull('confirmed_at')
-            ->where(fn ($q) => $q->whereNull('apk_expires_at')->orWhere('apk_expires_at', '<=', now()->addDays($days + 1)))
+            ->where(fn ($q) => $q
+                // no date yet: look again once a week, not every day
+                ->where(fn ($q) => $q->whereNull('apk_expires_at')->where('updated_at', '<', now()->subDays(7)))
+                ->orWhere('apk_expires_at', '<=', now()->addDays($days + 1)))
             ->get();
 
         foreach ($due as $reminder) {
@@ -52,6 +55,14 @@ class ApkRemind extends Command
                 continue;
             }
 
+            // still no APK date three months after the confirmation: there is nothing to remind about, so we do not keep the data
+            if ($reminder->apk_expires_at === null && $reminder->confirmed_at->lt(now()->subDays(90))) {
+                $reminder->delete();
+
+                continue;
+            }
+
+            $reminder->touch();   // also when nothing changed: that is how we know when we looked last
             $reminder->save();
             $expires = $reminder->apk_expires_at;
             $isDue = $expires && $expires->isFuture() && $expires->lte(now()->addDays($days)->endOfDay());

@@ -40,6 +40,11 @@ class AffiliateClicks extends Page
             'partners' => $count('partner'),
             'pages' => $count('page'),
             'positions' => $count('position'),
+            // which partner is clicked on which spot, and how that goes day by day
+            'combos' => AffiliateClick::where('created_at', '>=', $since)
+                ->select('partner', 'position', DB::raw('count(*) as clicks'))->groupBy('partner', 'position')->orderByDesc('clicks')->limit(20)->get(),
+            'perDay' => AffiliateClick::where('created_at', '>=', $since)
+                ->select(DB::raw('date(created_at) as day'), DB::raw('count(*) as clicks'))->groupBy('day')->orderBy('day')->get(),
             'labels' => collect(config('site.affiliates'))->map(fn ($a) => $a['title'])->all(),
         ];
     }
