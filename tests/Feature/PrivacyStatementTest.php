@@ -51,8 +51,10 @@ it('lists who receives data, how long things are kept and which rights you have'
         ->assertSee('bezwaar', false)->assertSee('overdragen', false)->assertSee('intrekken', false);
 });
 
-it('explains the session with IP address and browser, and the limit on the plate search', function () {
-    $this->get('/privacy')->assertSee('IP-adres en browser', false)->assertSee('binnen een uur', false);
+it('explains the session without IP address and browser, and the limit on the plate search', function () {
+    // the session holds no IP address or browser (AnonymousSessionHandler); the limit works with the IP address for a minute
+    $this->get('/privacy')->assertSee('zonder je IP-adres of browser', false)->assertSee('binnen een uur', false)
+        ->assertDontSee('sessie met je IP-adres', false);
 });
 
 it('says that a removed reminder can stay in a backup for a while', function () {
@@ -70,4 +72,23 @@ it('does not pass site:check on the live site without a responsible person and c
     config(['site.contact_email' => 'info@autozwaktes.example', 'site.operator_name' => 'Bram Meijer',
         'site.backup_passphrase' => 'een-lange-zin', 'session.secure' => true]);
     $this->artisan('site:check')->assertSuccessful();
+});
+
+it('lists every cookie that the site sets, with its purpose and how long it lasts', function () {
+    $response = $this->get('/privacy')->assertOk()->assertSee('auto-zwaktes-session', false)->assertSee('XSRF-TOKEN', false);
+
+    // the cookies on the page are the cookies that the site really sets
+    $names = collect($this->get('/')->headers->getCookies())->map->getName()->all();
+    expect($names)->toContain('XSRF-TOKEN');
+    $response->assertDontSee('az_consent', false);   // only while ads and the banner are on
+
+    config(['site.ads.enabled' => true]);
+    $this->get('/privacy')->assertSee('az_consent', false);
+});
+
+it('tells that the e-mail address code for the limit, the logs and the backups are handled with care', function () {
+    $this->get('/privacy')->assertSee('onleesbare code van je e-mailadres', false)
+        ->assertSee('geen e-mailadres of kenteken', false)
+        ->assertSee('versleuteld', false)
+        ->assertSee('Advertentie · Partnerlink', false);
 });

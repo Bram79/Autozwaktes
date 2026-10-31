@@ -41,13 +41,36 @@
 
         <section class="space-y-2" aria-labelledby="apk">
             <h2 id="apk" class="text-xl font-bold">APK-herinnering</h2>
-            <p>Als je een APK-herinnering aanvraagt, bewaren we je e-mailadres, je kenteken en de vervaldatum van de APK (die halen we uit de open data van de RDW). We gebruiken dit alleen om je elk jaar één mail te sturen ongeveer 30 dagen voordat de APK verloopt, zolang je herinnering loopt. De rechtsgrond is jouw toestemming.</p>
+            <p>Als je een APK-herinnering aanvraagt, bewaren we je e-mailadres, je kenteken en de vervaldatum van de APK (die halen we uit de open data van de RDW). We gebruiken dit alleen om je elk jaar één mail te sturen ongeveer 30 dagen voordat de APK verloopt, zolang je herinnering loopt. De rechtsgrond is jouw toestemming. Staat er in de herinneringsmail een partnerlink, dan staat die duidelijk aangeduid als "Advertentie · Partnerlink"; je e-mailadres of kenteken gaat daarbij niet naar de partner.</p>
             <p>Dit werkt met dubbele bevestiging: we sturen eerst een mail met een bevestigingslink. Bevestig je niet binnen een week, dan verwijderen we je gegevens. Onderaan elke mail staat een link waarmee je je meteen uitschrijft; dan verwijderen we je e-mailadres en kenteken direct uit onze database. Is de APK meer dan een jaar verlopen zonder dat er een nieuwe datum bij de RDW staat (de auto is dan waarschijnlijk verkocht of gesloopt), dan verwijderen we je gegevens ook automatisch.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="cookies">
             <h2 id="cookies" class="text-xl font-bold">Cookies</h2>
             <p>De site gebruikt functionele cookies: een sessiecookie en een beveiligingscookie die nodig zijn om formulieren en de zoekfunctie te laten werken, en een cookie die onthoudt wat je in de cookiebanner koos. Daarvoor is geen toestemming nodig.</p>
+            <table class="w-full text-left text-sm">
+                <caption class="sr-only">De cookies van deze site</caption>
+                <thead>
+                    <tr class="border-b-2 border-accent-400">
+                        <th scope="col" class="py-2 pr-4">Cookie</th>
+                        <th scope="col" class="py-2 pr-4">Waarvoor</th>
+                        <th scope="col" class="py-2">Hoe lang</th>
+                    </tr>
+                </thead>
+                <tbody class="align-top">
+                    @foreach ([
+                        ['auto-zwaktes-session', 'Je sessie: een willekeurig nummer', '2 uur'],
+                        ['XSRF-TOKEN', 'Beveiliging van formulieren', '2 uur'],
+                        ...($ads ? [['az_consent', 'Onthoudt je keuze in de cookiebanner', '180 dagen']] : []),
+                    ] as [$cookie, $use, $term])
+                        <tr class="border-b border-brand-100">
+                            <th scope="row" class="py-2 pr-4 font-semibold">{{ $cookie }}</th>
+                            <td class="py-2 pr-4">{{ $use }}</td>
+                            <td class="py-2">{{ $term }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
             @if ($ads)
                 <p>Als je dat goedvindt, laden we ook advertenties van een externe partij. Die partij kan zelf cookies plaatsen. Dat gebeurt pas nadat je op "Accepteren" klikt. Je kunt je keuze altijd wijzigen met "Cookie-instellingen" onderaan de pagina. Kies je daarna voor "Alleen noodzakelijke cookies", dan laden we de advertenties niet meer, maar cookies die de partij al plaatste kun je zelf verwijderen via je browserinstellingen.</p>
             @else
@@ -57,8 +80,8 @@
 
         <section class="space-y-2" aria-labelledby="logs">
             <h2 id="logs" class="text-xl font-bold">Technische gegevens</h2>
-            <p>Zodra je de site opent, maken we een sessie met je IP-adres en browser (user agent). Die bewaren we maximaal 2 uur, voor de werking en de beveiliging van de site. Onze server en hostingpartij leggen daarnaast tijdelijk technische gegevens vast, zoals je IP-adres en welke pagina je opvroeg, om storingen op te lossen en misbruik tegen te gaan.</p>
-            <p>Bij het zoeken op kenteken en het aanvragen van een herinnering gebruiken we je IP-adres ongeveer één minuut om te veel verzoeken achter elkaar te voorkomen. Die technische regel wordt binnen een uur opgeruimd.</p>
+            <p>Zodra je de site opent, maken we een sessie: een willekeurig nummer in een cookie, zonder je IP-adres of browser. Die bewaren we maximaal 2 uur, voor de werking en de beveiliging van de site. Onze server en hostingpartij leggen daarnaast tijdelijk technische gegevens vast, zoals je IP-adres en welke pagina je opvroeg, om storingen op te lossen en misbruik tegen te gaan.</p>
+            <p>Bij het zoeken op kenteken en het aanvragen van een herinnering gebruiken we je IP-adres ongeveer één minuut om te veel verzoeken achter elkaar te voorkomen. Die technische regel wordt binnen een uur opgeruimd. Als je een herinnering aanvraagt, bewaren we daarnaast een uur lang een onleesbare code van je e-mailadres (geen leesbaar adres), zodat niemand je mailbox met aanvragen kan volstuuren. Foutmeldingen in ons logbestand bevatten geen e-mailadres of kenteken.</p>
         </section>
 
         <section class="space-y-2" aria-labelledby="affiliate">
@@ -69,7 +92,7 @@
         <section class="space-y-2" aria-labelledby="delen">
             <h2 id="delen" class="text-xl font-bold">Met wie delen we gegevens</h2>
             <ul class="list-disc space-y-1 pl-5">
-                <li><strong>RDW:</strong> krijgt het kenteken dat je opzoekt, en voor een APK-herinnering elke dag een controle van de vervaldatum. De RDW ziet daarbij het adres van onze server, niet het jouwe.</li>
+                <li><strong>RDW:</strong> krijgt het kenteken dat je opzoekt, en voor een APK-herinnering een controle van de vervaldatum zodra die bijna verstrijkt (staat er nog geen datum, dan eens per week). De RDW ziet daarbij het adres van onze server, niet het jouwe.</li>
                 <li><strong>Onze hostingpartij:</strong> de server waarop de site en de database staan. Zij verwerken alle gegevens in deze verklaring namens ons.</li>
                 <li><strong>Onze mailprovider:</strong> krijgt je e-mailadres en de inhoud van de mail (bevestiging en herinnering).</li>
                 <li><strong>Partners van affiliate-links:</strong> alleen als je op hun link klikt (zie hierboven).</li>
@@ -97,11 +120,13 @@
                         @foreach ([
                             ['Kenteken bij zoeken', 'De auto opzoeken', 'Gerechtvaardigd belang', 'Niet bewaard'],
                             ['Modelgegevens in de cache', 'De site snel houden', 'Gerechtvaardigd belang', '24 uur, zonder kenteken'],
-                            ['Sessie met IP-adres en browser', 'Werking en beveiliging', 'Gerechtvaardigd belang', '2 uur'],
+                            ['Sessie (willekeurig nummer, zonder IP-adres of browser)', 'Werking en beveiliging', 'Gerechtvaardigd belang', '2 uur'],
+                            ['Model, bouwjaar en nieuwprijs van de gezochte auto, in je sessie', 'Dezelfde auto op de volgende pagina\'s kunnen tonen', 'Gerechtvaardigd belang', '30 minuten, zonder kenteken'],
+                            ['Onleesbare code van je e-mailadres, voor de limiet', 'Je mailbox beschermen tegen te veel mails', 'Gerechtvaardigd belang', '1 uur'],
                             ['IP-adres voor de limiet', 'Misbruik voorkomen', 'Gerechtvaardigd belang', 'Ongeveer 1 minuut actief, opgeruimd binnen een uur'],
                             ['E-mailadres, kenteken en APK-datum', 'De APK-herinnering', 'Toestemming', 'Tot je je uitschrijft; onbevestigd 7 dagen; automatisch weg een jaar na een verlopen APK, of drie maanden na je bevestiging als de RDW geen APK-datum heeft'],
-                            ['Foutmeldingen in het logbestand', 'Storingen oplossen', 'Gerechtvaardigd belang', '14 dagen'],
-                            ['Back-ups van de database', 'Herstel na een storing', 'Gerechtvaardigd belang', '14 dagen'],
+                            ['Foutmeldingen in het logbestand (zonder e-mailadres en kenteken)', 'Storingen oplossen', 'Gerechtvaardigd belang', '14 dagen'],
+                            ['Back-ups van de database (versleuteld)', 'Herstel na een storing', 'Gerechtvaardigd belang', '14 dagen'],
                             ['Klikken op affiliate-links', 'Statistiek', 'Gerechtvaardigd belang', 'Zonder persoonsgegevens, dus geen termijn'],
                         ] as [$item, $purpose, $basis, $term])
                             <tr class="border-b border-brand-100">
