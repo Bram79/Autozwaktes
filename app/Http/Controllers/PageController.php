@@ -7,6 +7,7 @@ use App\Models\CarModel;
 use App\Models\Generation;
 use App\Site\AdviceWriter;
 use App\Site\ComparisonService;
+use App\Site\PlateVisit;
 use App\Site\RankingService;
 use App\Site\Sitemap;
 use App\Site\SitemapBusyException;
@@ -50,7 +51,7 @@ class PageController extends Controller
 
         return view('pages.generation', [
             'generation' => $generation,
-            'adviceRows' => $this->advice->rows($generation),
+            'adviceRows' => $this->advice->rows($generation, withPrice: ! $this->showsOwnPrice($generation)),
             'years' => $this->stats->years($generation),
             'siblings' => $this->stats->generationsWithData($generation->carModel)->where('id', '!=', $generation->id),
             'similar' => $generation->carModel->brand->carModels()->withStats()->where('id', '!=', $generation->car_model_id)->orderBy('name')->get(),
@@ -67,7 +68,7 @@ class PageController extends Controller
         return view('pages.year', [
             'generation' => $generation,
             'year' => $year,
-            'adviceRows' => $year <= RankingService::lastInspectedYear() ? $this->advice->rows($generation, $year) : [],
+            'adviceRows' => $year <= RankingService::lastInspectedYear() ? $this->advice->rows($generation, $year, ! $this->showsOwnPrice($generation)) : [],
             'years' => $years,
             'result' => $this->stats->topDefects($generation, $year),
             'fuels' => $this->stats->fuels($generation),
@@ -84,6 +85,12 @@ class PageController extends Controller
     public function sitemapChunk(Sitemap $sitemap, int $chunk)
     {
         return $this->xml(fn () => $sitemap->chunk($chunk) ?? abort(404));
+    }
+
+    /** Does the page already show the new price of the car that the visitor looked up by plate? Then the table does not give a second price. */
+    private function showsOwnPrice(Generation $generation): bool
+    {
+        return PlateVisit::forModel($generation->car_model_id) && PlateVisit::price() !== null;
     }
 
     private function xml(Closure $build)

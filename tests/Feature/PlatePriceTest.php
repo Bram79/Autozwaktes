@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\CarModel;
 use Database\Seeders\DemoStatsSeeder;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -88,4 +90,53 @@ it('keeps the plate itself out of the session, while the price may be in it', fu
 
 it('tells in the privacy statement that the price of the car is shown and for how long it is remembered', function () {
     $this->get('/privacy')->assertSee('catalogusprijs', false);
+});
+
+// --- one price on the page, not two that disagree -----------------------------------------------------------------------
+
+/** Prices per build year for the Audi A4, so that the table can show the average of a year. */
+function a4YearPrices(): void
+{
+    $id = CarModel::where('slug', 'a4')->value('id');
+    DB::table('model_prices')->insert([
+        ['car_model_id' => $id, 'build_year' => 2010, 'vehicles' => 300, 'average_price' => 47254],
+        ['car_model_id' => $id, 'build_year' => 2011, 'vehicles' => 300, 'average_price' => 48000],
+    ]);
+    Cache::flush();
+}
+
+it('shows the average price of a build year in the table when nobody searched a plate', function () {
+    a4YearPrices();
+
+    $this->get('/audi/a4/b8/2010')->assertOk()->assertSee('Nieuwprijs bouwjaar 2010')->assertSee('€ 47.254')->assertDontSee('Nieuwprijs van jouw auto');
+});
+
+it('shows only the price of the searched car after a plate search, and leaves the average out of the table', function () {
+    a4YearPrices();
+    rdwCar(price: '41007');
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+
+    foreach (['/audi/a4/b8/2010', '/audi/a4/b8/2011', '/audi/a4/b8'] as $url) {
+        $html = $this->get($url)->assertOk()->getContent();
+
+        expect($html)->toContain('Nieuwprijs van jouw auto')->toContain('€ 41.007');
+        expect($html)->not->toContain('Nieuwprijs bouwjaar')->not->toContain('€ 47.254')->not->toContain('€ 48.000');
+    }
+});
+
+it('keeps the average in the table when the RDW has no price for the searched car', function () {
+    a4YearPrices();
+    rdwCar(price: null);
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+
+    $this->get('/audi/a4/b8/2010')->assertOk()->assertDontSee('Nieuwprijs van jouw auto')->assertSee('Nieuwprijs bouwjaar 2010')->assertSee('€ 47.254');
+});
+
+it('keeps the average in the table on the page of another model than the one that was searched', function () {
+    rdwCar('LANCIA', 'DELTA', 2012, '27999');   // not one of ours: only the home page shows its price
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+    DB::table('model_prices')->insert(['car_model_id' => CarModel::where('slug', 'a4')->value('id'), 'build_year' => 2010, 'vehicles' => 300, 'average_price' => 47254]);
+    Cache::flush();
+
+    $this->get('/audi/a4/b8/2010')->assertOk()->assertSee('Nieuwprijs bouwjaar 2010');
 });
