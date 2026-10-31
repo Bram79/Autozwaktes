@@ -81,7 +81,8 @@ Open dan **/admin**, bekijk de *Generatievoorstellen* en keur ze goed, pas ze to
 ## 7. Backups
 - `php artisan backup:database` maakt elke nacht om 02:30 een gecomprimeerde kopie in `storage/app/backups` (de laatste 14 dagen). De grote importtabellen laat het weg: die kun je opnieuw ophalen bij de RDW. Dit staat alleen in de scheduler als `APP_ENV=production`.
 - **Zet de backups óók ergens anders neer.** Een backup op dezelfde server helpt niet als de server weg is. Kies de automatische **server-snapshots** van je hoster (kost meestal een paar euro) en/of kopieer `storage/app/backups` naar andere opslag met bijvoorbeeld `rclone`.
-- **Terugzetten:** `gunzip < backup.sql.gz | mysql -u gebruiker -p autozwaktes`. Daarna `php artisan rdw:update` om de importtabellen te vullen.
+- **Versleutelen:** de backup bevat e-mailadressen en kentekens van APK-herinneringen. Zet daarom `BACKUP_PASSPHRASE` in `.env`: dan komt er een bestand `.sql.gz.enc` en blijft er geen leesbare kopie over. Bewaar de zin ook buiten de server (bijvoorbeeld in je wachtwoordmanager): zonder de zin kun je niets terugzetten. De map en bestanden zijn alleen leesbaar voor het serveraccount.
+- **Terugzetten:** `gunzip < backup.sql.gz | mysql -u gebruiker -p autozwaktes`. Een versleutelde backup eerst ontsleutelen: `BACKUP_PASSPHRASE='...' openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_PASSPHRASE -in backup.sql.gz.enc | gunzip | mysql -u gebruiker -p autozwaktes`. Daarna `php artisan rdw:update` om de importtabellen te vullen.
 - Test minstens één keer dat je een backup echt kunt terugzetten.
 
 ## 8. Updates en onderhoud
