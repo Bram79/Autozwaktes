@@ -60,7 +60,7 @@ it('also shows it prominently on the generation page the visitor lands on, with 
     $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
 
     expect($html)->toContain('plek=kenteken-resultaat-generatie');
-    expect(strpos($html, 'plek=kenteken-resultaat-generatie'))->toBeLessThan(strpos($html, 'Top 10 APK-gebreken'));
+    expect(strpos($html, 'plek=kenteken-resultaat-generatie'))->toBeLessThan(strpos($html, '>Top 10 APK-gebreken</h2>'));
 });
 
 it('does not show the prominent report to someone who did not search a plate', function () {
@@ -101,4 +101,38 @@ it('shows the vehicle report for a car we do not know, using the make and model 
     expect($html)->toContain('plek=kenteken-onbekend');
     expect($html)->toContain('Lancia Delta uit 2012');
     expect(strtoupper(json_encode(session()->all())))->not->toContain('AB123C');   // still no plate in the session
+});
+
+// --- the report and the price belong to the car that was searched, not to every page the visitor opens next -------------
+
+it('talks about the searched car, with its own build year, also on another year page of that model', function () {
+    rdwHasAudi(2010);
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+
+    $html = $this->get('/audi/a4/b8/2011')->assertOk()->getContent();
+
+    expect($html)->toContain('Audi A4 uit 2010');          // the searched car, not the page
+    expect($html)->not->toContain('Audi A4 uit 2011');
+    expect($html)->toContain('plek=kenteken-resultaat');
+});
+
+it('shows neither the price nor the report of the searched car on the page of another model', function () {
+    rdwHasAudi(2010);
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+
+    $html = $this->get('/volkswagen/golf/mk8')->assertOk()->getContent();
+
+    expect($html)->not->toContain('Nieuwprijs van jouw auto')->not->toContain('plek=kenteken-resultaat');
+    expect($html)->toContain('plek=generatiepagina-rapport');   // the normal block instead
+});
+
+it('keeps only the model number and year of the searched car in the session, never the plate', function () {
+    rdwHasAudi(2010);
+    $this->post('/kenteken', ['kenteken' => 'AB-123-C']);
+
+    expect(strtoupper(json_encode(session()->all())))->not->toContain('AB123C')->not->toContain('AB-123-C');
+});
+
+it('says in the privacy statement that the model and build year are kept for half an hour', function () {
+    $this->get('/privacy')->assertSee('het model en bouwjaar', false);
 });

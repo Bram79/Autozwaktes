@@ -17,7 +17,7 @@
 @endphp
 <x-layouts.app
     :title="$name.' ('.$range.'): zwakke punten en APK-problemen'"
-    :description="'Welke APK-gebreken komen het vaakst voor bij de '.$name.' ('.$range.')? Bekijk de top 10 met percentages, een koopchecklist en het verschil per bouwjaar.'"
+    :description="'Top '.config('site.top_defects').' APK-gebreken van de '.$name.' ('.$range.'), met percentages, koopchecklist en verschil per bouwjaar.'"
     :canonical="$url">
 
     <x-slot:head>
@@ -33,9 +33,9 @@
 
     <h1 class="text-3xl sm:text-4xl">{{ $name }} ({{ $range }}): zwakke punten en APK-problemen</h1>
 
-    @if (\App\Site\PlateVisit::active())
+    @if (\App\Site\PlateVisit::forModel($model->id))
         <x-plate-price />
-        <x-plate-cta :brand="$model->brand->name" :model="$model->name" position="kenteken-resultaat-generatie" />
+        <x-plate-cta :brand="$model->brand->name" :model="$model->name" :year="\App\Site\PlateVisit::year() ?? ''" position="kenteken-resultaat-generatie" />
     @endif
 
     <div class="mt-8 grid gap-8 lg:grid-cols-3">
@@ -54,7 +54,7 @@
         </div>
 
         <div class="space-y-4">
-            @unless (\App\Site\PlateVisit::active())
+            @unless (\App\Site\PlateVisit::forModel($model->id))
                 <x-affiliate-block type="vehicle_report" :brand="$model->brand->name" :model="$model->name" position="generatiepagina-rapport" />
             @endunless
             <x-affiliate-block type="insurance" :brand="$model->brand->name" :model="$model->name" />

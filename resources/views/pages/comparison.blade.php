@@ -10,7 +10,7 @@
 @endphp
 <x-layouts.app
     :title="$nameA.' vs '.$nameB.': welke heeft de minste APK-gebreken?'"
-    :description="'De '.$nameA.' en de '.$nameB.' vergeleken op APK-gebreken, bouwjaar '.$first.'–'.$last.': '.$fmt($scoreA).' tegen '.$fmt($scoreB).' gebreken per 100 auto\'s en de meest voorkomende gebreken naast elkaar.'"
+    :description="'De '.$nameA.' en de '.$nameB.' vergeleken op APK-gebreken, bouwjaren '.$first.'–'.$last.': '.$fmt($scoreA).' tegen '.$fmt($scoreB).' gebreken per 100 auto\'s en de meest voorkomende gebreken naast elkaar.'"
     :canonical="$url">
 
     <x-breadcrumbs :items="[['Home', route('home')], ['Ranglijsten', route('rankings')], [$nameA.' vs '.$nameB, $url]]" />
@@ -24,7 +24,7 @@
             <div class="rounded-2xl border-2 {{ $wins ? 'border-accent-400 bg-accent-300/20' : 'border-brand-100 bg-brand-50' }} p-4">
                 <div class="flex items-center justify-between gap-2">
                     <p class="font-bold text-brand-900">{{ $cardName }}</p>
-                    @if ($wins)<span class="badge-best">Minste gebreken</span>@endif
+                    @if ($wins)<span class="badge-best">Lager</span>@endif
                 </div>
                 <p class="mt-2 text-3xl font-extrabold tabular-nums text-brand-900">{{ $fmt($cardScore) }} <span class="text-sm font-medium text-slate-700">gebreken per 100 auto's</span></p>
                 <div class="score-track mt-3" aria-hidden="true"><span class="bar score-fill {{ $wins ? 'score-fill-best' : '' }}" style="--w: {{ round($cardScore / $maxPair * 100) }}%"></span></div>
@@ -37,14 +37,15 @@
             We vergelijken de bouwjaren {{ $first }} tot en met {{ $last }}, de jaren waarin beide auto's veel werden gebouwd.
             De {{ $nameA }} heeft in deze jaren gemiddeld {{ $fmt($scoreA) }} geconstateerde APK-gebreken per 100 auto's, de {{ $nameB }} {{ $fmt($scoreB) }}.
             @if ($better)
-                Een lager getal is beter: in deze vergelijking scoort de {{ $better }} dus beter, met {{ $fmt(abs($scoreA - $scoreB)) }} gebreken minder per 100 auto's.
+                Een lager getal betekent minder gebreken: in deze vergelijking komt de {{ $better }} lager uit, met {{ $fmt(abs($scoreA - $scoreB)) }} gebreken minder per 100 auto's.
             @else
                 Ze scoren dus precies gelijk.
             @endif
         </p>
         <p class="text-sm text-slate-600">
-            Gebaseerd op {{ $fmt($result['models'][$a->id]['total'], 0) }} {{ $a->name }}'s en {{ $fmt($result['models'][$b->id]['total'], 0) }} {{ $b->name }}'s uit de RDW-cijfers.
-            We vergelijken alleen auto's die ongeveer evenveel kostten toen ze nieuw waren. Gebreken per 100 auto's: elk soort gebrek telt één keer per auto.
+            Gebaseerd op {{ $fmt($result['models'][$a->id]['total'], 0) }} auto's van het model {{ $a->name }} en {{ $fmt($result['models'][$b->id]['total'], 0) }} van het model {{ $b->name }}, uit de RDW-cijfers.
+            We vergelijken alleen auto's die ongeveer evenveel kostten toen ze nieuw waren. Gebreken per 100 auto's: elk soort gebrek telt één keer per auto, dus een auto kan meerdere gebreken hebben en het getal kan boven de 100 uitkomen.
+            Verschillen in kilometers, onderhoud, gebruik en in de verdeling over bouwjaren en brandstof zijn hierin niet verwerkt: zie het als een indicatie.
         </p>
     </div>
 

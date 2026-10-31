@@ -39,6 +39,15 @@ return [
     // When set, database backups are encrypted with this passphrase (store it somewhere safe, apart from the server)
     'backup_passphrase' => env('BACKUP_PASSPHRASE'),
 
+    // When is a defect "clearly more often" or "clearly less often" than at the other models?
+    // ratio = this model's percentage divided by the average of the others. Used by the table and by the summary.
+    'compare' => [
+        'ratio_high' => 1.5,
+        'ratio_low' => 0.6,
+        'min_average' => 0.5,    // below this average (in %) a ratio says nothing
+        'min_vehicles' => 20,    // "more often" needs at least this many cars with the defect
+    ],
+
     // At most this many parts links in one defect table (the top defects first)
     'parts_links_per_table' => 3,
 

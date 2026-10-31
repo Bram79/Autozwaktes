@@ -77,7 +77,7 @@ it('shows ranking pages with a unique title, and noindex when the list is short'
     $this->get('/ranglijst/merk/kia')->assertOk()->assertSee('Minste APK-gebreken bij Kia')->assertSee('noindex,follow', false);
 
     $this->get('/ranglijst/brandstof/benzine')->assertOk()->assertSee('minste APK-gebreken');
-    $this->get('/ranglijst/bouwjaar/'.app(RankingService::class)->years()[0])->assertOk()->assertSee('Betrouwbaarste occasions');
+    $this->get('/ranglijst/bouwjaar/'.app(RankingService::class)->years()[0])->assertOk()->assertSee('minste APK-gebreken');
 });
 
 it('gives 404 for rankings that do not exist', function () {

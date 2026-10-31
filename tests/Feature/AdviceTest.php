@@ -54,7 +54,7 @@ it('names the clearly weak and strong points, with the exact ratio', function ()
 
     $weakRow = collect(app(AdviceWriter::class)->rows($this->generation))->firstWhere('label', 'Vaker dan gemiddeld');
     expect($weakRow['tone'])->toBe('bad');
-    expect(implode(' ', $weakRow['lines']))->toContain(number_format($comparison['weak'][0]['ratio'], 1, ',', '.').' keer vaker');
+    expect(implode(' ', $weakRow['lines']))->toContain(number_format($comparison['weak'][0]['ratio'], 1, ',', '.').' keer zo vaak');
 });
 
 it('gives the same table for the same page every time', function () {

@@ -81,14 +81,17 @@ class AdviceWriter
             'label' => 'Vaker dan gemiddeld',
             'lines' => $facts['vaker_dan_gemiddeld'] === []
                 ? ['Geen enkel veelvoorkomend gebrek valt duidelijk negatief op.']
-                : array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->times($p['keer_vaker']).' vaker ('.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']).')', $facts['vaker_dan_gemiddeld']),
+                : array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->times($p['keer_vaker']).' zo vaak ('.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']).')', $facts['vaker_dan_gemiddeld']),
             'tone' => $facts['vaker_dan_gemiddeld'] === [] ? null : 'bad',
         ];
 
         if ($facts['minder_vaak_dan_gemiddeld'] !== []) {
             $rows[] = [
-                'label' => 'Beter dan gemiddeld',
-                'lines' => array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']), $facts['minder_vaak_dan_gemiddeld']),
+                'label' => 'Minder vaak dan gemiddeld',
+                'lines' => [
+                    ...array_map(fn ($p) => $this->upper($p['gebrek']).': '.$this->percent($p['percentage']).' tegenover '.$this->percent($p['gemiddeld_percentage']), $facts['minder_vaak_dan_gemiddeld']),
+                    'Dit zegt niet dat de auto op die onderdelen beter is gemaakt.',
+                ],
                 'tone' => 'good',
             ];
         }
