@@ -11,7 +11,10 @@ class DefectText
 {
     public static function plain(string $description): string
     {
-        return self::cleanCut(self::spellOut($description));
+        $spelledOut = self::spellOut($description);
+
+        // gas texts are handled above (the length of the original says whether the RDW cut them off, not the length of what we made of them)
+        return $spelledOut !== $description ? $spelledOut : self::cleanCut($description);
     }
 
     /** Writes out the gas abbreviations. */

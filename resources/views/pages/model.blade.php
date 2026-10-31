@@ -28,7 +28,7 @@
                 <li class="reveal" style="--i: {{ min($loop->index, 8) }}">
                     <a href="{{ route('generation', [$model->brand, $model->slug, $generation->slug]) }}" class="card-link group flex items-center gap-3">
                         <span>
-                            <span class="block font-semibold text-brand-700">{{ $name }} {{ $generation->code }}</span>
+                            <span class="block font-semibold text-brand-700">{{ \App\Site\Seo::generationName($generation) }}</span>
                             <span class="mt-0.5 inline-block rounded-full bg-brand-50 px-2.5 py-0.5 text-sm text-brand-900">{{ \App\Site\Seo::yearsLabel($generation) }}</span>
                         </span>
                         <span class="card-arrow" aria-hidden="true">&rarr;</span>

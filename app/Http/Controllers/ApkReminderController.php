@@ -37,6 +37,10 @@ class ApkReminderController extends Controller
         ], [
             'email.required' => 'Vul je e-mailadres in.',
             'email.email' => 'Dit is geen geldig e-mailadres.',
+            'email.max' => 'Dit e-mailadres is te lang.',
+            'kenteken.max' => 'Dit is geen geldig kenteken. Een kenteken heeft 6 tekens, bijvoorbeeld AB-123-C.',
+            'kenteken.string' => 'Dit is geen geldig kenteken. Een kenteken heeft 6 tekens, bijvoorbeeld AB-123-C.',
+            'email.string' => 'Dit is geen geldig e-mailadres.',
             'kenteken.required' => 'Vul je kenteken in.',
             'akkoord.accepted' => 'Vink aan dat je akkoord gaat met de herinneringsmail.',
         ]);

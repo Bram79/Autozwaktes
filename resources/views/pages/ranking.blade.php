@@ -62,7 +62,7 @@
                                         <td class="py-3 pr-2 text-slate-700">{{ $id === 'minste' ? $i + 1 : $count - $i }}</td>
                                         <td class="py-3 pr-4">
                                             <a class="font-medium text-brand-700 underline underline-offset-2 hover:text-brand-900" href="{{ $year ? route('year', [$row['brand_slug'], $row['model_slug'], $row['generation_slug'], $year]) : route('generation', [$row['brand_slug'], $row['model_slug'], $row['generation_slug']]) }}">
-                                                {{ $row['brand'] }} {{ $row['model'] }} {{ $row['code'] }}
+                                                {{ $row['brand'] }} {{ $row['model'] }} {{ $row['code'] === \App\Site\Seo::ALL_YEARS ? '' : $row['code'] }}
                                             </a>
                                             @if ($id === 'minste' && $i === 0)<span class="badge-best ml-2 align-middle">Beste score</span>@endif
                                             <span class="block text-xs text-slate-700 sm:hidden">{{ $year ?? $row['years'] }}</span>

@@ -17,7 +17,7 @@
 @endphp
 <x-layouts.app
     :title="$name.' ('.$range.'): zwakke punten en APK-problemen'"
-    :description="'Welke APK-gebreken komen het vaakst voor bij de '.$name.' ('.$range.')? Bekijk de top 10 met percentages, een koopchecklist en het verschil per bouwjaar.'"
+    :description="'Top '.config('site.top_defects').' APK-gebreken van de '.$name.' ('.$range.'), met percentages, koopchecklist en verschil per bouwjaar.'"
     :canonical="$url">
 
     <x-slot:head>

@@ -60,7 +60,7 @@ it('also shows it prominently on the generation page the visitor lands on, with 
     $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
 
     expect($html)->toContain('plek=kenteken-resultaat-generatie');
-    expect(strpos($html, 'plek=kenteken-resultaat-generatie'))->toBeLessThan(strpos($html, 'Top 10 APK-gebreken'));
+    expect(strpos($html, 'plek=kenteken-resultaat-generatie'))->toBeLessThan(strpos($html, '>Top 10 APK-gebreken</h2>'));
 });
 
 it('does not show the prominent report to someone who did not search a plate', function () {

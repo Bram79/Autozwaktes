@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CarModel;
+use App\Models\Generation;
 use App\Site\ComparisonService;
 use App\Site\RankingService;
 use App\Site\Seo;
@@ -97,4 +98,23 @@ it('says "Er is 1 generatie" for one generation', function () {
     $html = $this->get(route('model', [$model->brand, $model->slug]))->assertOk()->getContent();
 
     expect($html)->toContain('Er is 1 generatie')->not->toContain('Er zijn 1 generatie');
+});
+
+// --- the catch-all generation in lists ------------------------------------------------------------------------
+
+it('does not write "Alle bouwjaren" behind a model name in lists', function () {
+    Generation::where('slug', 'b8')->update(['code' => 'Alle bouwjaren']);
+    Cache::flush();
+
+    $this->get('/audi/a4')->assertOk()->assertDontSee('A4 Alle bouwjaren');
+    $this->get('/ranglijst/alles')->assertOk()->assertDontSee('A4 Alle bouwjaren');
+});
+
+it('gives a generation page a description that is not cut off and does not say "top 10" by hand', function () {
+    $html = $this->get('/audi/a4/b8')->assertOk()->getContent();
+    preg_match('~<meta name="description" content="(.*?)">~', $html, $m);
+
+    expect(mb_strlen(html_entity_decode($m[1])))->toBeLessThanOrEqual(160);
+    expect($m[1])->toEndWith('.');
+    expect($m[1])->toContain('Top '.config('site.top_defects'));
 });
