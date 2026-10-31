@@ -57,7 +57,6 @@
         </div>
     @endunless
 
-    @php $suggestions = app(\App\Site\ComparisonService::class)->suggestions($model); @endphp
     @if ($suggestions)
         <section class="mt-10 panel" aria-labelledby="vergelijken">
             <h2 id="vergelijken" class="text-xl font-semibold">Vergelijk de {{ $name }} met</h2>

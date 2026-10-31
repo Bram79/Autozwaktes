@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Site\PlateLookup;
 use App\Site\PlateVisit;
+use App\Site\RateGate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\RateLimiter;
 
 class PlateController extends Controller
 {
@@ -21,12 +21,9 @@ class PlateController extends Controller
     /** A plate goes in with POST so that it does not end up in the URL or in server logs. */
     public function lookup(Request $request, PlateLookup $lookup)
     {
-        $key = 'plate:'.$request->ip();
-
-        if (RateLimiter::tooManyAttempts($key, 10)) {
+        if (! RateGate::attempt('plate:'.$request->ip(), (int) config('site.limits.plate_per_minute'))) {
             return redirect()->route('home')->with('plate_error', 'Je zoekt te snel. Probeer het over een minuut opnieuw.');
         }
-        RateLimiter::hit($key, 60);
 
         $result = $lookup->find(is_string($request->input('kenteken')) ? $request->input('kenteken') : '');
 

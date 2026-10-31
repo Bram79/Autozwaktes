@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /*
@@ -29,9 +30,7 @@ pest()->extend(TestCase::class)
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
-});
+// (no custom expectations yet)
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +43,11 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/** The RDW knows a plate: an Audi A4 from the given year, APK valid until $apk. */
+function rdwHasAudi(int $year = 2010, string $apk = '2027-06-13'): void
 {
-    // ..
+    Http::fake(['opendata.rdw.nl/*' => Http::response([[
+        'kenteken' => 'AB123C', 'voertuigsoort' => 'Personenauto', 'merk' => 'AUDI', 'handelsbenaming' => 'A4',
+        'datum_eerste_toelating_dt' => "{$year}-05-04T00:00:00.000", 'vervaldatum_apk_dt' => "{$apk}T00:00:00.000",
+    ]])]);
 }

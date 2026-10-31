@@ -4,6 +4,7 @@ use App\Support\Bots;
 use Database\Seeders\DemoStatsSeeder;
 use Database\Seeders\StarterModelsSeeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 beforeEach(function () {
     $this->withoutVite();
@@ -38,6 +39,7 @@ it('still makes a session for a visitor, who needs it for the forms and the sear
 });
 
 it('answers a bot that posts the plate form like anyone else', function () {
+    Http::fake(['opendata.rdw.nl/*' => Http::response([])]);
     $this->withHeader('User-Agent', 'Mozilla/5.0 (compatible; Googlebot/2.1)')->post('/kenteken', ['kenteken' => 'AB-123-C'])->assertRedirect();
 });
 

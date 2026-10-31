@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\CarModel;
 use App\Models\Generation;
+use App\Site\AdviceWriter;
+use App\Site\ComparisonService;
+use App\Site\RankingService;
 use App\Site\Sitemap;
 use App\Site\SitemapBusyException;
 use App\Site\StatsService;
@@ -12,7 +15,7 @@ use Closure;
 
 class PageController extends Controller
 {
-    public function __construct(private StatsService $stats) {}
+    public function __construct(private StatsService $stats, private AdviceWriter $advice, private ComparisonService $comparisons) {}
 
     public function home()
     {
@@ -38,7 +41,7 @@ class PageController extends Controller
         $generations = $this->stats->generationsWithData($model);
         $similar = $model->brand->carModels()->withStats()->where('id', '!=', $model->id)->orderBy('name')->get();
 
-        return view('pages.model', compact('model', 'generations', 'similar'));
+        return view('pages.model', ['model' => $model, 'generations' => $generations, 'similar' => $similar, 'suggestions' => $this->comparisons->suggestions($model)]);
     }
 
     public function generation(string $brand, string $model, string $generation)
@@ -47,6 +50,7 @@ class PageController extends Controller
 
         return view('pages.generation', [
             'generation' => $generation,
+            'adviceRows' => $this->advice->rows($generation),
             'years' => $this->stats->years($generation),
             'siblings' => $this->stats->generationsWithData($generation->carModel)->where('id', '!=', $generation->id),
             'similar' => $generation->carModel->brand->carModels()->withStats()->where('id', '!=', $generation->car_model_id)->orderBy('name')->get(),
@@ -63,6 +67,7 @@ class PageController extends Controller
         return view('pages.year', [
             'generation' => $generation,
             'year' => $year,
+            'adviceRows' => $year <= RankingService::lastInspectedYear() ? $this->advice->rows($generation, $year) : [],
             'years' => $years,
             'result' => $this->stats->topDefects($generation, $year),
             'fuels' => $this->stats->fuels($generation),

@@ -54,7 +54,7 @@ class PlateLookup
             return ['status' => 'not_found'];
         }
 
-        if (($vehicle['voertuigsoort'] ?? '') !== 'Personenauto') {
+        if (($vehicle['voertuigsoort'] ?? '') !== RdwClient::PASSENGER_CAR) {
             return ['status' => 'not_supported'];
         }
 
