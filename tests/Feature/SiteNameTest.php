@@ -126,6 +126,14 @@ it('uses logo.png when there is no logo.svg', function () {
     expect(Brand::logoUrl())->toEndWith('/images/logo.png');
 });
 
+it('has a real favicon, linked from the site and from the admin', function () {
+    expect(filesize(public_path('favicon.ico')))->toBeGreaterThan(0);
+    expect(filesize(public_path('apple-touch-icon.png')))->toBeGreaterThan(0);
+
+    $this->get('/')->assertOk()->assertSee('rel="icon" href="'.asset('favicon.ico').'"', false)->assertSee('apple-touch-icon', false);
+    $this->get('/admin/login')->assertOk()->assertSee(asset('favicon.ico'), false);
+});
+
 it('explains in the go-live notes where the name and the logo are set', function () {
     expect(file_get_contents(base_path('docs/LIVEGANG.md')))->toContain('APP_NAME')->toContain('public/images/logo.svg')->toContain('nuvik.nl');
 });

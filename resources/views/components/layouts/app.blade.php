@@ -16,6 +16,8 @@
     @if (! empty($robots))
         <meta name="robots" content="{{ $robots }}">
     @endif
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+    <link rel="apple-touch-icon" href="{{ asset('apple-touch-icon.png') }}">
     <link rel="canonical" href="{{ $canonical ?? url()->current() }}">
     <meta property="og:title" content="{{ $title }}">
     <meta property="og:description" content="{{ $description }}">

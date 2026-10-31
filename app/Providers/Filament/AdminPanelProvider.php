@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName(fn () => config('site.name').' beheer')
+            ->favicon(fn () => asset('favicon.ico'))
             ->login()
             ->navigationGroups(['Inhoud', 'Inkomsten', 'Instellingen', 'Geavanceerd'])
             ->sidebarCollapsibleOnDesktop()
