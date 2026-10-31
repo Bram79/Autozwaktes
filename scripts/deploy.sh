@@ -2,6 +2,9 @@
 # Update de live site na een wijziging. Draai dit op de server, in de projectmap: bash scripts/deploy.sh
 set -euo pipefail
 
+# If a step fails, do not leave the site in maintenance mode: put it back up and say clearly that the deploy failed.
+trap 'echo "DEPLOY MISLUKT: zie de fout hierboven. De site wordt weer aangezet; controleer of de code en de database kloppen." >&2; php artisan up' ERR
+
 php artisan down --retry=60 || true
 
 git pull --ff-only
