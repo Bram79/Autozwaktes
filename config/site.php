@@ -33,6 +33,14 @@ return [
     // Verification code from Google Search Console ("HTML tag" method). Leave empty until you have it.
     'google_verification' => env('GOOGLE_SITE_VERIFICATION'),
 
+    // Limits against abuse (all per minute unless it says otherwise). Overridable in .env for a busy launch day.
+    'limits' => [
+        'search_per_minute' => (int) env('LIMIT_SEARCH_PER_MINUTE', 60),
+        'apk_mail_per_hour' => (int) env('LIMIT_APK_MAIL_PER_HOUR', 3),
+        // all visitors together: the RDW is a shared, free service
+        'rdw_lookups_per_minute' => (int) env('LIMIT_RDW_LOOKUPS_PER_MINUTE', 120),
+    ],
+
     // Groups with fewer vehicles than this are not shown: the percentages would be unreliable.
     'min_sample' => (int) env('SITE_MIN_SAMPLE', 100),
 

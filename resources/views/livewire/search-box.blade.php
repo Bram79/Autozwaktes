@@ -9,6 +9,9 @@
 
     @if (trim($query) !== '')
         <div class="mt-3" aria-live="polite">
+            @if ($tooFast)
+                <p class="text-sm font-medium text-brand-100">Je zoekt te snel. Wacht even en probeer het opnieuw.</p>
+            @endif
             @forelse ($results as $model)
                 @if ($loop->first)<ul class="divide-y divide-brand-100 overflow-hidden rounded-2xl bg-white shadow-lg">@endif
                 <li>
@@ -18,7 +21,9 @@
                 </li>
                 @if ($loop->last)</ul>@endif
             @empty
+                @unless ($tooFast)
                 <p class="text-sm font-medium text-brand-100">Geen resultaten voor "{{ $query }}".</p>
+                @endunless
             @endforelse
         </div>
     @endif

@@ -58,7 +58,14 @@ class ApkReminderController extends Controller
         $email = Str::lower(trim($data['email']));
         $reminder = ApkReminder::firstOrNew(['email' => $email, 'license_plate' => $plate]);
 
-        if (! $reminder->isConfirmed()) {
+        // Nobody may fill someone else's inbox: a few mails per address per hour. The answer stays the same either way.
+        // The key holds a hash, not the address itself.
+        $mailKey = 'apk-mail:'.hash_hmac('sha256', $email, (string) config('app.key'));
+        $mayMail = ! RateLimiter::tooManyAttempts($mailKey, (int) config('site.limits.apk_mail_per_hour'));
+
+        if (! $reminder->isConfirmed() && $mayMail) {
+            RateLimiter::hit($mailKey, 3600);
+
             $reminder->fill([
                 'apk_expires_at' => self::expiry($vehicle),
                 'token' => $reminder->token ?: Str::random(48),

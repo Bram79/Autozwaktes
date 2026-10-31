@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\CarModel;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
@@ -13,14 +14,32 @@ class SearchBox extends Component
     #[Url(as: 'q', except: '')]
     public string $query = '';
 
+    /** True when this visitor searched too often in the last minute (see config site.limits). */
+    public bool $tooFast = false;
+
+    /** The text we search on: a very long query is cut off. */
+    public function searchText(): string
+    {
+        return mb_substr(trim($this->query), 0, 60);
+    }
+
     /** @return Collection<int, CarModel> */
     public function results(): Collection
     {
-        $words = preg_split('/\s+/', trim($this->query), -1, PREG_SPLIT_NO_EMPTY);
+        $this->tooFast = false;
+        $words = preg_split('/\s+/', $this->searchText(), -1, PREG_SPLIT_NO_EMPTY);
 
         if ($words === false || $words === []) {
             return collect();
         }
+
+        $key = 'search:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($key, (int) config('site.limits.search_per_minute'))) {
+            $this->tooFast = true;
+
+            return collect();
+        }
+        RateLimiter::hit($key, 60);
 
         $models = CarModel::withStats()->with('brand')->limit(10);
 
