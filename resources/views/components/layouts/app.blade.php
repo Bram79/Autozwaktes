@@ -47,7 +47,6 @@
                 {{ config('site.name') }}
             </a>
             <nav aria-label="Hoofdmenu" class="-mx-3 flex flex-wrap text-sm font-medium sm:mx-0">
-                <a href="{{ route('home') }}" class="nav-link">Zoeken</a>
                 <a href="{{ route('rankings') }}" class="nav-link">Ranglijsten</a>
                 <a href="{{ route('apk') }}" class="nav-link">APK-herinnering</a>
             </nav>

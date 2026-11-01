@@ -137,3 +137,10 @@ it('has a real favicon, linked from the site and from the admin', function () {
 it('explains in the go-live notes where the name and the logo are set', function () {
     expect(file_get_contents(base_path('docs/LIVEGANG.md')))->toContain('APP_NAME')->toContain('public/images/logo.svg')->toContain('nuvik.nl');
 });
+
+it('has no separate "Zoeken" link in the menu: the logo and name lead to the home page', function () {
+    $html = $this->get('/ranglijsten')->assertOk()->getContent();
+
+    expect($html)->not->toContain('class="nav-link">Zoeken</a>')->toContain('class="nav-link">Ranglijsten</a>');
+    $this->get('/')->assertSee('<a href="'.route('home').'" class="flex min-h-11 items-center gap-2', false);
+});
