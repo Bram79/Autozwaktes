@@ -21,11 +21,69 @@ function observeReveals() {
     items.forEach((el) => observer.observe(el));
 }
 
-document.addEventListener('DOMContentLoaded', observeReveals);
+// Getallen met data-count lopen van 0 op naar de echte waarde (die al in de HTML staat) zodra ze in beeld komen.
+// Zonder JavaScript, zonder IntersectionObserver of met "minder beweging" blijft de tekst gewoon staan.
+function countUp(el) {
+    const target = parseFloat(el.dataset.count);
+    const finalText = el.textContent;
+    // "23,4%": het getal telt, het achtervoegsel (%) blijft staan
+    const [, number, suffix] = finalText.match(/^([\d.,]+)(.*)$/);
+    const decimals = (number.split(',')[1] || '').length;
+    const numberFormat = new Intl.NumberFormat('nl-NL', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    const format = { format: (value) => numberFormat.format(value) + suffix };
+    const duration = 1100;
+    const start = performance.now();
+
+    // De breedte vastzetten, zodat de tekst ernaast niet heen en weer springt tijdens het tellen
+    el.style.display = 'inline-block';
+    el.style.minWidth = `${el.offsetWidth}px`;
+    el.style.textAlign = 'right';
+
+    const step = (now) => {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 4);
+        el.textContent = t < 1 ? format.format(target * eased) : finalText;
+        if (t < 1) {
+            requestAnimationFrame(step);
+        }
+    };
+
+    el.textContent = format.format(0);
+    requestAnimationFrame(step);
+}
+
+function observeCounts() {
+    const items = document.querySelectorAll('[data-count]:not([data-counted])');
+
+    if (! ('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                observer.unobserve(entry.target);
+                countUp(entry.target);
+            }
+        });
+    }, { threshold: 0.6 });
+
+    items.forEach((el) => {
+        el.dataset.counted = '1';
+        observer.observe(el);
+    });
+}
+
+function observeAll() {
+    observeReveals();
+    observeCounts();
+}
+
+document.addEventListener('DOMContentLoaded', observeAll);
 // Livewire ververst delen van de pagina (zoeken, filters): daarna opnieuw kijken.
-document.addEventListener('livewire:navigated', observeReveals);
+document.addEventListener('livewire:navigated', observeAll);
 document.addEventListener('livewire:initialized', () => {
-    window.Livewire.hook('morphed', () => requestAnimationFrame(observeReveals));
+    window.Livewire.hook('morphed', () => requestAnimationFrame(observeAll));
 });
 
 // Cookie banner. Advertising is only loaded after the visitor says yes.

@@ -112,12 +112,14 @@
 .reveal {
     opacity: 0;
     transform: translateY(18px);
-    transition: opacity 0.9s var(--ease-lux), transform 1s var(--ease-lux);
+    filter: blur(6px);
+    transition: opacity 0.9s var(--ease-lux), transform 1s var(--ease-lux), filter 0.9s var(--ease-lux);
     transition-delay: calc(var(--i, 0) * 80ms);
 }
 .reveal.is-visible {
     opacity: 1;
     transform: none;
+    filter: none;
 }
 
 /* Balkjes in de gebrekkentabel groeien van links naar rechts */
@@ -150,7 +152,7 @@
     animation: hero-rise 1s var(--ease-lux) calc(var(--d, 0) * 1s) both;
 }
 @keyframes hero-rise {
-    from { opacity: 0; transform: translateY(14px); }
+    from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
 }
 
 /* Heading: the line slides up out of a mask */
@@ -174,6 +176,7 @@
     .bar {
         opacity: 1;
         transform: none;
+        filter: none;
         transition: none;
     }
     .hero-in,

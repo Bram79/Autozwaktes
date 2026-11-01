@@ -41,7 +41,7 @@
                                 <div class="bar-wrap h-1.5 min-w-0 flex-1 overflow-hidden rounded-sm bg-brand-100 sm:w-40 sm:flex-none" aria-hidden="true">
                                     <div class="bar h-1.5 rounded-sm bg-brand-600" style="width: {{ round($defect->percentage / $max * 100) }}%"></div>
                                 </div>
-                                <span class="font-semibold tabular-nums"><span class="sr-only">Aandeel: </span>{{ number_format($defect->percentage, 1, ',', '.') }}%</span>
+                                <span class="font-semibold tabular-nums"><span class="sr-only">Aandeel: </span><span data-count="{{ $defect->percentage }}">{{ number_format($defect->percentage, 1, ',', '.') }}%</span></span>
                             </div>
                         </td>
                         <td role="cell" class="py-3 text-right tabular-nums text-ink-soft max-sm:col-start-2 max-sm:py-0 max-sm:pt-1 max-sm:text-left">
