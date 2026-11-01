@@ -147,9 +147,9 @@
     from { transform: scaleX(0); }
 }
 
-/* Staged entry: text, search, plate. The delay (--d) sets the order. */
+/* Staged entry: text, search, plate. The delay (--d) sets the order. "backwards" and not "both": afterwards the element goes back to its normal style (no leftover blur(0)). */
 .hero-in {
-    animation: hero-rise 1s var(--ease-lux) calc(var(--d, 0) * 1s) both;
+    animation: hero-rise 1s var(--ease-lux) calc(var(--d, 0) * 1s) backwards;
 }
 @keyframes hero-rise {
     from { opacity: 0; transform: translateY(14px); filter: blur(6px); }
@@ -170,6 +170,45 @@
     from { transform: translateY(110%); }
 }
 
+/* ---------- Alle pagina's: de inhoud komt rustig binnen ---------- */
+
+/* Elk blok in de inhoud komt na elkaar binnen. Blokken met eigen .reveal (of eentje erin) doen dat zelf bij het scrollen. */
+#inhoud > *:not(.reveal):not(:has(.reveal)):not(script) {
+    animation: hero-rise 0.9s var(--ease-lux) calc(var(--page-d, 0) * 1s) backwards;
+}
+#inhoud > :nth-child(1) { --page-d: 0; }
+#inhoud > :nth-child(2) { --page-d: 0.07; }
+#inhoud > :nth-child(3) { --page-d: 0.14; }
+#inhoud > :nth-child(4) { --page-d: 0.21; }
+#inhoud > :nth-child(5) { --page-d: 0.28; }
+#inhoud > :nth-child(n+6) { --page-d: 0.35; }
+/* Wat JavaScript onder de vouw als .reveal markeert, krijgt alleen de scroll-animatie */
+#inhoud > .reveal {
+    animation: none;
+}
+
+/* Tussen twee pagina's een korte crossfade; de header blijft staan (zie ook de media query onderaan) */
+@view-transition {
+    navigation: auto;
+}
+body > header {
+    view-transition-name: site-header;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: 0.3s;
+}
+
+/* Ankerlinks (zoals "Ga naar de inhoud" en de inhoudsopgave) scrollen zacht */
+html {
+    scroll-behavior: smooth;
+}
+
+/* De cookiebanner schuift na een korte pauze zacht in beeld */
+#consent-banner:not([hidden]) {
+    animation: hero-rise 0.8s var(--ease-lux) 0.8s backwards;
+}
+
 /* Geen beweging voor mensen die dat liever uitzetten */
 @media (prefers-reduced-motion: reduce) {
     .reveal,
@@ -181,8 +220,16 @@
     }
     .hero-in,
     .hero-line,
-    .hero-rule {
-        animation: none;
+    .hero-rule,
+    #inhoud > *,
+    #consent-banner {
+        animation: none !important;
+    }
+    html {
+        scroll-behavior: auto;
+    }
+    @view-transition {
+        navigation: none;
     }
     .card-link,
     .card-arrow,

@@ -81,7 +81,7 @@
                                         </td>
                                         <td class="hidden py-3 pr-4 text-ink-soft sm:table-cell">{{ $year ?? $row['years'] }}</td>
                                         <td class="min-w-28 py-3 pr-4 text-right">
-                                            <span class="font-semibold tabular-nums">{{ number_format($row['index'], 0, ',', '.') }}</span>
+                                            <span class="font-semibold tabular-nums" data-count="{{ $row['index'] }}">{{ number_format($row['index'], 0, ',', '.') }}</span>
                                             <span class="block text-xs text-ink-soft">{{ round(abs($row['index'] - 100)) === 0.0 ? 'gemiddeld' : round(abs($row['index'] - 100)).'% '.($row['index'] < 100 ? 'beter' : 'slechter') }}</span>
                                             <span class="score-track mt-1 block" aria-hidden="true"><span class="bar score-fill {{ $id === 'minste' ? 'score-fill-best' : '' }}" style="--w: {{ round($row['index'] / $maxIndex * 100) }}%"></span></span>
                                         </td>

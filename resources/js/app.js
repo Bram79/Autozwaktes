@@ -1,6 +1,17 @@
 import { attachPlateFormatting } from './plate';
 
 // Laat elementen met de klasse "reveal" (en de balkjes) soepel verschijnen zodra ze in beeld komen.
+// Blokken die bij het laden nog onder de vouw staan, verschijnen pas bij het scrollen (op elke pagina, zonder dat de view iets hoeft te doen).
+function markBelowTheFold() {
+    document.querySelectorAll('#inhoud > *:not(.reveal)').forEach((block) => {
+        if (block.querySelector('.reveal') || block.getBoundingClientRect().top < window.innerHeight * 0.9) {
+            return;
+        }
+
+        block.classList.add('reveal');
+    });
+}
+
 function observeReveals() {
     const items = document.querySelectorAll('.reveal:not(.is-visible), .bar-wrap:not(.is-visible)');
 
@@ -26,11 +37,11 @@ function observeReveals() {
 function countUp(el) {
     const target = parseFloat(el.dataset.count);
     const finalText = el.textContent;
-    // "23,4%": het getal telt, het achtervoegsel (%) blijft staan
-    const [, number, suffix] = finalText.match(/^([\d.,]+)(.*)$/);
+    // "23,4%" of "€ 12.345": het getal telt, het voorvoegsel (€) en het achtervoegsel (%) blijven staan
+    const [, prefix, number, suffix] = finalText.match(/^(\D*)([\d.,]+)(.*)$/);
     const decimals = (number.split(',')[1] || '').length;
     const numberFormat = new Intl.NumberFormat('nl-NL', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
-    const format = { format: (value) => numberFormat.format(value) + suffix };
+    const format = { format: (value) => prefix + numberFormat.format(value) + suffix };
     const duration = 1100;
     const start = performance.now();
 
@@ -75,6 +86,9 @@ function observeCounts() {
 }
 
 function observeAll() {
+    if (! window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        markBelowTheFold();
+    }
     observeReveals();
     observeCounts();
 }
