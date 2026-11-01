@@ -17,6 +17,8 @@ export default defineConfig({
         tailwindcss(),
     ],
     server: {
+        // IPv4 and not Vite's default [::1]: the Content-Security-Policy cannot match an IPv6 address in brackets
+        host: '127.0.0.1',
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
