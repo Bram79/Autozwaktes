@@ -59,7 +59,7 @@
                 </thead>
                 <tbody class="align-top">
                     @foreach ([
-                        ['auto-zwaktes-session', 'Je sessie: een willekeurig nummer', '2 uur'],
+                        [config('session.cookie'), 'Je sessie: een willekeurig nummer', '2 uur'],
                         ['XSRF-TOKEN', 'Beveiliging van formulieren', '2 uur'],
                         ...($ads ? [['az_consent', 'Onthoudt je keuze in de cookiebanner', '180 dagen']] : []),
                     ] as [$cookie, $use, $term])

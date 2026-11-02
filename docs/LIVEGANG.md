@@ -3,7 +3,7 @@
 Een checklist, in de volgorde waarin je het doet. Controleer onderweg met `php artisan site:check`: dat commando zegt wat nog niet klopt.
 
 ## 1. Eerst regelen
-- [ ] **Domein** (bijvoorbeeld autozwaktes.nl) en eventueel ook een variant zonder streepje of met streepje, en laat die doorsturen.
+- [ ] **Domein** (bijvoorbeeld nuvik.nl) en laat eventuele varianten doorsturen.
 - [ ] **E-mailadres** voor de site, bijvoorbeeld `info@jouwdomein.nl` (komt op de privacypagina als `CONTACT_EMAIL`; zet ook je naam of bedrijfsnaam in `OPERATOR_NAME`: `site:check` faalt zonder die twee) en een verzendadres voor de APK-herinnering.
 - [ ] **Mailprovider** met SMTP (de meeste hosters en diensten als Mailgun, Postmark of Brevo hebben dit). Zet SPF en DKIM goed bij je domein, anders komen de herinneringen in de spam.
 - [ ] **Affiliate-accounts** (kentekenrapport, verzekering, onderdelen). Zonder links verdient de site niets.
@@ -43,20 +43,20 @@ php artisan site:check
 ## 4. Wachtrij en scheduler
 **Cron** (via `crontab -e` als de gebruiker van de site):
 ```
-* * * * * cd /var/www/autozwaktes && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /var/www/nuvik && php artisan schedule:run >> /dev/null 2>&1
 ```
-**Wachtrij-worker met supervisor** (`/etc/supervisor/conf.d/autozwaktes-worker.conf`):
+**Wachtrij-worker met supervisor** (`/etc/supervisor/conf.d/nuvik-worker.conf`):
 ```ini
-[program:autozwaktes-worker]
-command=php /var/www/autozwaktes/artisan queue:work --sleep=3 --tries=3 --timeout=0
-directory=/var/www/autozwaktes
+[program:nuvik-worker]
+command=php /var/www/nuvik/artisan queue:work --sleep=3 --tries=3 --timeout=0
+directory=/var/www/nuvik
 user=www-data
 autostart=true
 autorestart=true
 numprocs=1
 stopwaitsecs=3600
 redirect_stderr=true
-stdout_logfile=/var/www/autozwaktes/storage/logs/worker.log
+stdout_logfile=/var/www/nuvik/storage/logs/worker.log
 ```
 Daarna: `sudo supervisorctl reread && sudo supervisorctl update`. Forge en Ploi doen dit met een paar klikken.
 
@@ -93,7 +93,7 @@ Open dan **/admin**, bekijk de *Generatievoorstellen* en keur ze goed, pas ze to
 - `php artisan backup:database` maakt elke nacht om 02:30 een gecomprimeerde kopie in `storage/app/backups` (de laatste 14 dagen). De grote importtabellen laat het weg: die kun je opnieuw ophalen bij de RDW. Dit staat alleen in de scheduler als `APP_ENV=production`.
 - **Zet de backups óók ergens anders neer.** Een backup op dezelfde server helpt niet als de server weg is. Kies de automatische **server-snapshots** van je hoster (kost meestal een paar euro) en/of kopieer `storage/app/backups` naar andere opslag met bijvoorbeeld `rclone`.
 - **Versleutelen:** de backup bevat e-mailadressen en kentekens van APK-herinneringen. Zet daarom `BACKUP_PASSPHRASE` in `.env`: dan komt er een bestand `.sql.gz.enc` en blijft er geen leesbare kopie over. Bewaar de zin ook buiten de server (bijvoorbeeld in je wachtwoordmanager): zonder de zin kun je niets terugzetten. De map en bestanden zijn alleen leesbaar voor het serveraccount.
-- **Terugzetten:** `gunzip < backup.sql.gz | mysql -u gebruiker -p autozwaktes`. Een versleutelde backup eerst ontsleutelen: `BACKUP_PASSPHRASE='...' openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_PASSPHRASE -in backup.sql.gz.enc | gunzip | mysql -u gebruiker -p autozwaktes`. Daarna `php artisan rdw:update` om de importtabellen te vullen.
+- **Terugzetten:** `gunzip < backup.sql.gz | mysql -u gebruiker -p nuvik`. Een versleutelde backup eerst ontsleutelen: `BACKUP_PASSPHRASE='...' openssl enc -d -aes-256-cbc -pbkdf2 -pass env:BACKUP_PASSPHRASE -in backup.sql.gz.enc | gunzip | mysql -u gebruiker -p nuvik`. Daarna `php artisan rdw:update` om de importtabellen te vullen.
 - Test minstens één keer dat je een backup echt kunt terugzetten.
 
 ## 8. Updates en onderhoud

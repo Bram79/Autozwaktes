@@ -37,11 +37,11 @@ it('only says that there are no advertising cookies when ads are off', function 
 });
 
 it('names who is responsible and how to reach them', function () {
-    config(['site.operator_name' => 'Bram Meijer', 'site.contact_email' => 'info@autozwaktes.example']);
+    config(['site.operator_name' => 'Bram Meijer', 'site.contact_email' => 'info@nuvik.example']);
 
     $html = $this->get('/privacy')->assertOk()->getContent();
 
-    expect($html)->toContain('Wie is verantwoordelijk')->toContain('Bram Meijer')->toContain('info@autozwaktes.example');
+    expect($html)->toContain('Wie is verantwoordelijk')->toContain('Bram Meijer')->toContain('info@nuvik.example');
 });
 
 it('lists who receives data, how long things are kept and which rights you have', function () {
@@ -63,23 +63,23 @@ it('says that a removed reminder can stay in a backup for a while', function () 
 
 it('does not pass site:check on the live site without a responsible person and contact address', function () {
     app()->detectEnvironment(fn () => 'production');
-    config(['app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
+    config(['app.debug' => false, 'app.url' => 'https://nuvik.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
         'site.contact_email' => null, 'site.operator_name' => null]);
 
     $this->artisan('site:check')->assertFailed()->expectsOutputToContain('CONTACT_EMAIL')->expectsOutputToContain('OPERATOR_NAME');
 
     // with a person and an address filled in, only the other live requirements are left
-    config(['site.contact_email' => 'info@autozwaktes.example', 'site.operator_name' => 'Bram Meijer',
+    config(['site.contact_email' => 'info@nuvik.example', 'site.operator_name' => 'Bram Meijer',
         'site.backup_passphrase' => 'een-lange-zin', 'session.secure' => true]);
     $this->artisan('site:check')->assertSuccessful();
 });
 
 it('lists every cookie that the site sets, with its purpose and how long it lasts', function () {
-    $response = $this->get('/privacy')->assertOk()->assertSee('auto-zwaktes-session', false)->assertSee('XSRF-TOKEN', false);
+    $response = $this->get('/privacy')->assertOk()->assertSee(config('session.cookie'), false)->assertSee('XSRF-TOKEN', false);
 
     // the cookies on the page are the cookies that the site really sets
     $names = collect($this->get('/')->headers->getCookies())->map->getName()->all();
-    expect($names)->toContain('XSRF-TOKEN');
+    expect($names)->toContain('XSRF-TOKEN')->toContain(config('session.cookie'));
     $response->assertDontSee('az_consent', false);   // only while ads and the banner are on
 
     config(['site.ads.enabled' => true]);

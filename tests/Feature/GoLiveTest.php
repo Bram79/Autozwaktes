@@ -76,16 +76,16 @@ it('says what is not ready with site:check, and fails on a real problem', functi
 it('is happy with a correct live configuration', function () {
     app()->detectEnvironment(fn () => 'production');
     config([
-        'app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
+        'app.debug' => false, 'app.url' => 'https://nuvik.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
         'site.contact_email' => 'info@example.com', 'site.operator_name' => 'Bram Meijer', 'site.google_verification' => 'abc',
         'site.backup_passphrase' => 'een-lange-zin', 'session.secure' => true, 'trustedproxy.proxies' => '10.0.0.1',
     ]);
 
-    $this->artisan('site:check')->assertSuccessful()->expectsOutputToContain('APP_URL is https://autozwaktes.example');
+    $this->artisan('site:check')->assertSuccessful()->expectsOutputToContain('APP_URL is https://nuvik.example');
 });
 
 it('backs up the database without the big import tables, without the password on the command line, and keeps only recent ones', function () {
-    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'geheim-wachtwoord', 'database' => 'autozwaktes']]);
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'geheim-wachtwoord', 'database' => 'nuvik']]);
     $directory = storage_path('app/backups');
     @mkdir($directory, 0775, true);
     file_put_contents("{$directory}/2020-01-01_000000.sql.gz", 'old');
@@ -108,7 +108,7 @@ it('backs up the database without the big import tables, without the password on
     $files = glob("{$directory}/*.sql.gz");
     expect($files)->toHaveCount(1);                                   // the new one; the 30-day-old one is gone
     expect(gzdecode(file_get_contents($files[0])))->toContain('CREATE TABLE x');
-    expect($seen->command)->toContain('--single-transaction')->toContain('--ignore-table=autozwaktes.staging_defects')->toContain('--host=db.example');
+    expect($seen->command)->toContain('--single-transaction')->toContain('--ignore-table=nuvik.staging_defects')->toContain('--host=db.example');
     expect(implode(' ', $seen->command))->not->toContain('geheim-wachtwoord');
     expect($seen->environment)->toBe(['MYSQL_PWD' => 'geheim-wachtwoord']);
 
@@ -116,7 +116,7 @@ it('backs up the database without the big import tables, without the password on
 });
 
 it('keeps backups private: only the owner can open the folder and the files', function () {
-    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes']]);
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'nuvik']]);
     $directory = storage_path('app/backups');
     @mkdir($directory, 0775, true);
     chmod($directory, 0775);
@@ -141,7 +141,7 @@ it('keeps backups private: only the owner can open the folder and the files', fu
 
 it('encrypts the backup when a passphrase is set, with the passphrase in the environment and not on the command line', function () {
     config([
-        'database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes'],
+        'database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'nuvik'],
         'site.backup_passphrase' => 'een-lange-geheime-zin',
     ]);
     $directory = storage_path('app/backups');
@@ -189,7 +189,7 @@ it('stops the deploy script from leaving the site in maintenance mode when a ste
 it('does not let a live site start without an encrypted backup, a secure session cookie and a known proxy', function () {
     app()->detectEnvironment(fn () => 'production');
     config([
-        'app.debug' => false, 'app.url' => 'https://autozwaktes.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
+        'app.debug' => false, 'app.url' => 'https://nuvik.example', 'mail.default' => 'smtp', 'site.admin_emails' => ['ik@example.com'],
         'site.contact_email' => 'info@example.com', 'site.operator_name' => 'Bram Meijer', 'site.google_verification' => 'abc',
         'site.backup_passphrase' => null, 'session.secure' => false, 'trustedproxy.proxies' => null, 'site.csp' => 'off',
     ]);
@@ -203,7 +203,7 @@ it('does not let a live site start without an encrypted backup, a secure session
 
 it('warns about a backup without passphrase and still makes the backup', function () {
     app()->detectEnvironment(fn () => 'production');
-    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes'], 'site.backup_passphrase' => null]);
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'nuvik'], 'site.backup_passphrase' => null]);
     @mkdir(storage_path('app/backups'), 0700, true);
     Process::fake(function ($process) {
         foreach ($process->command as $argument) {
@@ -221,7 +221,7 @@ it('warns about a backup without passphrase and still makes the backup', functio
 });
 
 it('reports a failed backup', function () {
-    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'autozwaktes']]);
+    config(['database.connections.backup_test' => ['host' => 'db.example', 'port' => 3306, 'username' => 'gebruiker', 'password' => 'x', 'database' => 'nuvik']]);
     Process::fake(['*' => Process::result('', 'Access denied', 2)]);
 
     $this->artisan('backup:database --connection=backup_test')->assertFailed();
