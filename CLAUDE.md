@@ -43,10 +43,9 @@ Draai alles met `php artisan ...` vanuit de projectroot. De database draait in D
 - Gebruik geen tijdelijke debug-tests in de repo; verwijder ze na gebruik.
 
 ## Git
-- Commit-berichten in het Engels, kort en duidelijk, Conventional Commits: `feat:`, `fix:`, `test:`, `refactor:`, `docs:`, `style:`, `chore:`.
-- Eén onderwerp per commit; formatteer-wijzigingen (Pint) in een eigen `style:`-commit.
-- Grotere taken op een feature-branch (`feat/naam`); merge pas naar `main` als alle tests groen zijn.
-- Push alleen als ik het vraag. Gebruik nooit `--no-verify`; de pre-push hook (`.githooks/pre-push`) draait Pint en alle tests.
+- Je mag zelf committen, pushen en mergen, rechtstreeks op `main`; een branch is niet nodig en je hoeft er niet om te vragen.
+- Commit-berichten in het Engels, kort en duidelijk, Conventional Commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`, `style:`, `chore:`).
+- Gebruik nooit `--no-verify`; de pre-push hook (`.githooks/pre-push`) draait Pint en alle tests.
 - Commit nooit `.env`, API-keys of andere geheimen. Nieuwe instellingen komen in `.env.example` en `.env.production.example`.
 
 ## Laravel-afspraken
